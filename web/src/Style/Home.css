@@ -1,0 +1,500 @@
+/* Estilos específicos para a página Home */
+
+/* Prevent any scrolling on the page */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+.App {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+/* Main container */
+.home-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Sidebar styles */
+.sidebar {
+  background: linear-gradient(180deg, #1976D2 0%, #1565C0 100%);
+  color: white;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar.open {
+  width: 280px;
+}
+
+.sidebar.closed {
+  width: 70px;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-section {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.admin-avatar {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.admin-avatar img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.admin-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Navigation */
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left-color: white;
+}
+
+.nav-item.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left-color: white;
+}
+
+.nav-icon {
+  font-size: 20px;
+  margin-right: 15px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.nav-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metro-branding {
+  display: flex;
+  align-items: center;
+justify-content: center;
+  gap: 12px;
+}
+
+.metro-branding img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.metro-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.metro-subtitle {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+  background-color: #f5f5f5;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Estados da sidebar são controlados pelo JavaScript, 
+   o flexbox já cuida do posicionamento automaticamente */
+
+/* Header */
+.main-header {
+  background: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  height: 70px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.main-header h1 {
+  font-size: 28px;
+  color: #333;
+  font-weight: 600;
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.header-controls button {
+  background: none;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.2s;
+}
+
+.header-controls button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Projects grid */
+.projects-grid {
+  flex: 1;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+  gap: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Project cards */
+.project-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  max-height: 400px;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.project-image {
+  height: 200px;
+  overflow: hidden;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.project-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-image::before {
+  content: '🏗️';
+  font-size: 48px;
+  position: absolute;
+  z-index: 1;
+}
+
+.project-content {
+  padding: 20px;
+}
+
+.project-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.project-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.project-info {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 13px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Progress section */
+.progress-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.progress-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  min-width: 40px;
+}
+
+/* Responsive Design */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .projects-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    padding: 15px;
+    gap: 15px;
+    grid-auto-rows: min-content;
+  }
+  
+  .main-header {
+    padding: 10px 15px;
+    height: 65px;
+  }
+  
+  .main-header h1 {
+    font-size: 22px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .home-container {
+    flex-direction: column;
+  }
+  
+  .sidebar.open {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+    height: 100vh;
+  }
+  
+  .sidebar.closed {
+    display: none;
+  }
+  
+  .main-header {
+    padding: 10px;
+    height: 60px;
+  }
+  
+  .main-header h1 {
+    font-size: 20px;
+  }
+  
+  .projects-grid {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 10px;
+    grid-auto-rows: min-content;
+  }
+  
+  .project-card {
+    margin: 0;
+  }
+  
+  .project-content {
+    padding: 15px;
+  }
+  
+  .header-controls {
+    gap: 5px;
+  }
+  
+  .header-controls button {
+    padding: 8px;
+    font-size: 16px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .admin-section h3 {
+    font-size: 16px;
+  }
+  
+  .nav-label {
+    font-size: 13px;
+  }
+  
+  .main-header {
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .main-header h1 {
+    font-size: 20px;
+  }
+  
+  .projects-grid {
+    padding: 5px;
+    gap: 8px;
+  }
+  
+  .project-image {
+    height: 150px;
+  }
+  
+  .project-title {
+    font-size: 16px;
+  }
+  
+  .project-subtitle {
+    font-size: 13px;
+  }
+}
+
+/* Overlay for mobile sidebar */
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+  }
+  
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+/* Animation for smooth transitions */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.sidebar.open {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Focus states for accessibility */
+.nav-item:focus,
+.menu-toggle:focus,
+.header-controls button:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .project-card {
+    border: 2px solid #333;
+  }
+  
+  .sidebar {
+    border-right: 2px solid #333;
+  }
+}
