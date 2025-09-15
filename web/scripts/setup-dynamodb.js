@@ -5,11 +5,14 @@
 
 const AWS = require('aws-sdk');
 
+// Carregar variáveis de ambiente do arquivo .env
+require('dotenv').config();
+
 // Configurar AWS (certifique-se de ter as credenciais configuradas)
 AWS.config.update({
-  region: process.env.AWS_REGION || 'us-east-1',
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.REACT_APP_AWS_REGION || process.env.AWS_REGION || 'sa-east-1',
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY,
 });
 
 const dynamodb = new AWS.DynamoDB();
@@ -99,12 +102,15 @@ const main = async () => {
     console.log('=== Setup DynamoDB para Metro SP ===\n');
     
     // Verificar se as credenciais estão configuradas
-    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+    const accessKey = process.env.REACT_APP_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+    const secretKey = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
+    
+    if (!accessKey || !secretKey) {
       console.error('ERRO: Credenciais AWS não encontradas!');
-      console.log('Configure as seguintes variáveis de ambiente:');
-      console.log('- AWS_ACCESS_KEY_ID');
-      console.log('- AWS_SECRET_ACCESS_KEY');
-      console.log('- AWS_REGION (opcional, padrão: us-east-1)');
+      console.log('Configure as seguintes variáveis de ambiente no arquivo .env:');
+      console.log('- REACT_APP_AWS_ACCESS_KEY_ID (ou AWS_ACCESS_KEY_ID)');
+      console.log('- REACT_APP_AWS_SECRET_ACCESS_KEY (ou AWS_SECRET_ACCESS_KEY)');
+      console.log('- REACT_APP_AWS_REGION (opcional, padrão: us-east-1)');
       process.exit(1);
     }
     

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../Style/Register.css';
 import MetroLogo from '../assets/metro.png';
-import userService from '../services/userService';
+import userService from '../services/userService'; // DynamoDB
+// import userService from '../services/mockUserService'; // Mock para testes
 
 function Register() {
   const navigate = useNavigate();

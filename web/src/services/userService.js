@@ -7,12 +7,12 @@ import bcrypt from 'bcryptjs';
 class UserService {
   /**
    * Criar um novo usuário
-   * @param {Object} userData - Dados do usuário
-   * @param {string} userData.username - Nome de usuário
-   * @param {string} userData.email - E-mail do usuário
-   * @param {string} userData.password - Senha do usuário
-   * @param {string} userData.name - Nome completo do usuário
-   * @returns {Promise<Object>} Resultado da operação
+   * @param {Object} userData 
+   * @param {string} userData.username 
+   * @param {string} userData.email 
+   * @param {string} userData.password 
+   * @param {string} userData.name
+   * @returns {Promise<Object>} 
    */
   async createUser(userData) {
     try {
