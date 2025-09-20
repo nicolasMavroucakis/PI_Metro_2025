@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import '../Style/AddProject.css';
+import projectService from '../services/projectService';
 
 function AddProject() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,9 @@ function AddProject() {
   });
 
   const [dragActive, setDragActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const menuItems = [
     { icon: '🏠', label: 'Home', path: '/home' },
@@ -36,6 +40,9 @@ function AddProject() {
       ...prev,
       [name]: value
     }));
+    // Limpar mensagens quando usuário começar a digitar
+    if (error) setError('');
+    if (success) setSuccess('');
   };
 
   const handleFileSelect = (e) => {
@@ -72,44 +79,95 @@ function AddProject() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Validação básica
+  const validateForm = () => {
     if (!formData.projectName.trim()) {
-      alert('Por favor, insira o nome do projeto');
-      return;
+      setError('Nome do projeto é obrigatório');
+      return false;
     }
     
     if (!formData.startDate) {
-      alert('Por favor, selecione a data de início');
-      return;
+      setError('Data de início é obrigatória');
+      return false;
     }
     
     if (!formData.endDate) {
-      alert('Por favor, selecione a data de término');
-      return;
+      setError('Data de término é obrigatória');
+      return false;
     }
     
     if (!formData.status) {
-      alert('Por favor, selecione o status do projeto');
-      return;
+      setError('Status do projeto é obrigatório');
+      return false;
     }
 
-    // Aqui você pode adicionar a lógica para salvar o projeto
-    console.log('Dados do projeto:', formData);
+    // Validar se data de término é posterior à data de início
+    if (new Date(formData.endDate) <= new Date(formData.startDate)) {
+      setError('Data de término deve ser posterior à data de início');
+      return false;
+    }
+
+    // Validar arquivo de imagem se fornecido
+    if (formData.projectImage) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(formData.projectImage.type)) {
+        setError('Formato de imagem não suportado. Use JPG, PNG ou WebP');
+        return false;
+      }
+      
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (formData.projectImage.size > maxSize) {
+        setError('Imagem muito grande. Tamanho máximo: 5MB');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
     
-    // Simular sucesso
-    alert('Projeto adicionado com sucesso!');
-    
-    // Reset do formulário
-    setFormData({
-      projectName: '',
-      startDate: '',
-      endDate: '',
-      status: '',
-      projectImage: null
-    });
+    try {
+      if (!validateForm()) {
+        setLoading(false);
+        return;
+      }
+
+      // Criar projeto
+      const result = await projectService.createProject({
+        projectName: formData.projectName.trim(),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        status: formData.status,
+        projectImage: formData.projectImage
+      });
+      
+      if (result.success) {
+        setSuccess('Projeto criado com sucesso!');
+        
+        // Reset do formulário após sucesso
+        setTimeout(() => {
+          setFormData({
+            projectName: '',
+            startDate: '',
+            endDate: '',
+            status: '',
+            projectImage: null
+          });
+          setSuccess('');
+        }, 3000);
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      console.error('Erro ao criar projeto:', error);
+      setError('Erro interno. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const triggerFileInput = () => {
@@ -128,6 +186,9 @@ function AddProject() {
             <h2>Adicionar Projeto</h2>
           </div>
           
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
+          
           <form className="add-project-form" onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
@@ -142,6 +203,7 @@ function AddProject() {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="Digite o nome do projeto"
+                  disabled={loading}
                   required
                 />
               </div>
@@ -159,6 +221,7 @@ function AddProject() {
                   value={formData.startDate}
                   onChange={handleInputChange}
                   className="form-input date-input"
+                  disabled={loading}
                   required
                 />
               </div>
@@ -175,6 +238,7 @@ function AddProject() {
                   onChange={handleInputChange}
                   className="form-input date-input"
                   min={formData.startDate}
+                  disabled={loading}
                   required
                 />
               </div>
@@ -189,6 +253,7 @@ function AddProject() {
                   value={formData.status}
                   onChange={handleInputChange}
                   className="form-select"
+                  disabled={loading}
                   required
                 >
                   {statusOptions.map(option => (
@@ -250,8 +315,8 @@ function AddProject() {
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="submit-button">
-                Próximo
+              <button type="submit" className="submit-button" disabled={loading}>
+                {loading ? 'Criando Projeto...' : 'Criar Projeto'}
               </button>
             </div>
           </form>

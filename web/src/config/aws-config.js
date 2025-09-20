@@ -24,8 +24,13 @@ AWS.config.update({
 // Criar instância do DynamoDB
 export const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
-// Nome da tabela (pode ser configurado via variável de ambiente)
+// Criar instância do S3
+export const s3 = new AWS.S3();
+
+// Nomes das tabelas e bucket (podem ser configurados via variável de ambiente)
 export const USERS_TABLE = process.env.REACT_APP_USERS_TABLE || 'metro-users';
+export const PROJECTS_TABLE = process.env.REACT_APP_PROJECTS_TABLE || 'metro-projects';
+export const S3_BUCKET = process.env.REACT_APP_S3_BUCKET || 'metrosp2025maua';
 
 // Log para debug (remover em produção)
 console.log('🔧 AWS Config:', {
