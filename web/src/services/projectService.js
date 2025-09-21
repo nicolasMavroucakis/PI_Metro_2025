@@ -517,50 +517,111 @@ class ProjectService {
   }
 
   /**
-   * Buscar fotos de captura do projeto no S3 (excluindo fotoPerfil)
+   * Buscar fotos do projeto no S3 separadas por categoria
    * @param {string} projectName - Nome do projeto
-   * @param {number} limit - Limite de fotos (padrão: 10)
-   * @returns {Promise<Array>} Lista de URLs das fotos
+   * @param {string} category - Categoria da foto ('categoria1', 'categoria2', 'all')
+   * @param {number} limit - Limite de itens (padrão: 10)
+   * @returns {Promise<Array>} Lista de objetos com informações das fotos
    */
-  async getProjectCapturePhotos(projectName, limit = 10) {
+  async getProjectPhotos(projectName, category = 'all', limit = 10) {
     try {
       const sanitizedProjectName = this.sanitizeProjectName(projectName);
       
-      // Listar objetos do projeto no S3
-      const params = {
-        Bucket: S3_BUCKET,
-        Prefix: `${sanitizedProjectName}/`,
-        MaxKeys: 100 // Buscar até 100 objetos para filtrar
-      };
-
-      const result = await s3.listObjectsV2(params).promise();
+      // Definir prefixos baseados na categoria
+      let prefixes = [];
+      if (category === 'categoria1' || category === 'all') {
+        prefixes.push(`${sanitizedProjectName}/fotos/categoria1/`);
+      }
+      if (category === 'categoria2' || category === 'all') {
+        prefixes.push(`${sanitizedProjectName}/fotos/categoria2/`);
+      }
       
-      if (!result.Contents || result.Contents.length === 0) {
-        return [];
+      // Se nenhuma categoria específica foi solicitada, buscar na raiz (compatibilidade apenas quando não há categorias)
+      if (prefixes.length === 0) {
+        prefixes.push(`${sanitizedProjectName}/`);
       }
 
-      // Filtrar apenas imagens que NÃO estão na pasta fotoPerfil
-      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-      const photos = result.Contents
-        .filter(obj => {
-          const key = obj.Key;
-          // Excluir arquivos da pasta fotoPerfil
-          if (key.includes('/fotoPerfil/')) {
-            return false;
-          }
-          // Incluir apenas arquivos de imagem
-          return imageExtensions.some(ext => 
-            key.toLowerCase().endsWith(ext)
-          );
-        })
-        .sort((a, b) => new Date(b.LastModified) - new Date(a.LastModified)) // Mais recentes primeiro
-        .slice(0, limit)
-        .map(obj => {
-          // Gerar URL pública da imagem
-          return `https://${S3_BUCKET}.s3.${process.env.REACT_APP_AWS_REGION || 'sa-east-1'}.amazonaws.com/${obj.Key}`;
-        });
+      let allPhotos = [];
+      const seenKeys = new Set(); // Para evitar duplicatas
 
-      return photos;
+      // Buscar em cada prefixo
+      for (const prefix of prefixes) {
+        const params = {
+          Bucket: S3_BUCKET,
+          Prefix: prefix,
+          MaxKeys: 100
+        };
+
+        const result = await s3.listObjectsV2(params).promise();
+        
+        if (result.Contents && result.Contents.length > 0) {
+          // Filtrar apenas imagens válidas
+          const validImageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+
+          const photos = result.Contents
+            .filter(obj => {
+              const key = obj.Key;
+              
+              // Evitar duplicatas
+              if (seenKeys.has(key)) {
+                return false;
+              }
+              
+              // Excluir pasta fotoPerfil e documentos
+              if (key.includes('/fotoPerfil/') || key.includes('/documentos/')) {
+                return false;
+              }
+              
+              // Determinar categoria baseado no caminho
+              let photoCategory = 'categoria1';
+              if (key.includes('/fotos/categoria2/')) {
+                photoCategory = 'categoria2';
+              } else if (key.includes('/fotos/categoria1/')) {
+                photoCategory = 'categoria1';
+              }
+              
+              // Filtrar por categoria se especificado
+              if (category !== 'all' && photoCategory !== category) {
+                return false;
+              }
+              
+              // Verificar se é uma imagem válida
+              const extension = key.toLowerCase().split('.').pop();
+              return validImageExtensions.some(ext => ext === `.${extension}`);
+            })
+            .map(obj => {
+              const key = obj.Key;
+              const fileName = key.split('/').pop();
+              const extension = fileName.toLowerCase().split('.').pop();
+              
+              // Marcar como visto
+              seenKeys.add(key);
+              
+              // Determinar categoria
+              let photoCategory = 'categoria1';
+              if (key.includes('/fotos/categoria2/')) {
+                photoCategory = 'categoria2';
+              }
+              
+              return {
+                key: obj.Key,
+                fileName: fileName,
+                category: photoCategory,
+                size: obj.Size,
+                lastModified: obj.LastModified,
+                url: `https://${S3_BUCKET}.s3.${process.env.REACT_APP_AWS_REGION || 'sa-east-1'}.amazonaws.com/${obj.Key}`,
+                extension: extension
+              };
+            });
+
+          allPhotos = allPhotos.concat(photos);
+        }
+      }
+
+      // Ordenar por data (mais recente primeiro) e limitar
+      return allPhotos
+        .sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified))
+        .slice(0, limit);
 
     } catch (error) {
       console.error('Erro ao buscar fotos do projeto:', error);
@@ -569,23 +630,136 @@ class ProjectService {
   }
 
   /**
-   * Buscar fotos de captura por ID do projeto
-   * @param {string} projectId - ID do projeto
+   * Buscar fotos de captura do projeto no S3 (compatibilidade)
+   * @param {string} projectName - Nome do projeto
    * @param {number} limit - Limite de fotos (padrão: 10)
    * @returns {Promise<Array>} Lista de URLs das fotos
    */
-  async getProjectCapturePhotosById(projectId, limit = 10) {
+  async getProjectCapturePhotos(projectName, limit = 10) {
+    try {
+      const photos = await this.getProjectPhotos(projectName, 'all', limit);
+      return photos.map(photo => photo.url);
+    } catch (error) {
+      console.error('Erro ao buscar fotos do projeto:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Buscar fotos por ID do projeto
+   * @param {string} projectId - ID do projeto
+   * @param {string} category - Categoria da foto ('categoria1', 'categoria2', 'all')
+   * @param {number} limit - Limite de itens (padrão: 10)
+   * @returns {Promise<Array>} Lista de objetos com informações das fotos
+   */
+  async getProjectPhotosById(projectId, category = 'all', limit = 10) {
     try {
       const project = await this.getProjectById(projectId);
       if (!project) {
         return [];
       }
 
-      return await this.getProjectCapturePhotos(project.projectName, limit);
+      return await this.getProjectPhotos(project.projectName, category, limit);
 
     } catch (error) {
       console.error('Erro ao buscar fotos do projeto por ID:', error);
       return [];
+    }
+  }
+
+  /**
+   * Buscar fotos de captura por ID do projeto (compatibilidade)
+   * @param {string} projectId - ID do projeto
+   * @param {number} limit - Limite de fotos (padrão: 10)
+   * @returns {Promise<Array>} Lista de URLs das fotos
+   */
+  async getProjectCapturePhotosById(projectId, limit = 10) {
+    try {
+      const photos = await this.getProjectPhotosById(projectId, 'all', limit);
+      return photos.map(photo => photo.url);
+
+    } catch (error) {
+      console.error('Erro ao buscar fotos do projeto por ID:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Upload de foto para o projeto
+   * @param {string} projectName - Nome do projeto
+   * @param {File} file - Arquivo de imagem para upload
+   * @param {string} category - Categoria da foto ('categoria1' ou 'categoria2')
+   * @param {Function} onProgress - Callback para progresso (opcional)
+   * @returns {Promise<Object>} Resultado do upload
+   */
+  async uploadPhoto(projectName, file, category, onProgress = null) {
+    try {
+      const sanitizedProjectName = this.sanitizeProjectName(projectName);
+      const timestamp = Date.now();
+      const fileExtension = file.name.split('.').pop();
+      const fileName = `foto-${timestamp}.${fileExtension}`;
+      
+      // Caminho no S3: projeto/fotos/categoria/arquivo
+      const s3Key = `${sanitizedProjectName}/fotos/${category}/${fileName}`;
+      
+      const uploadParams = {
+        Bucket: S3_BUCKET,
+        Key: s3Key,
+        Body: file,
+        ContentType: file.type,
+        Metadata: {
+          'original-name': file.name,
+          'photo-category': category,
+          'upload-date': new Date().toISOString(),
+          'file-size': file.size.toString()
+        }
+      };
+
+      // Upload com progresso se callback fornecido
+      if (onProgress) {
+        const upload = s3.upload(uploadParams);
+        upload.on('httpUploadProgress', (progress) => {
+          const percentage = Math.round((progress.loaded / progress.total) * 100);
+          onProgress(percentage);
+        });
+        
+        const result = await upload.promise();
+        
+        return {
+          success: true,
+          message: `Foto da ${category === 'categoria1' ? 'Fotos da Obra' : 'Fotos do BIM'} enviada com sucesso`,
+          photo: {
+            key: s3Key,
+            url: result.Location,
+            category: category,
+            fileName: fileName,
+            originalName: file.name,
+            size: file.size
+          }
+        };
+      } else {
+        const result = await s3.upload(uploadParams).promise();
+        
+        return {
+          success: true,
+          message: `Foto da ${category === 'categoria1' ? 'Fotos da Obra' : 'Fotos do BIM'} enviada com sucesso`,
+          photo: {
+            key: s3Key,
+            url: result.Location,
+            category: category,
+            fileName: fileName,
+            originalName: file.name,
+            size: file.size
+          }
+        };
+      }
+
+    } catch (error) {
+      console.error('Erro no upload da foto:', error);
+      return {
+        success: false,
+        message: error.message || 'Erro ao enviar foto'
+      };
     }
   }
 }

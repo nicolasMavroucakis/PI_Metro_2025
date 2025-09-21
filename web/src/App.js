@@ -6,6 +6,7 @@ import Register from './Pages/Register';
 import Home from './Pages/Home';
 import AddProject from './Pages/AddProject';
 import ProjectDetails from './Pages/ProjectDetails';
+import Documents from './Pages/Documents';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/add-project" element={<AddProject />} />
             <Route path="/project/:projectId" element={<ProjectDetails />} />
+            <Route path="/project/:projectId/documents" element={<Documents />} />
           </Routes>
         </div>
       </SidebarProvider>

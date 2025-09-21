@@ -21,6 +21,15 @@ function ProjectDetails() {
   const [newProgress, setNewProgress] = useState('');
   const [progressObservation, setProgressObservation] = useState('');
   const [updatingProgress, setUpdatingProgress] = useState(false);
+  
+  // Estados para fotos
+  const [showNewPhotoModal, setShowNewPhotoModal] = useState(false);
+  const [showViewMoreModal, setShowViewMoreModal] = useState(false);
+  const [photoCategory, setPhotoCategory] = useState('all');
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [allPhotos, setAllPhotos] = useState([]);
+  const [loadingAllPhotos, setLoadingAllPhotos] = useState(false);
 
   // Carregar dados do projeto
   useEffect(() => {
@@ -185,7 +194,7 @@ function ProjectDetails() {
   ];
 
   const handleNewCapture = () => {
-    alert('Funcionalidade de Nova Captura será implementada');
+    setShowNewPhotoModal(true);
   };
 
   const handleGenerateReport = () => {
@@ -193,7 +202,90 @@ function ProjectDetails() {
   };
 
   const handleViewMore = (section) => {
-    alert(`Ver mais ${section} será implementado`);
+    if (section === 'capturas') {
+      setShowViewMoreModal(true);
+      loadAllPhotos('all');
+    } else {
+      alert(`Ver mais ${section} será implementado`);
+    }
+  };
+
+  // Carregar todas as fotos para o modal "Ver Mais"
+  const loadAllPhotos = async (category) => {
+    try {
+      setLoadingAllPhotos(true);
+      const photos = await projectService.getProjectPhotosById(projectId, category, 50);
+      setAllPhotos(photos);
+      setPhotoCategory(category);
+    } catch (error) {
+      console.error('Erro ao carregar fotos:', error);
+    } finally {
+      setLoadingAllPhotos(false);
+    }
+  };
+
+  // Upload de nova foto
+  const handlePhotoUpload = async (file, category) => {
+    if (!file || !project) return;
+
+    try {
+      setUploadingPhoto(true);
+      setUploadProgress(0);
+
+      const result = await projectService.uploadPhoto(
+        project.projectName,
+        file,
+        category,
+        (progress) => setUploadProgress(progress)
+      );
+
+      if (result.success) {
+        alert(result.message);
+        setShowNewPhotoModal(false);
+        
+        // Recarregar fotos de captura
+        try {
+          const photos = await projectService.getProjectCapturePhotosById(projectId, 6);
+          setCapturePhotos(photos);
+        } catch (photoError) {
+          console.error('Erro ao recarregar fotos:', photoError);
+        }
+      } else {
+        alert(`Erro: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      alert('Erro ao enviar foto');
+    } finally {
+      setUploadingPhoto(false);
+      setUploadProgress(0);
+    }
+  };
+
+  // Filtrar fotos por categoria no modal "Ver Mais"
+  const handleFilterPhotos = (category) => {
+    loadAllPhotos(category);
+  };
+
+  // Obter nome da categoria
+  const getCategoryName = (category) => {
+    switch (category) {
+      case 'categoria1':
+        return 'Fotos da Obra';
+      case 'categoria2':
+        return 'Fotos do BIM';
+      default:
+        return 'Todas';
+    }
+  };
+
+  // Formatar tamanho do arquivo
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   // Se estiver carregando
@@ -261,6 +353,15 @@ function ProjectDetails() {
     <Layout menuItems={menuItems}>
       <header className="project-header">
         <h1>Projetos</h1>
+        <div className="project-header-actions">
+          <button 
+            className="documents-button"
+            onClick={() => navigate(`/project/${projectId}/documents`)}
+            title="Ver documentos do projeto"
+          >
+            📁 Documentos
+          </button>
+        </div>
       </header>
       
       <main className="project-details-main">
@@ -493,6 +594,166 @@ function ProjectDetails() {
         </div>
 
       </main>
+
+      {/* Modal de Nova Foto */}
+      {showNewPhotoModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Nova Foto</h3>
+            <p>Escolha a categoria da foto que deseja adicionar:</p>
+            
+            <div className="capture-type-options">
+              <div className="capture-option">
+                <h4>🏗️ Fotos da Obra</h4>
+                <p>Imagens do progresso da construção</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) handlePhotoUpload(file, 'categoria1');
+                  }}
+                  style={{ display: 'none' }}
+                  id="photo-categoria1-upload"
+                />
+                <button 
+                  className="action-button primary"
+                  onClick={() => document.getElementById('photo-categoria1-upload').click()}
+                  disabled={uploadingPhoto}
+                >
+                  Selecionar Foto
+                </button>
+              </div>
+              
+              <div className="capture-option">
+                <h4>📐 Fotos do BIM</h4>
+                <p>Imagens de modelos e desenhos técnicos</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) handlePhotoUpload(file, 'categoria2');
+                  }}
+                  style={{ display: 'none' }}
+                  id="photo-categoria2-upload"
+                />
+                <button 
+                  className="action-button primary"
+                  onClick={() => document.getElementById('photo-categoria2-upload').click()}
+                  disabled={uploadingPhoto}
+                >
+                  Selecionar Foto
+                </button>
+              </div>
+            </div>
+
+            {uploadingPhoto && (
+              <div className="upload-progress">
+                <p>Enviando foto... {uploadProgress}%</p>
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
+            <div className="modal-actions">
+              <button 
+                className="action-button secondary"
+                onClick={() => setShowNewPhotoModal(false)}
+                disabled={uploadingPhoto}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Ver Mais Fotos */}
+      {showViewMoreModal && (
+        <div className="modal-overlay">
+          <div className="modal large">
+            <div className="modal-header">
+              <h3>Todas as Fotos</h3>
+              <button 
+                className="close-button"
+                onClick={() => setShowViewMoreModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="capture-filters">
+              <button 
+                className={`filter-button ${photoCategory === 'all' ? 'active' : ''}`}
+                onClick={() => handleFilterPhotos('all')}
+              >
+                Todas
+              </button>
+              <button 
+                className={`filter-button ${photoCategory === 'categoria1' ? 'active' : ''}`}
+                onClick={() => handleFilterPhotos('categoria1')}
+              >
+                🏗️ Fotos da Obra
+              </button>
+              <button 
+                className={`filter-button ${photoCategory === 'categoria2' ? 'active' : ''}`}
+                onClick={() => handleFilterPhotos('categoria2')}
+              >
+                📐 Fotos do BIM
+              </button>
+            </div>
+
+            <div className="captures-content">
+              {loadingAllPhotos ? (
+                <div className="loading-captures">
+                  <p>Carregando fotos...</p>
+                </div>
+              ) : allPhotos.length === 0 ? (
+                <div className="empty-captures">
+                  <p>Nenhuma foto encontrada.</p>
+                </div>
+              ) : (
+                <div className="captures-grid-large">
+                  {allPhotos.map((photo, index) => (
+                    <div key={index} className="capture-item-large">
+                      <div className="capture-preview">
+                        <img 
+                          src={photo.url} 
+                          alt={photo.fileName}
+                          onError={(e) => {
+                            e.target.src = `https://via.placeholder.com/150x100/9E9E9E/white?text=Erro`;
+                          }}
+                        />
+                      </div>
+                      <div className="capture-info">
+                        <h5 className="capture-name" title={photo.fileName}>
+                          {photo.fileName}
+                        </h5>
+                        <p className="capture-details">
+                          {getCategoryName(photo.category)} • {formatFileSize(photo.size)} • {new Date(photo.lastModified).toLocaleDateString('pt-BR')}
+                        </p>
+                        <div className="capture-actions">
+                          <button 
+                            className="action-button small"
+                            onClick={() => window.open(photo.url, '_blank')}
+                          >
+                            Ver Foto
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Atualização de Progresso */}
       {showProgressModal && (
