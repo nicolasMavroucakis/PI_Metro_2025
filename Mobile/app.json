@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "PI_MOBILE_2025",
-    "slug": "PI_MOBILE_2025",
+    "name": "Mobile",
+    "slug": "Mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "pimobile2025",
+    "scheme": "mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
