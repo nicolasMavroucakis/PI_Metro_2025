@@ -33,6 +33,9 @@ yarn-error.*
 # local env files
 .env*.local
 
+# AWS credentials (SECURITY)
+config/credentials.js
+
 # typescript
 *.tsbuildinfo
 
