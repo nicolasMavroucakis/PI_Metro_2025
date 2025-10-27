@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import projectService from '../services/projectService';
 import vertexAIService from '../services/vertexAIService';
+import reportService from '../services/reportService';
 import '../Style/BimComparison.css';
 
 function BimComparison() {
@@ -119,8 +120,65 @@ function BimComparison() {
         console.log('Dados da análise:', result.data);
         setComparisonResult(result.data);
         setShowResults(true);
+        
+        // 🆕 Salvar relatório no DynamoDB
+        try {
+          const saveResult = await reportService.saveReport({
+            projectId: projectId,
+            projectName: project.projectName,
+            status: 'success',
+            bimImage: {
+              url: selectedBimPhoto.url,
+              fileName: selectedBimPhoto.fileName,
+              category: 'categoria2'
+            },
+            obraImage: {
+              url: selectedObraPhoto.url,
+              fileName: selectedObraPhoto.fileName,
+              category: 'categoria1'
+            },
+            userContext: userContext,
+            analysisResult: result.data,
+            userId: localStorage.getItem('userId') || 'guest',
+            userName: localStorage.getItem('userName') || 'Usuário'
+          });
+          
+          if (saveResult.success) {
+            console.log('✅ Relatório salvo:', saveResult.reportId);
+          } else {
+            console.warn('⚠️ Erro ao salvar relatório:', saveResult.error);
+          }
+        } catch (saveError) {
+          console.error('❌ Erro ao salvar relatório:', saveError);
+          // Não bloqueia a exibição dos resultados se falhar ao salvar
+        }
       } else {
         alert(`Erro na comparação: ${result.error}`);
+        
+        // Salvar relatório de falha
+        try {
+          await reportService.saveReport({
+            projectId: projectId,
+            projectName: project.projectName,
+            status: 'failed',
+            bimImage: {
+              url: selectedBimPhoto.url,
+              fileName: selectedBimPhoto.fileName,
+              category: 'categoria2'
+            },
+            obraImage: {
+              url: selectedObraPhoto.url,
+              fileName: selectedObraPhoto.fileName,
+              category: 'categoria1'
+            },
+            userContext: userContext,
+            errorMessage: result.error,
+            userId: localStorage.getItem('userId') || 'guest',
+            userName: localStorage.getItem('userName') || 'Usuário'
+          });
+        } catch (saveError) {
+          console.error('❌ Erro ao salvar relatório de falha:', saveError);
+        }
       }
     } catch (err) {
       console.error('Erro ao comparar imagens:', err);

@@ -12,9 +12,11 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useAuth } from '@/contexts/AuthContext';
 import projectService from '@/services/projectService';
 
 export default function ProjectsScreen() {
+  const { user, logout } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -53,6 +55,24 @@ export default function ProjectsScreen() {
         projectName: project.projectName 
       }
     });
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sair',
+      'Deseja realmente sair do aplicativo?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            router.replace('/login');
+          }
+        }
+      ]
+    );
   };
 
   const formatDate = (dateString) => {
@@ -149,9 +169,24 @@ export default function ProjectsScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText type="title" style={styles.title}>
-          Projetos Metro SP
-        </ThemedText>
+        <View style={styles.headerTop}>
+          <View style={styles.headerLeft}>
+            <ThemedText type="title" style={styles.title}>
+              Projetos Metro SP
+            </ThemedText>
+            {user && (
+              <ThemedText style={styles.userText}>
+                👤 {user.username}
+              </ThemedText>
+            )}
+          </View>
+          <TouchableOpacity 
+            style={styles.logoutButton}
+            onPress={handleLogout}
+          >
+            <ThemedText style={styles.logoutButtonText}>🚪 Sair</ThemedText>
+          </TouchableOpacity>
+        </View>
         <ThemedText style={styles.subtitle}>
           Selecione um projeto para ver as fotos de obra
         </ThemedText>
@@ -205,11 +240,38 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     backgroundColor: '#0066CC',
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  headerLeft: {
+    flex: 1,
+  },
   title: {
     color: '#fff',
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 4,
+  },
+  userText: {
+    color: '#E3F2FD',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  logoutButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   subtitle: {
     color: '#E3F2FD',

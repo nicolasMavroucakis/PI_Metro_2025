@@ -1,0 +1,630 @@
+/* Container Principal */
+.report-details-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Header */
+.report-details-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-back-header {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+}
+
+.btn-back-header:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-3px);
+}
+
+.header-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+}
+
+.report-meta {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.success {
+  background: rgba(76, 175, 80, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.status-badge.failed {
+  background: rgba(244, 67, 54, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.report-date {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Main Content */
+.report-details-main {
+  flex: 1;
+  padding: 30px;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.report-details-main > div {
+  margin-bottom: 30px;
+}
+
+/* Info Section */
+.info-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item span,
+.info-item code {
+  font-size: 16px;
+  color: #333;
+}
+
+.info-item code {
+  background: #f5f5f5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+/* Context Section */
+.context-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.context-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.context-section p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+  margin: 0;
+}
+
+/* Images Section */
+.images-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.images-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.image-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.image-card:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.image-card h4 {
+  background: #f9f9f9;
+  padding: 12px 16px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.image-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.image-filename {
+  padding: 12px 16px;
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  background: #f9f9f9;
+}
+
+/* Progress Section */
+.progress-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.progress-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 25px 0;
+}
+
+.progress-content {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.progress-circle-large {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+.progress-circle-large svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-text-large {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.progress-text-large .percentage {
+  display: block;
+  font-size: 48px;
+  font-weight: 700;
+  color: #1976D2;
+  line-height: 1;
+}
+
+.progress-text-large .label {
+  display: block;
+  font-size: 16px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.progress-description {
+  flex: 1;
+}
+
+.progress-description p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+  margin: 0;
+}
+
+/* Conformity Section */
+.conformity-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.conformity-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.conformity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.conformity-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.conformity-icon {
+  font-size: 32px;
+}
+
+.conformity-item strong {
+  display: block;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.conformity-item p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Problems Section */
+.problems-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.problems-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.problems-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.problem-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #F44336;
+}
+
+.severity-indicator {
+  width: 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.problem-content {
+  flex: 1;
+}
+
+.problem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.problem-header strong {
+  font-size: 16px;
+  color: #333;
+}
+
+.severity-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+.problem-content p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Observations Section */
+.observations-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.observations-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.observations-section p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+  margin: 0;
+}
+
+/* Recommendations Section */
+.recommendations-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recommendations-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.recommendations-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recommendations-list li {
+  padding: 12px 15px;
+  background: #E3F2FD;
+  border-left: 4px solid #1976D2;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.recommendations-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Error Section */
+.error-section {
+  background: #FFEBEE;
+  border: 2px solid #FFCDD2;
+  padding: 25px;
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.error-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #C62828;
+  margin: 0 0 15px 0;
+}
+
+.error-section p {
+  font-size: 15px;
+  color: #D32F2F;
+  margin: 0;
+}
+
+/* Loading and Error States */
+.report-details-loading,
+.report-details-error {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.report-details-error h2 {
+  color: #F44336;
+  margin-bottom: 20px;
+}
+
+.btn-back {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  background: #5568d3;
+  transform: translateX(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .report-details-main {
+    padding: 25px 20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .report-details-main {
+    padding: 20px 15px;
+  }
+
+  .report-details-header {
+    padding: 25px 20px;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .progress-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 25px;
+  }
+  
+  .images-section,
+  .progress-section,
+  .conformity-section,
+  .problems-section,
+  .observations-section,
+  .recommendations-section,
+  .error-section {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .report-details-header {
+    padding: 20px 15px;
+  }
+
+  .header-content h1 {
+    font-size: 22px;
+  }
+
+  .report-details-main {
+    padding: 15px 10px;
+  }
+  
+  .report-details-main > div {
+    margin-bottom: 20px;
+  }
+
+  .info-grid,
+  .images-grid,
+  .conformity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-circle-large {
+    width: 180px;
+    height: 180px;
+  }
+
+  .progress-text-large .percentage {
+    font-size: 40px;
+  }
+  
+  .info-section,
+  .context-section,
+  .images-section,
+  .progress-section,
+  .conformity-section,
+  .problems-section,
+  .observations-section,
+  .recommendations-section,
+  .error-section {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content h1 {
+    font-size: 18px;
+  }
+  
+  .report-date {
+    font-size: 12px;
+  }
+
+  .report-details-main {
+    padding: 10px 8px;
+  }
+
+  .progress-circle-large {
+    width: 150px;
+    height: 150px;
+  }
+
+  .progress-text-large .percentage {
+    font-size: 32px;
+  }
+  
+  .progress-text-large .label {
+    font-size: 14px;
+  }
+}
+

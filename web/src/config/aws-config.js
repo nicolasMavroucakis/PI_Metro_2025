@@ -30,6 +30,7 @@ export const s3 = new AWS.S3();
 // Nomes das tabelas e bucket (podem ser configurados via variável de ambiente)
 export const USERS_TABLE = process.env.REACT_APP_USERS_TABLE || 'metro-users';
 export const PROJECTS_TABLE = process.env.REACT_APP_PROJECTS_TABLE || 'metro-projects';
+export const REPORTS_TABLE = process.env.REACT_APP_REPORTS_TABLE || 'metro-bim-reports';
 export const S3_BUCKET = process.env.REACT_APP_S3_BUCKET || 'metrosp2025maua';
 
 // Log para debug (remover em produção)
@@ -37,5 +38,7 @@ console.log('🔧 AWS Config:', {
   region: AWS_REGION,
   hasAccessKey: !!AWS_ACCESS_KEY_ID,
   hasSecretKey: !!AWS_SECRET_ACCESS_KEY,
-  tableName: USERS_TABLE
+  usersTable: USERS_TABLE,
+  projectsTable: PROJECTS_TABLE,
+  reportsTable: REPORTS_TABLE
 });

@@ -8,6 +8,8 @@ import AddProject from './Pages/AddProject';
 import ProjectDetails from './Pages/ProjectDetails';
 import Documents from './Pages/Documents';
 import BimComparison from './Pages/BimComparison';
+import Reports from './Pages/Reports';
+import ReportDetails from './Pages/ReportDetails';
 import './App.css';
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
             <Route path="/project/:projectId" element={<ProjectDetails />} />
             <Route path="/project/:projectId/documents" element={<Documents />} />
             <Route path="/project/:projectId/bim-comparison" element={<BimComparison />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/reports/:reportId" element={<ReportDetails />} />
           </Routes>
         </div>
       </SidebarProvider>
