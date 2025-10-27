@@ -113,21 +113,6 @@ function ProjectDetails() {
     }
   };
 
-  // Função para gerar imagem placeholder
-  const getProjectImage = (project) => {
-    if (project?.imageUrl) {
-      return project.imageUrl;
-    }
-    
-    let hash = 0;
-    const name = project?.projectName || 'Projeto';
-    for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const color = Math.abs(hash).toString(16).substring(0, 6);
-    
-    return `https://via.placeholder.com/120x90/${color}/white?text=${encodeURIComponent(name)}`;
-  };
 
   // Função para atualizar progresso
   const handleUpdateProgress = async () => {
@@ -360,6 +345,13 @@ function ProjectDetails() {
             title="Ver documentos do projeto"
           >
             📁 Documentos
+          </button>
+          <button 
+            className="bim-comparison-button"
+            onClick={() => navigate(`/project/${projectId}/bim-comparison`)}
+            title="Comparação BIM com IA - Análise de Progresso e Conformidade"
+          >
+            🤖 Comparação IA
           </button>
         </div>
       </header>

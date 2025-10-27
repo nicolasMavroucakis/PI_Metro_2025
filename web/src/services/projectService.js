@@ -764,4 +764,5 @@ class ProjectService {
   }
 }
 
-export default new ProjectService();
+const projectServiceInstance = new ProjectService();
+export default projectServiceInstance;

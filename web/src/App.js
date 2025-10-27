@@ -7,6 +7,7 @@ import Home from './Pages/Home';
 import AddProject from './Pages/AddProject';
 import ProjectDetails from './Pages/ProjectDetails';
 import Documents from './Pages/Documents';
+import BimComparison from './Pages/BimComparison';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path="/add-project" element={<AddProject />} />
             <Route path="/project/:projectId" element={<ProjectDetails />} />
             <Route path="/project/:projectId/documents" element={<Documents />} />
+            <Route path="/project/:projectId/bim-comparison" element={<BimComparison />} />
           </Routes>
         </div>
       </SidebarProvider>

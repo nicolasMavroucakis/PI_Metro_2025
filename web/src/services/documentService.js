@@ -486,4 +486,5 @@ class DocumentService {
   }
 }
 
-export default new DocumentService();
+const documentServiceInstance = new DocumentService();
+export default documentServiceInstance;
