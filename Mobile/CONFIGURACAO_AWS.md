@@ -35,18 +35,6 @@ Mobile/
    };
    ```
 
-#### 3. **Exemplo com credenciais reais**
-   ```javascript
-   export const AWS_CREDENTIALS = {
-     region: 'sa-east-1',
-     accessKeyId: 'AKIA6GVYV6WLQKFPXVTK',
-     secretAccessKey: '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',
-     usersTable: 'metro-users',
-     projectsTable: 'metro-projects',
-     s3Bucket: 'metrosp2025maua'
-   };
-   ```
-
 ---
 
 ## 🔒 SEGURANÇA

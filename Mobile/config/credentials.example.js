@@ -23,6 +23,4 @@ export const AWS_CREDENTIALS = {
   s3Bucket: 'metrosp2025maua'
 };
 
-// EXEMPLO DE CREDENCIAIS VÁLIDAS:
-// accessKeyId: 'AKIA6GVYV6WLQKFPXVTK',
-// secretAccessKey: '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',
+
