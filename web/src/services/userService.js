@@ -223,6 +223,241 @@ class UserService {
       console.error('Erro ao atualizar último login:', error);
     }
   }
+
+  // ==================== ADMIN FUNCTIONS ====================
+
+  /**
+   * Listar todos os usuários (apenas admin)
+   * @returns {Promise<Object>} Lista de usuários
+   */
+  async getAllUsers() {
+    try {
+      console.log('📋 Buscando todos os usuários...');
+      
+      const params = {
+        TableName: USERS_TABLE
+      };
+
+      const result = await dynamoDB.scan(params).promise();
+      
+      // Remover senhas dos usuários
+      const users = result.Items.map(user => {
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+
+      console.log(`✅ ${users.length} usuários encontrados`);
+      return {
+        success: true,
+        users: users,
+        count: users.length
+      };
+
+    } catch (error) {
+      console.error('❌ Erro ao listar usuários:', error);
+      return {
+        success: false,
+        message: 'Erro ao listar usuários',
+        users: []
+      };
+    }
+  }
+
+  /**
+   * Criar novo usuário (apenas admin)
+   * @param {Object} userData - Dados do usuário
+   * @returns {Promise<Object>} Resultado da operação
+   */
+  async createUserAdmin(userData) {
+    try {
+      console.log('👤 Criando novo usuário:', userData.username);
+
+      // Verificar se usuário já existe
+      const existingUser = await this.getUserByUsername(userData.username);
+      if (existingUser) {
+        return {
+          success: false,
+          message: 'Usuário já existe'
+        };
+      }
+
+      // Hash da senha
+      const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+      const newUser = {
+        username: userData.username,
+        password: hashedPassword,
+        email: userData.email,
+        name: userData.name || userData.fullName || '',
+        role: userData.role || 'user',
+        isAdmin: userData.isAdmin || false,
+        isActive: userData.isActive !== undefined ? userData.isActive : true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        lastLogin: null
+      };
+
+      const params = {
+        TableName: USERS_TABLE,
+        Item: newUser
+      };
+
+      await dynamoDB.put(params).promise();
+
+      console.log('✅ Usuário criado com sucesso:', userData.username);
+      
+      const { password, ...userWithoutPassword } = newUser;
+      return {
+        success: true,
+        message: 'Usuário criado com sucesso',
+        user: userWithoutPassword
+      };
+
+    } catch (error) {
+      console.error('❌ Erro ao criar usuário:', error);
+      return {
+        success: false,
+        message: 'Erro ao criar usuário'
+      };
+    }
+  }
+
+  /**
+   * Atualizar usuário (apenas admin)
+   * @param {string} username - Nome de usuário
+   * @param {Object} updates - Dados a atualizar
+   * @returns {Promise<Object>} Resultado da operação
+   */
+  async updateUserAdmin(username, updates) {
+    try {
+      console.log('✏️ Atualizando usuário:', username);
+
+      // Verificar se usuário existe
+      const existingUser = await this.getUserByUsername(username);
+      if (!existingUser) {
+        return {
+          success: false,
+          message: 'Usuário não encontrado'
+        };
+      }
+
+      // Construir expressão de atualização
+      let updateExpression = 'SET updatedAt = :updatedAt';
+      const expressionAttributeValues = {
+        ':updatedAt': new Date().toISOString()
+      };
+      const expressionAttributeNames = {};
+
+      // Adicionar campos a atualizar
+      if (updates.email !== undefined) {
+        updateExpression += ', email = :email';
+        expressionAttributeValues[':email'] = updates.email;
+      }
+
+      if (updates.name !== undefined) {
+        updateExpression += ', #name = :name';
+        expressionAttributeValues[':name'] = updates.name;
+        expressionAttributeNames['#name'] = 'name';
+      }
+
+      if (updates.role !== undefined) {
+        updateExpression += ', #role = :role';
+        expressionAttributeValues[':role'] = updates.role;
+        expressionAttributeNames['#role'] = 'role';
+      }
+
+      if (updates.isAdmin !== undefined) {
+        updateExpression += ', isAdmin = :isAdmin';
+        expressionAttributeValues[':isAdmin'] = updates.isAdmin;
+      }
+
+      if (updates.isActive !== undefined) {
+        updateExpression += ', isActive = :isActive';
+        expressionAttributeValues[':isActive'] = updates.isActive;
+      }
+
+      // Se atualizar senha, fazer hash
+      if (updates.password) {
+        const hashedPassword = await bcrypt.hash(updates.password, 10);
+        updateExpression += ', password = :password';
+        expressionAttributeValues[':password'] = hashedPassword;
+      }
+
+      const params = {
+        TableName: USERS_TABLE,
+        Key: {
+          username: username
+        },
+        UpdateExpression: updateExpression,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ReturnValues: 'ALL_NEW'
+      };
+
+      if (Object.keys(expressionAttributeNames).length > 0) {
+        params.ExpressionAttributeNames = expressionAttributeNames;
+      }
+
+      const result = await dynamoDB.update(params).promise();
+
+      console.log('✅ Usuário atualizado com sucesso:', username);
+
+      const { password, ...userWithoutPassword } = result.Attributes;
+      return {
+        success: true,
+        message: 'Usuário atualizado com sucesso',
+        user: userWithoutPassword
+      };
+
+    } catch (error) {
+      console.error('❌ Erro ao atualizar usuário:', error);
+      return {
+        success: false,
+        message: 'Erro ao atualizar usuário'
+      };
+    }
+  }
+
+  /**
+   * Deletar usuário (apenas admin)
+   * @param {string} username - Nome de usuário a deletar
+   * @returns {Promise<Object>} Resultado da operação
+   */
+  async deleteUserAdmin(username) {
+    try {
+      console.log('🗑️ Deletando usuário:', username);
+
+      // Verificar se usuário existe
+      const existingUser = await this.getUserByUsername(username);
+      if (!existingUser) {
+        return {
+          success: false,
+          message: 'Usuário não encontrado'
+        };
+      }
+
+      const params = {
+        TableName: USERS_TABLE,
+        Key: {
+          username: username
+        }
+      };
+
+      await dynamoDB.delete(params).promise();
+
+      console.log('✅ Usuário deletado com sucesso:', username);
+      return {
+        success: true,
+        message: 'Usuário deletado com sucesso'
+      };
+
+    } catch (error) {
+      console.error('❌ Erro ao deletar usuário:', error);
+      return {
+        success: false,
+        message: 'Erro ao deletar usuário'
+      };
+    }
+  }
 }
 
 const userServiceInstance = new UserService();

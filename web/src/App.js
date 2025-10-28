@@ -10,6 +10,7 @@ import Documents from './Pages/Documents';
 import BimComparison from './Pages/BimComparison';
 import Reports from './Pages/Reports';
 import ReportDetails from './Pages/ReportDetails';
+import Users from './Pages/Users';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/home" element={<Home />} />
             <Route path="/add-project" element={<AddProject />} />
@@ -27,6 +29,7 @@ function App() {
             <Route path="/project/:projectId/bim-comparison" element={<BimComparison />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/reports/:reportId" element={<ReportDetails />} />
+            <Route path="/users" element={<Users />} />
           </Routes>
         </div>
       </SidebarProvider>

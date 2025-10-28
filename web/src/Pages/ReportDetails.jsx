@@ -17,8 +17,7 @@ function ReportDetails() {
     { icon: '🏠', label: 'Home', path: '/home' },
     { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
     { icon: '📊', label: 'Relatórios', path: '/reports' },
-    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' },
-    { icon: '👤', label: 'Usuário', path: '/profile' }
+    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' }
   ];
 
   useEffect(() => {

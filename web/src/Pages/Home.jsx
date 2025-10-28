@@ -9,6 +9,7 @@ function Home() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   // Carregar projetos do DynamoDB
   useEffect(() => {
@@ -95,17 +96,43 @@ function Home() {
     return `https://via.placeholder.com/300x200/${color}/white?text=${encodeURIComponent(project.projectName)}`;
   };
 
+  // Menu items baseado em permissões
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const menuItems = [
     { icon: '🏠', label: 'Home', active: true, path: '/home' },
-    { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
+    // Item condicional - apenas para admin
+    ...(user.isAdmin ? [{ icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' }] : []),
     { icon: '📊', label: 'Relatórios', path: '/reports' },
-    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' },
-    { icon: '👤', label: 'Usuário', path: '/profile' }
+    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' }
   ];
 
   const handleProjectClick = (projectId) => {
     navigate(`/project/${projectId}`);
   };
+
+  // Função de logout
+  const handleLogout = () => {
+    // Limpar todos os dados do localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    
+    // Redirecionar para login
+    navigate('/login');
+  };
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userDropdownOpen && !event.target.closest('.user-menu-container')) {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [userDropdownOpen]);
 
   return (
     <Layout menuItems={menuItems}>
@@ -113,7 +140,54 @@ function Home() {
           <h1>Home</h1>
           <div className="header-controls">
             <button className="theme-toggle">☀️</button>
-            <button className="user-menu">👤</button>
+            
+            {/* User Menu com Dropdown */}
+            <div className="user-menu-container">
+              <button 
+                className="user-menu"
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              >
+                👤
+              </button>
+              
+              {userDropdownOpen && (
+                <div className="user-dropdown">
+                  <div className="user-dropdown-header">
+                    <div className="user-avatar">👤</div>
+                    <div className="user-info">
+                      <strong>{user.name || user.username || 'Usuário'}</strong>
+                      <small>{user.email || 'Email não disponível'}</small>
+                    </div>
+                  </div>
+                  
+                  <div className="user-dropdown-divider"></div>
+                  
+                  <div className="user-dropdown-items">
+                    {user.isAdmin && (
+                      <div className="user-dropdown-badge">
+                        🛡️ Administrador
+                      </div>
+                    )}
+                    <button 
+                      className="user-dropdown-item"
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        navigate('/profile');
+                      }}
+                    >
+                      <span>👤</span> Meu Perfil
+                    </button>
+                    <button 
+                      className="user-dropdown-item logout"
+                      onClick={handleLogout}
+                    >
+                      <span>🚪</span> Sair
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             <button className="settings">⚙️</button>
           </div>
         </header>
