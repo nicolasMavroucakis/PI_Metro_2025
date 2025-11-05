@@ -228,6 +228,11 @@
   border-bottom: 2px solid #e0e0e0;
 }
 
+.reports-table th:last-child {
+  width: 200px;
+  max-width: 200px;
+}
+
 .reports-table tbody tr {
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s;
@@ -240,6 +245,14 @@
 .reports-table td {
   padding: 15px 20px;
   vertical-align: middle;
+  color: #333;
+  font-weight: 500;
+}
+
+.reports-table td:last-child {
+  width: 200px;
+  max-width: 200px;
+  padding: 10px 15px;
 }
 
 .status-badge {
@@ -306,7 +319,7 @@
   background: #667eea;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
@@ -314,12 +327,50 @@
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .btn-view:hover {
   background: #5568d3;
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.action-buttons-cell {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+}
+
+.btn-delete {
+  background: #CC0000;
+  color: white;
+  border: 2px solid #990000;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.btn-delete:hover {
+  background: #B30000;
+  border-color: #800000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(204, 0, 0, 0.6);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
 }
 
 /* Empty States */

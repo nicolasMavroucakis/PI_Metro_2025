@@ -30,6 +30,13 @@ function ProjectDetails() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [allPhotos, setAllPhotos] = useState([]);
   const [loadingAllPhotos, setLoadingAllPhotos] = useState(false);
+  
+  // Estados para alertas
+  const [showAddAlertModal, setShowAddAlertModal] = useState(false);
+  const [newAlertText, setNewAlertText] = useState('');
+  const [newAlertLevel, setNewAlertLevel] = useState('amarelo');
+  const [addingAlert, setAddingAlert] = useState(false);
+  const [alerts, setAlerts] = useState([]);
 
   // Carregar dados do projeto
   useEffect(() => {
@@ -53,6 +60,9 @@ function ProjectDetails() {
         }
 
         setProject(projectData);
+        
+        // Carregar alertas do projeto
+        setAlerts(projectData.alerts || []);
 
         // Carregar dados do gráfico de progresso
         const chartInfo = await projectService.getProgressChartData(projectId);
@@ -263,6 +273,73 @@ function ProjectDetails() {
     }
   };
 
+  // Adicionar novo alerta
+  const handleAddAlert = async () => {
+    if (!newAlertText.trim()) {
+      alert('Por favor, digite o texto do alerta');
+      return;
+    }
+
+    try {
+      setAddingAlert(true);
+      
+      const newAlert = {
+        id: Date.now().toString(),
+        text: newAlertText,
+        level: newAlertLevel,
+        createdAt: new Date().toISOString(),
+        createdBy: localStorage.getItem('userName') || 'Usuário'
+      };
+
+      const updatedAlerts = [...alerts, newAlert];
+      
+      // Salvar no DynamoDB
+      const result = await projectService.updateProject(projectId, {
+        alerts: updatedAlerts
+      });
+
+      if (result.success) {
+        setAlerts(updatedAlerts);
+        setNewAlertText('');
+        setNewAlertLevel('amarelo');
+        setShowAddAlertModal(false);
+        alert('Alerta adicionado com sucesso!');
+      } else {
+        alert(`Erro ao adicionar alerta: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar alerta:', error);
+      alert('Erro ao adicionar alerta');
+    } finally {
+      setAddingAlert(false);
+    }
+  };
+
+  // Deletar alerta
+  const handleDeleteAlert = async (alertId) => {
+    if (!window.confirm('Tem certeza que deseja deletar este alerta?')) {
+      return;
+    }
+
+    try {
+      const updatedAlerts = alerts.filter(alert => alert.id !== alertId);
+      
+      const result = await projectService.updateProject(projectId, {
+        alerts: updatedAlerts
+      });
+
+      if (result.success) {
+        setAlerts(updatedAlerts);
+        alert('Alerta deletado com sucesso!');
+      } else {
+        alert(`Erro ao deletar alerta: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Erro ao deletar alerta:', error);
+      alert('Erro ao deletar alerta');
+    }
+  };
+
   // Formatar tamanho do arquivo
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
@@ -453,13 +530,30 @@ function ProjectDetails() {
               <h3 className="card-title">Alertas</h3>
               <span className="alert-icon">⚠️</span>
             </div>
-            <div className="alert-number">
-              <span className="alert-count">{project.problems || 0}</span>
-              <p className="alert-description">Problemas detectados</p>
+            <div className="alerts-content">
+              {alerts.length === 0 ? (
+                <div className="no-alerts">
+                  <p className="alert-description">Nenhum alerta no momento</p>
+                </div>
+              ) : (
+                <div className="alerts-list">
+                  {alerts.slice(0, 3).map((alert) => (
+                    <div key={alert.id} className={`alert-item alert-${alert.level}`}>
+                      <div className="alert-indicator"></div>
+                      <div className="alert-text">{alert.text}</div>
+                    </div>
+                  ))}
+                  {alerts.length > 3 && (
+                    <p className="more-alerts">+{alerts.length - 3} mais alerta(s)</p>
+                  )}
+                </div>
+              )}
             </div>
-            <button className="view-more-btn" onClick={() => handleViewMore('alertas')}>
-              Ver Mais
-            </button>
+            <div className="alerts-actions">
+              <button className="add-alert-btn" onClick={() => setShowAddAlertModal(true)}>
+                ➕ Adicionar Alerta
+              </button>
+            </div>
           </div>
 
           {/* Próximas Etapas */}
@@ -576,12 +670,6 @@ function ProjectDetails() {
           <button className="generate-report-btn" onClick={handleGenerateReport}>
             Gerar Relatório
           </button>
-        </div>
-
-        {/* Observações */}
-        <div className="observations-section">
-          <h3>Observações</h3>
-          <p>{project.observations || 'Nenhuma observação adicional.'}</p>
         </div>
 
       </main>
@@ -842,6 +930,92 @@ function ProjectDetails() {
                 }}
               >
                 {updatingProgress ? 'Atualizando...' : 'Atualizar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Adicionar Alerta */}
+      {showAddAlertModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>Adicionar Novo Alerta</h3>
+              <button 
+                className="close-button"
+                onClick={() => {
+                  setShowAddAlertModal(false);
+                  setNewAlertText('');
+                  setNewAlertLevel('amarelo');
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="modal-content">
+              <div className="form-group">
+                <label>Nível do Alerta:</label>
+                <div className="alert-level-options">
+                  <button
+                    className={`alert-level-btn alert-level-verde ${newAlertLevel === 'verde' ? 'selected' : ''}`}
+                    onClick={() => setNewAlertLevel('verde')}
+                  >
+                    🟢 Verde
+                    <span className="level-description">Informativo</span>
+                  </button>
+                  <button
+                    className={`alert-level-btn alert-level-amarelo ${newAlertLevel === 'amarelo' ? 'selected' : ''}`}
+                    onClick={() => setNewAlertLevel('amarelo')}
+                  >
+                    🟡 Amarelo
+                    <span className="level-description">Atenção</span>
+                  </button>
+                  <button
+                    className={`alert-level-btn alert-level-vermelho ${newAlertLevel === 'vermelho' ? 'selected' : ''}`}
+                    onClick={() => setNewAlertLevel('vermelho')}
+                  >
+                    🔴 Vermelho
+                    <span className="level-description">Crítico</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Descrição do Alerta:</label>
+                <textarea
+                  className="alert-textarea"
+                  value={newAlertText}
+                  onChange={(e) => setNewAlertText(e.target.value)}
+                  placeholder="Digite a descrição do alerta..."
+                  rows={4}
+                  maxLength={200}
+                />
+                <small className="char-counter">
+                  {newAlertText.length}/200 caracteres
+                </small>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                onClick={() => {
+                  setShowAddAlertModal(false);
+                  setNewAlertText('');
+                  setNewAlertLevel('amarelo');
+                }}
+                disabled={addingAlert}
+                className="btn-secondary"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAddAlert}
+                disabled={addingAlert || !newAlertText.trim()}
+                className="btn-primary"
+              >
+                {addingAlert ? 'Adicionando...' : 'Adicionar Alerta'}
               </button>
             </div>
           </div>

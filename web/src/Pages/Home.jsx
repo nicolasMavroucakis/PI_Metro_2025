@@ -243,7 +243,8 @@ function Home() {
               </div>
             ) : (
               projects.map((project) => {
-                const progress = calculateProgress(project.startDate, project.endDate);
+                // Usar progresso real do projeto (não baseado em datas)
+                const progress = project.progress || 0;
                 const progressColor = getProgressColor(project.status);
                 
                 return (

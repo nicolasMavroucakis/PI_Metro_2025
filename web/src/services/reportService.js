@@ -23,23 +23,37 @@ class ReportService {
         createdAt: timestamp,
         status: reportData.status, // 'success' ou 'failed'
         
-        // Imagens comparadas
-        bimImage: {
-          url: reportData.bimImage?.url || '',
-          fileName: reportData.bimImage?.fileName || 'unknown',
-          category: reportData.bimImage?.category || 'categoria2'
-        },
-        obraImage: {
-          url: reportData.obraImage?.url || '',
-          fileName: reportData.obraImage?.fileName || 'unknown',
-          category: reportData.obraImage?.category || 'categoria1'
-        },
+        // Imagens comparadas (suporte a arrays múltiplas E single)
+        // Se for análise em pares, salvar arrays
+        ...(reportData.bimImages && reportData.bimImages.length > 0 ? {
+          bimImages: reportData.bimImages,
+          obraImages: reportData.obraImages || []
+        } : {
+          // Fallback para compatibilidade com análises antigas
+          bimImage: {
+            url: reportData.bimImage?.url || '',
+            fileName: reportData.bimImage?.fileName || 'unknown',
+            category: reportData.bimImage?.category || 'categoria2'
+          },
+          obraImage: {
+            url: reportData.obraImage?.url || '',
+            fileName: reportData.obraImage?.fileName || 'unknown',
+            category: reportData.obraImage?.category || 'categoria1'
+          }
+        }),
         
         // Contexto fornecido pelo usuário
         userContext: reportData.userContext || '',
         
         // Resultado da análise do Gemini
         analysisResult: reportData.analysisResult || null,
+        
+        // Análises individuais dos pares (se for análise em pares)
+        ...(reportData.pairComparisons ? {
+          pairComparisons: reportData.pairComparisons,
+          isPairAnalysis: reportData.isPairAnalysis || true,
+          totalPairs: reportData.totalPairs || (reportData.pairComparisons?.length || 1)
+        } : {}),
         
         // Índices para query otimizada
         GSI1_PK: `project#${reportData.projectId}`,
@@ -52,6 +66,8 @@ class ReportService {
         // Mensagem de erro (se status for 'failed')
         errorMessage: reportData.errorMessage || null
       };
+      
+      console.log('💾 Estrutura do relatório a salvar:', JSON.stringify(report, null, 2));
       
       await dynamoDB.put({
         TableName: REPORTS_TABLE,
@@ -199,7 +215,9 @@ class ReportService {
       const successReports = reports.filter(r => r.status === 'success' && r.analysisResult);
       if (successReports.length > 0) {
         const totalProgress = successReports.reduce((sum, r) => {
-          return sum + (r.analysisResult?.percentual_conclusao || 0);
+          // Usar percentual_conclusao_geral se disponível (análise consolidada), senão percentual_conclusao
+          const percentual = r.analysisResult?.percentual_conclusao_geral || r.analysisResult?.percentual_conclusao || 0;
+          return sum + percentual;
         }, 0);
         stats.avgProgress = Math.round(totalProgress / successReports.length);
       }

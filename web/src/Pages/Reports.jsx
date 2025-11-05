@@ -114,6 +114,46 @@ function Reports() {
     navigate(`/reports/${reportId}?projectId=${selectedProject.projectId}`);
   };
 
+  const handleDeleteReport = async (reportId) => {
+    const confirmed = window.confirm(
+      '⚠️ Tem certeza que deseja deletar este relatório?\n\nEsta ação não pode ser desfeita.'
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      setLoadingReports(true);
+      
+      const result = await reportService.deleteReport(reportId, selectedProject.projectId);
+      
+      if (result.success) {
+        alert('✅ Relatório deletado com sucesso!');
+        
+        // Recarregar relatórios
+        const reportsData = await reportService.getProjectReports(selectedProject.projectId);
+        if (reportsData.success) {
+          setReports(reportsData.reports || []);
+          
+          // Recalcular estatísticas
+          const successCount = reportsData.reports.filter(r => r.status === 'success').length;
+          const failedCount = reportsData.reports.filter(r => r.status === 'failed').length;
+          setStats({
+            total: reportsData.count || 0,
+            success: successCount,
+            failed: failedCount
+          });
+        }
+      } else {
+        alert(`❌ Erro ao deletar relatório: ${result.message}`);
+      }
+    } catch (err) {
+      console.error('Erro ao deletar relatório:', err);
+      alert('❌ Erro ao deletar relatório. Tente novamente.');
+    } finally {
+      setLoadingReports(false);
+    }
+  };
+
   const formatDate = (isoDate) => {
     if (!isoDate) return 'N/A';
     const date = new Date(isoDate);
@@ -287,7 +327,6 @@ function Reports() {
                         <th>ID do Relatório</th>
                         <th>Progresso</th>
                         <th>Data</th>
-                        <th>Usuário</th>
                         <th>Ações</th>
                       </tr>
                     </thead>
@@ -308,11 +347,11 @@ function Reports() {
                                 <div className="progress-bar-small">
                                   <div
                                     className="progress-fill-small"
-                                    style={{ width: `${report.analysisResult.percentual_conclusao}%` }}
+                                    style={{ width: `${report.analysisResult.percentual_conclusao_geral || report.analysisResult.percentual_conclusao || 0}%` }}
                                   />
                                 </div>
                                 <span className="progress-text-small">
-                                  {report.analysisResult.percentual_conclusao}%
+                                  {report.analysisResult.percentual_conclusao_geral || report.analysisResult.percentual_conclusao || 0}%
                                 </span>
                               </div>
                             ) : (
@@ -320,14 +359,23 @@ function Reports() {
                             )}
                           </td>
                           <td>{formatDate(report.createdAt)}</td>
-                          <td>{report.userName || 'Desconhecido'}</td>
                           <td>
-                            <button
-                              className="btn-view"
-                              onClick={() => handleViewReport(report.reportId)}
-                            >
-                              👁️ Ver
-                            </button>
+                            <div className="action-buttons-cell">
+                              <button
+                                className="btn-view"
+                                onClick={() => handleViewReport(report.reportId)}
+                                title="Ver relatório"
+                              >
+                                👁️ Ver
+                              </button>
+                              <button
+                                className="btn-delete"
+                                onClick={() => handleDeleteReport(report.reportId)}
+                                title="Deletar relatório"
+                              >
+                                🗑️ Deletar
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

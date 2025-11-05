@@ -257,14 +257,19 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+  max-width: 160px;
+  word-wrap: break-word;
 }
 
 .progress-text-large .percentage {
   display: block;
-  font-size: 48px;
+  font-size: 44px;
   font-weight: 700;
   color: #1976D2;
   line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .progress-text-large .label {
@@ -584,8 +589,12 @@
     height: 180px;
   }
 
+  .progress-text-large {
+    max-width: 140px;
+  }
+
   .progress-text-large .percentage {
-    font-size: 40px;
+    font-size: 38px;
   }
   
   .info-section,
@@ -619,8 +628,12 @@
     height: 150px;
   }
 
+  .progress-text-large {
+    max-width: 120px;
+  }
+
   .progress-text-large .percentage {
-    font-size: 32px;
+    font-size: 30px;
   }
   
   .progress-text-large .label {
