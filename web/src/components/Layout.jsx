@@ -29,12 +29,22 @@ const Layout = ({
   return (
     <div className={`layout-container ${className}`}>
       {renderOverlay()}
+
+      {/* Botão de toggle fixo fora da sidebar para não sofrer com o transform da animação */}
+      <button 
+        className="menu-toggle" 
+        onClick={toggle} 
+        aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
+      >
+        ☰
+      </button>
       
       {showSidebar && (
         <Sidebar
           menuItems={menuItems}
           isOpen={isOpen}
           onToggle={toggle}
+          showToggleInSidebar={false}
           {...sidebarProps}
         />
       )}

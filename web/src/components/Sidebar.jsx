@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import MetroLogo from '../assets/metro.png';
+import { 
+  MdHome,
+  MdPeople,
+  MdAssessment,
+  MdAddCircleOutline,
+  MdChevronRight
+} from 'react-icons/md';
 
 const Sidebar = ({ 
   menuItems = [],
@@ -9,7 +16,8 @@ const Sidebar = ({
   onToggle: controlledOnToggle,
   className = '',
   showMetroBranding = true,
-  adminName = 'ADMIN'
+  adminName = 'ADMIN',
+  showToggleInSidebar = true
 }) => {
   // Estado interno se não for controlado externamente
   const [internalIsOpen, setInternalIsOpen] = useState(true);
@@ -28,6 +36,29 @@ const Sidebar = ({
 
   const items = menuItems.length > 0 ? menuItems : defaultMenuItems;
 
+  const renderIcon = (item) => {
+    // Se já veio um React element, usa diretamente
+    if (React.isValidElement(item.icon)) return item.icon;
+
+    const key = (item.label || '').toLowerCase();
+    switch (key) {
+      case 'home':
+        return <MdHome size={26} />;
+      case 'gerenciamento de usuários':
+      case 'usuários':
+      case 'usuarios':
+        return <MdPeople size={26} />;
+      case 'relatórios':
+      case 'relatorios':
+        return <MdAssessment size={26} />;
+      case 'adicionar projeto':
+      case 'novo projeto':
+        return <MdAddCircleOutline size={26} />;
+      default:
+        return <MdChevronRight size={26} />;
+    }
+  };
+
   const handleMenuItemClick = (item) => {
     if (item.onClick) {
       item.onClick();
@@ -42,14 +73,16 @@ const Sidebar = ({
   return (
     <div className={`sidebar ${isOpen ? 'open' : 'closed'} ${className}`}>
       <div className="sidebar-header">
-        <button className="menu-toggle" onClick={onToggle} aria-label="Toggle menu">
-          ☰
-        </button>
+        {showToggleInSidebar && (
+          <button className="menu-toggle" onClick={onToggle} aria-label="Toggle menu">
+            ☰
+          </button>
+        )}
         <div className="admin-section">
           <div className="admin-avatar">
             <img src={MetroLogo} alt="Admin Avatar" />
           </div>
-          {isOpen && <h3>{adminName}</h3>}
+          <h3 className={`admin-name ${isOpen ? 'visible' : 'hidden'}`}>{adminName}</h3>
         </div>
       </div>
 
@@ -61,7 +94,7 @@ const Sidebar = ({
             className={`nav-item ${item.active ? 'active' : ''}`}
             aria-label={item.label}
           >
-            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-icon">{renderIcon(item)}</span>
             {isOpen && <span className="nav-label">{item.label}</span>}
           </button>
         ))}

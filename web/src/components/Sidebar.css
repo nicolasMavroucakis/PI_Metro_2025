@@ -23,6 +23,7 @@
 .sidebar-header {
   padding: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 96px; /* espaço maior para afastar a logo do botão fixo */
 }
 
 .menu-toggle {
@@ -35,6 +36,11 @@
   padding: 8px;
   border-radius: 4px;
   transition: background-color 0.2s;
+  /* Fixa o botão na tela para não se mover ao expandir/recolher */
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1100;
 }
 
 .menu-toggle:hover {
@@ -76,6 +82,18 @@
   letter-spacing: 1px;
 }
 
+/* Reservar espaço do nome do admin mesmo quando sidebar fechada */
+.admin-name {
+  height: 22px;
+  line-height: 22px;
+  margin: 0;
+  transition: opacity 0.2s ease;
+}
+.admin-name.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Navigation */
 .sidebar-nav {
   flex: 1;
@@ -85,9 +103,11 @@
 }
 
 .nav-item {
-  display: flex;
-  align-items: center;
-  padding: 15px 20px;
+  display: grid;
+  grid-template-columns: 70px 1fr; /* coluna fixa do ícone + coluna do rótulo */
+  column-gap: 12px;
+  align-items: center; /* vertical center */
+  padding: 15px 20px 15px 0; /* sem padding à esquerda */
   color: white;
   background: none;
   border: none;
@@ -98,6 +118,7 @@
   font-family: inherit;
   text-align: left;
   width: 100%;
+  min-height: 48px; /* altura consistente para centralização perceptível */
 }
 
 .nav-item:hover {
@@ -117,14 +138,35 @@
 
 .nav-icon {
   font-size: 20px;
-  margin-right: 15px;
-  min-width: 30px;
   text-align: center;
+  display: flex;
+  align-items: center;   /* centro vertical do ícone */
+  justify-content: center; /* centro horizontal do ícone */
+  justify-self: center; /* centro na coluna fixa de 70px */
 }
 
 .nav-label {
   font-size: 14px;
   font-weight: 500;
+  display: flex;
+  align-items: center; /* centro vertical do texto */
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.sidebar.open .nav-label {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.05s;
+  pointer-events: auto;
+}
+
+.sidebar.closed .nav-label {
+  transition-delay: 0s;
 }
 
 /* Sidebar footer */
@@ -220,19 +262,8 @@
   }
 }
 
-/* Animation for smooth transitions */
-@keyframes slideIn {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-.sidebar.open {
-  animation: slideIn 0.3s ease-out;
-}
+/* Removida animação de translateX para evitar “pulo” visual.
+   Mantemos apenas a transição de width já definida na classe .sidebar */
 
 /* Accessibility */
 .sidebar button:focus-visible {
