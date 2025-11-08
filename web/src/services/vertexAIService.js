@@ -5,8 +5,102 @@
  * usando a API Gemini Vision do Google para análise inteligente.
  */
 
+import { decode } from '@toon-format/toon';
+
 const GEMINI_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+// Parser TOON customizado (fallback) para o subconjunto de formato usado nos prompts
+function parseToonCustom(toonText) {
+  const lines = toonText.split(/\r?\n/);
+  const result = {};
+
+  const isIndented = (s) => s.startsWith(' ') || s.startsWith('\t');
+  const unquote = (s) => {
+    const t = s.trim();
+    if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
+      return t.slice(1, -1);
+    }
+    return t;
+  };
+  const parseValue = (raw) => {
+    const v = raw.trim();
+    if (!v) return '';
+    const uq = unquote(v);
+    if (/^-?\d+(\.\d+)?$/.test(uq)) {
+      return uq.includes('.') ? parseFloat(uq) : parseInt(uq, 10);
+    }
+    return uq;
+  };
+  const splitCsvRespectingQuotes = (line) => {
+    const out = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        inQuotes = !inQuotes;
+        current += ch;
+      } else if (ch === ',' && !inQuotes) {
+        out.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    out.push(current.trim());
+    return out.map(unquote);
+  };
+
+  let i = 0;
+  while (i < lines.length) {
+    let line = lines[i].trimEnd();
+    if (!line.trim()) { i++; continue; }
+
+    // key: value
+    let m = line.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+    if (m) {
+      const key = m[1];
+      const raw = m[2] || '';
+      result[key] = parseValue(raw);
+      i++;
+      continue;
+    }
+
+    // table header: key{col1,col2,...}:
+    m = line.match(/^([A-Za-z0-9_]+)\{([A-Za-z0-9_,]+)\}:\s*$/);
+    if (m) {
+      const key = m[1];
+      const cols = m[2].split(',').map((c) => c.trim());
+      i++;
+      const rows = [];
+      while (i < lines.length) {
+        const rowLine = lines[i];
+        if (!rowLine || !isIndented(rowLine)) break;
+        const cells = splitCsvRespectingQuotes(rowLine.trim());
+        const obj = {};
+        for (let c = 0; c < cols.length; c++) {
+          obj[cols[c]] = cells[c] !== undefined ? parseValue(cells[c]) : '';
+        }
+        rows.push(obj);
+        i++;
+      }
+
+      // Tabelas que representam um único objeto
+      if (key === 'conformidade' || key === 'conformidade_geral' || key === 'distribuicao_percentuais' || key === 'cobertura_analise') {
+        result[key] = rows[0] || {};
+      } else {
+        result[key] = rows;
+      }
+      continue;
+    }
+
+    // linha inesperada: ignorar
+    i++;
+  }
+
+  return result;
+}
 
 /**
  * Converte uma URL de imagem para Base64
@@ -112,7 +206,7 @@ async function compareImages(bimImageUrl, realImageUrl, userContext = '') {
       ? `\n\nCONTEXTO ADICIONAL DO USUÁRIO:\n${userContext}\n(Considere estas informações na sua análise)`
       : '';
 
-    // Prompt otimizado para análise rigorosa de construção civil
+    // Prompt otimizado para análise rigorosa de construção civil (saída em TOON)
     const prompt = `Você é um engenheiro civil especialista em fiscalização de obras com 20 anos de experiência. Sua função é realizar uma análise RIGOROSA e CRÍTICA comparando um projeto BIM com a execução real da obra.
 
 IMAGEM 1: Modelo BIM (planejamento/projeto) - Este é o padrão de referência esperado
@@ -124,53 +218,62 @@ PRINCÍPIO FUNDAMENTAL DA AVALIAÇÃO:
 - Seja CRÍTICO e RIGOROSO em sua avaliação
 - É MELHOR subestimar do que superestimar a conformidade
 
-AVALIAÇÃO DO PERCENTUAL:
-- 100%: Execução perfeita e completa, tudo idêntico ao BIM
-- 85-99%: Quase completo, pequenos ajustes necessários
-- 70-84%: Avançado mas com diferenças notáveis
-- 50-69%: Em andamento, diferenças significativas
-- 30-49%: Inicial, maioria não executado
+FOCO NA ESTRUTURA GERAL (PRIORIDADE):
+1) PAREDES/ALVENARIAS E VEDAÇÕES: alinhamento, continuidade, presença/ausência, espessuras aparentes
+2) PILARES/VIGAS/ELEMENTOS ESTRUTURAIS: posição, presença, geometria aparente
+3) ABERTURAS (JANELAS/PORTAS): posição, tamanho relativo, quantidade, orientação
+4) LAYOUT/VOLUMETRIA: configuração do espaço, divisórias e organização geral
+5) MOBÍLIA/ELEMENTOS FIXOS: presença e posicionamento (se houver)
+6) ACABAMENTOS: considerar somente quando impactarem geometria/funcionalidade ou evidenciem não conformidade estrutural/posicional
+
+PESOS RECOMENDADOS PARA O PERCENTUAL (guide):
+- Estrutura (paredes/pilares/vigas): ~60%
+- Posicionamento (aberturas/layout): ~20%
+- Dimensões relativas: ~15%
+- Acabamentos: ~5% (apenas se afetarem função/geometria)
+
+AVALIAÇÃO DO PERCENTUAL (sem mudar a escala, apenas a ênfase):
+- 100%: Execução perfeita e completa, estrutura e posicionamento idênticos ao BIM
+- 85-99%: Quase completo, ajustes menores sem impacto estrutural
+- 70-84%: Avançado, com diferenças notáveis em layout/aberturas
+- 50-69%: Em andamento, diferenças significativas em estrutura/posicionamento
+- 30-49%: Inicial, com lacunas relevantes de estrutura/layout
 - 0-29%: Início ou não iniciado
 
-Compare elementos, dimensões, materiais e acabamentos. Seja CRÍTICO e conservador.
+Compare, em ordem, ESTRUTURA → POSICIONAMENTO/ABERTURAS → DIMENSÕES → (por último) ACABAMENTOS. Seja CRÍTICO e conservador.
 
-FORMATO DE RESPOSTA (APENAS JSON, sem markdown):
+FORMATO DE RESPOSTA (APENAS TOON, sem markdown):
 
-{
-  "percentual_conclusao": <0-100>,
-  "analise_progresso": "<máx 150 chars>",
-  "problemas_detectados": [
-    {
-      "tipo": "<estrutural|dimensional|material|acabamento|posicionamento>",
-      "descricao": "<máx 80 chars>",
-      "severidade": "<baixa|média|alta>"
-    }
-  ],
-  "conformidade": {
-    "estrutura": "<conforme|parcialmente_conforme|não_conforme>",
-    "dimensoes": "<conforme|parcialmente_conforme|não_conforme>",
-    "acabamento": "<conforme|parcialmente_conforme|não_conforme>",
-    "posicionamento": "<conforme|parcialmente_conforme|não_conforme>"
-  },
-  "elementos_faltantes": ["<item 1>", "<item 2>", "<item 3>"],
-  "observacoes_gerais": "<máx 120 chars>",
-  "justificativa_percentual": "<máx 100 chars>",
-  "recomendacoes": ["<ação 1>", "<ação 2>"]
-}
+percentual_conclusao: <0-100>
+analise_progresso: "<máx 150 chars>"
+conformidade{estrutura,dimensoes,acabamento,posicionamento}:
+  <conforme|parcialmente_conforme|não_conforme>,<conforme|parcialmente_conforme|não_conforme>,<conforme|parcialmente_conforme|não_conforme>,<conforme|parcialmente_conforme|não_conforme>
+problemas_detectados{tipo,descricao,severidade}:
+  <estrutural|dimensional|material|acabamento|posicionamento>,"<máx 80 chars>",<baixa|média|alta>
+  ... (uma linha por problema, até 3)
+elementos_faltantes{item}:
+  "<item 1>"
+  "<item 2>"
+observacoes_gerais: "<máx 120 chars>"
+justificativa_percentual: "<máx 100 chars>"
+recomendacoes{acao}:
+  "<ação 1>"
+  "<ação 2>"
 
 IMPORTANTE - NÃO FAÇA:
 - Não seja generoso demais com o percentual
 - Não ignore pequenas diferenças
 - Não assuma que elementos estão corretos se não puder ver claramente
 - Não use 100% a menos que esteja ABSOLUTAMENTE certo de conformidade total
-- Não adicione texto antes ou depois do JSON
+- Não adicione texto antes ou depois do TOON
 - Não use blocos de código markdown
 
 IMPORTANTE - FAÇA:
 - Seja rigoroso e crítico na avaliação
-- Procure ativamente por diferenças
+- Procure ativamente por diferenças, priorizando estrutura e aberturas
+- Dê mais peso a paredes/pilares/vigas/aberturas do que a acabamentos
 - Use percentuais conservadores (quando em dúvida, reduza)
-- Retorne APENAS o objeto JSON puro
+- Retorne APENAS o TOON puro
 
 LIMITES OBRIGATÓRIOS (respeite rigorosamente):
 - analise_progresso: MÁXIMO 150 caracteres
@@ -180,6 +283,10 @@ LIMITES OBRIGATÓRIOS (respeite rigorosamente):
 - Máximo 2 recomendações (só as urgentes)
 - observacoes_gerais: MÁXIMO 120 caracteres
 - justificativa_percentual: MÁXIMO 100 caracteres
+
+REGRAS DE FORMATAÇÃO TOON:
+- NÃO inclua colchetes com contagem (ex.: [3], [max 3]) nos headers; use apenas {colunas}
+- Use aspas apenas quando necessário em strings com vírgulas
 
 SEJA EXTREMAMENTE CONCISO. Use frases curtas e diretas.`;
 
@@ -210,8 +317,8 @@ SEJA EXTREMAMENTE CONCISO. Use frases curtas e diretas.`;
         temperature: 0.1,  // Reduzido para respostas mais consistentes e conservadoras
         topK: 20,
         topP: 0.8,
-        maxOutputTokens: 8192,  // Aumentado para evitar truncamento
-        responseMimeType: "application/json"
+        maxOutputTokens: 16384,  // Aumentado para evitar truncamento
+        responseMimeType: "text/plain"
       },
       safetySettings: [
         {
@@ -345,8 +452,9 @@ SEJA EXTREMAMENTE CONCISO. Use frases curtas e diretas.`;
     console.log('📝 TIPO DA RESPOSTA:', typeof textResponse);
     console.log('📏 TAMANHO DA RESPOSTA:', textResponse.length, 'caracteres');
     
-    // Tentar extrair JSON da resposta
+    // Tentar extrair TOON da resposta
     let analysisResult;
+    let toonRaw = '';
     try {
       // Limpeza super agressiva do texto
       let cleanedText = textResponse.trim();
@@ -356,37 +464,52 @@ SEJA EXTREMAMENTE CONCISO. Use frases curtas e diretas.`;
       cleanedText = cleanedText.replace(/^```\s*/gm, '');
       cleanedText = cleanedText.replace(/```\s*$/gm, '');
       
-      // 2. Remove qualquer texto explicativo antes do JSON
-      // Procura pelo primeiro { que inicia o JSON
-      const jsonStartIndex = cleanedText.indexOf('{');
-      if (jsonStartIndex > 0) {
-        cleanedText = cleanedText.substring(jsonStartIndex);
-      }
-      
-      // 3. Remove qualquer texto explicativo depois do JSON
-      // Procura pelo último } que fecha o JSON
-      const jsonEndIndex = cleanedText.lastIndexOf('}');
-      if (jsonEndIndex > 0 && jsonEndIndex < cleanedText.length - 1) {
-        cleanedText = cleanedText.substring(0, jsonEndIndex + 1);
-      }
-      
-      // 4. Remove espaços e quebras de linha extras
+      // 2. Normalizar headers com colchetes de contagem (ex.: [max 3]) removendo-os antes de "{"
+      //    Mantém valores como "[1,2,3]" pois não são seguidos por "{"
+      cleanedText = cleanedText.replace(/\[[^\]]*\](?=\s*\{)/g, '');
+
+      // 3. Remove espaços e quebras de linha extras
       cleanedText = cleanedText.trim();
+      toonRaw = cleanedText;
       
       console.log('=== TEXTO LIMPO ===');
       console.log(cleanedText.substring(0, 300) + '...');
       console.log('=== FIM DO TEXTO LIMPO ===');
       console.log('🧹 TEXTO LIMPO COMPLETO (primeiros 500 chars):', cleanedText.substring(0, 500));
       
-      // Tentar fazer parse
-      analysisResult = JSON.parse(cleanedText);
+      // Tentar fazer parse (TOON -> Objeto) com a lib oficial
+      try {
+        analysisResult = decode(cleanedText);
+      } catch (libErr) {
+        console.warn('⚠️ Falha no decode oficial TOON. Usando parser customizado.');
+        analysisResult = parseToonCustom(cleanedText);
+      }
       
-      console.log('✅ JSON parseado com sucesso!');
+      console.log('✅ TOON parseado com sucesso!');
       console.log('📊 OBJETO PARSEADO:', JSON.stringify(analysisResult, null, 2));
       
       // Validar estrutura mínima
       if (analysisResult.percentual_conclusao === undefined) {
-        throw new Error('JSON inválido: falta percentual_conclusao');
+        throw new Error('Resposta inválida: falta percentual_conclusao');
+      }
+
+      // Normalizações para compatibilidade
+      if (analysisResult.observacoes_generais && !analysisResult.observacoes_gerais) {
+        analysisResult.observacoes_gerais = analysisResult.observacoes_generais;
+        delete analysisResult.observacoes_generais;
+      }
+      if (Array.isArray(analysisResult.conformidade)) {
+        analysisResult.conformidade = analysisResult.conformidade[0];
+      }
+      if (Array.isArray(analysisResult.elementos_faltantes) && analysisResult.elementos_faltantes.length > 0 && typeof analysisResult.elementos_faltantes[0] === 'object') {
+        analysisResult.elementos_faltantes = analysisResult.elementos_faltantes
+          .map(e => e.item ?? e.value ?? e.nome)
+          .filter(Boolean);
+      }
+      if (Array.isArray(analysisResult.recomendacoes) && analysisResult.recomendacoes.length > 0 && typeof analysisResult.recomendacoes[0] === 'object') {
+        analysisResult.recomendacoes = analysisResult.recomendacoes
+          .map(r => r.acao ?? r.value ?? r.texto)
+          .filter(Boolean);
       }
     } catch (parseError) {
       console.error('❌ Erro ao fazer parse da resposta:', parseError.message);
@@ -426,6 +549,7 @@ SEJA EXTREMAMENTE CONCISO. Use frases curtas e diretas.`;
     return {
       success: true,
       data: analysisResult,
+      toon: toonRaw,
       timestamp: new Date().toISOString()
     };
 
@@ -459,44 +583,37 @@ async function compareMultipleImages(bimImageUrl, realImageUrls, userContext = '
 
     console.log(`Iniciando análise de ${realImageUrls.length} fotos da obra...`);
 
-    // Array para armazenar as análises individuais
-    const individualAnalyses = [];
     const totalImages = realImageUrls.length;
 
-    // Analisar cada foto individualmente (sequencialmente para evitar sobrecarga da API)
-    for (let i = 0; i < realImageUrls.length; i++) {
-      const imageUrl = realImageUrls[i];
-      
-      console.log(`Analisando foto ${i + 1} de ${totalImages}...`);
-      
-      // Reportar progresso se callback fornecido
-      if (onProgress) {
-        onProgress({
-          current: i + 1,
-          total: totalImages,
-          phase: 'individual',
-          message: `Analisando foto ${i + 1} de ${totalImages}`
-        });
+    // Executar todas as análises em paralelo
+    let completed = 0;
+    const tasks = realImageUrls.map((imageUrl, idx) => (async () => {
+      console.log(`Analisando foto ${idx + 1} de ${totalImages}...`);
+      try {
+        const analysis = await compareImages(
+          bimImageUrl,
+          imageUrl,
+          `${userContext}\n\nEsta é a foto ${idx + 1} de ${totalImages} da obra.`
+        );
+        return {
+          imageIndex: idx + 1,
+          imageUrl,
+          analysis
+        };
+      } finally {
+        if (onProgress) {
+          completed += 1;
+          onProgress({
+            current: completed,
+            total: totalImages,
+            phase: 'individual',
+            message: `Concluída análise da foto ${idx + 1} de ${totalImages}`
+          });
+        }
       }
+    })());
 
-      // Analisar esta foto com o BIM
-      const analysis = await compareImages(
-        bimImageUrl, 
-        imageUrl, 
-        `${userContext}\n\nEsta é a foto ${i + 1} de ${totalImages} da obra.`
-      );
-
-      individualAnalyses.push({
-        imageIndex: i + 1,
-        imageUrl: imageUrl,
-        analysis: analysis
-      });
-
-      // Pequeno delay entre requisições para evitar rate limiting
-      if (i < realImageUrls.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-    }
+    const individualAnalyses = await Promise.all(tasks);
 
     // Reportar progresso da consolidação
     if (onProgress) {
@@ -542,58 +659,49 @@ async function compareMultipleImages(bimImageUrl, realImageUrls, userContext = '
  */
 async function consolidateAnalyses(individualAnalyses, userContext = '') {
   try {
-    // Preparar resumo das análises individuais
-    let analysisTexts = individualAnalyses.map((item, index) => {
+    // Preparar TOON bruto das análises individuais (exatamente como retornado pelos prompts de comparação)
+    let toonComparisons = individualAnalyses.map((item, index) => {
       if (!item.analysis.success) {
-        return `FOTO ${index + 1}: Erro na análise - ${item.analysis.error}`;
+        return `FOTO ${index + 1} (erro): ${item.analysis.error}`;
       }
-
-      const data = item.analysis.data;
-      return `
-FOTO ${index + 1}:
-- Percentual de Conclusão: ${data.percentual_conclusao}%
-- Análise: ${data.analise_progresso}
-- Problemas Detectados: ${data.problemas_detectados?.length || 0} problemas
-- Elementos Faltantes: ${data.elementos_faltantes?.length || 0} elementos
-- Conformidade Estrutural: ${data.conformidade?.estrutura || 'não_identificado'}
-- Observações: ${data.observacoes_gerais}
-`;
+      const toon = item.analysis.toon || '';
+      return `FOTO ${index + 1}:\n${toon}`;
     }).join('\n---\n');
 
-    // Adicionar contexto do usuário ao prompt se fornecido
-    const contextSection = userContext 
-      ? `\n\nCONTEXTO DO PROJETO:\n${userContext}`
-      : '';
+    // Não incluir contexto adicional no consolidador (contexto já foi aplicado nos comparadores)
+    const contextSection = '';
 
-    // Prompt para consolidação
+// Prompt para consolidação (saída em TOON)
     const prompt = `Você é um engenheiro civil especialista em análise e fiscalização de obras. Você recebeu análises individuais de ${individualAnalyses.length} fotos diferentes da mesma obra, todas comparadas com o mesmo modelo BIM.
 
 Sua tarefa é CONSOLIDAR todas essas análises em um RELATÓRIO ÚNICO e ABRANGENTE da obra.${contextSection}
 
-ANÁLISES INDIVIDUAIS RECEBIDAS:
-${analysisTexts}
+ANÁLISES INDIVIDUAIS RECEBIDAS (TOON bruto de cada comparação):
+${toonComparisons}
 
-INSTRUÇÕES PARA CONSOLIDAÇÃO:
+INSTRUÇÕES PARA CONSOLIDAÇÃO (FOCO EM ESTRUTURA E ABERTURAS):
 
 1. PERCENTUAL GERAL:
-   - Calcule uma média ponderada dos percentuais
+   - Calcule uma média ponderada priorizando estrutura (paredes, pilares, vigas) e aberturas (janelas/portas)
    - Considere que diferentes ângulos podem mostrar diferentes estágios
-   - Se houver discrepâncias grandes entre fotos, dê preferência ao percentual MENOR (seja conservador)
+   - Se houver discrepâncias grandes, dê preferência ao percentual MENOR (seja conservador), principalmente quando houver divergências estruturais/posicionais
    - Justifique claramente como chegou ao percentual final
 
 2. ANÁLISE COMPLETA:
    - Sintetize as observações de todas as fotos
    - Identifique padrões comuns entre as análises
    - Destaque áreas que aparecem em múltiplas fotos
+   - Priorize comentários sobre: paredes/vedações, pilares/vigas, aberturas/posicionamento, layout geral e, por fim, mobília (se houver)
 
 3. PROBLEMAS CONSOLIDADOS:
    - Agrupe problemas similares encontrados em diferentes fotos
    - Evite duplicação de problemas
-   - Priorize por severidade e frequência
+   - Priorize por severidade e frequência, dando precedência a problemas estruturais/posicionais
 
 4. CONFORMIDADE GERAL:
    - Se um aspecto foi avaliado em múltiplas fotos, use a avaliação mais conservadora
    - Se só foi avaliado em uma foto, use essa avaliação
+   - Dê mais peso a divergências de paredes/pilares/vigas/aberturas do que a diferenças de acabamento
 
 5. ELEMENTOS FALTANTES:
    - Crie uma lista unificada sem duplicatas
@@ -603,65 +711,41 @@ INSTRUÇÕES PARA CONSOLIDAÇÃO:
    - Forneça recomendações baseadas na visão geral de todas as fotos
    - Priorize ações por severidade e impacto
 
-FORMATO DE RESPOSTA (APENAS JSON, sem markdown):
+FORMATO DE RESPOSTA (APENAS TOON, sem markdown):
 
-{
-  "percentual_conclusao_geral": <número de 0 a 100>,
-  "analise_consolidada": "<síntese completa considerando todas as fotos>",
-  "distribuicao_percentuais": {
-    "minimo": <menor percentual encontrado>,
-    "maximo": <maior percentual encontrado>,
-    "media": <média aritmética>,
-    "desvio_padrao": <variação entre as análises>
-  },
-  "problemas_consolidados": [
-    {
-      "tipo": "<tipo do problema>",
-      "descricao": "<descrição consolidada>",
-      "severidade": "<baixa|média|alta>",
-      "frequencia": "<encontrado em X de Y fotos>",
-      "fotos_afetadas": [<índices das fotos onde aparece>]
-    }
-  ],
-  "conformidade_geral": {
-    "estrutura": "<conforme|parcialmente_conforme|não_conforme|não_identificado>",
-    "dimensoes": "<conforme|parcialmente_conforme|não_conforme|não_identificado>",
-    "acabamento": "<conforme|parcialmente_conforme|não_conforme|não_identificado>",
-    "posicionamento": "<conforme|parcialmente_conforme|não_conforme|não_identificado>",
-    "materiais": "<conforme|parcialmente_conforme|não_conforme|não_identificado>",
-    "cores_texturas": "<conforme|parcialmente_conforme|não_conforme|não_identificado>"
-  },
-  "elementos_faltantes_consolidados": [
-    "<lista unificada sem duplicatas>"
-  ],
-  "areas_criticas": [
-    "<áreas que requerem atenção imediata baseado em múltiplas fotos>"
-  ],
-  "pontos_positivos": [
-    "<aspectos bem executados identificados nas análises>"
-  ],
-  "observacoes_gerais": "<síntese geral da obra considerando todos os ângulos analisados>",
-  "justificativa_percentual": "<explicação detalhada de como o percentual geral foi calculado>",
-  "recomendacoes_prioritarias": [
-    {
-      "prioridade": "<alta|média|baixa>",
-      "acao": "<descrição da ação>",
-      "justificativa": "<por que é importante>"
-    }
-  ],
-  "cobertura_analise": {
-    "total_fotos_analisadas": <número>,
-    "fotos_com_sucesso": <número>,
-    "fotos_com_erro": <número>,
-    "areas_cobertas": ["<lista de áreas/ângulos que foram analisados>"]
-  }
-}
+percentual_conclusao_geral: <0-100>
+analise_consolidada: "<síntese completa considerando todas as fotos>"
+distribuicao_percentuais{minimo,maximo,media,desvio_padrao}:
+  <número>,<número>,<número>,<número>
+problemas_consolidados{tipo,descricao,severidade,frequencia,fotos_afetadas}:
+  <tipo>,"<descrição>",<baixa|média|alta>,"<encontrado em X de Y fotos>","[1,2,3]"
+  ... (uma linha por problema)
+conformidade_geral{estrutura,dimensoes,acabamento,posicionamento,materiais,cores_texturas}:
+  <conforme|parcialmente_conforme|não_conforme|não_identificado>,<conforme|parcialmente_conforme|não_conforme|não_identificado>,<conforme|parcialmente_conforme|não_conforme|não_identificado>,<conforme|parcialmente_conforme|não_conforme|não_identificado>,<conforme|parcialmente_conforme|não_conforme|não_identificado>,<conforme|parcialmente_conforme|não_conforme|não_identificado>
+elementos_faltantes_consolidados{item}:
+  "<item 1>"
+  "<item 2>"
+areas_criticas{area}:
+  "<área 1>"
+pontos_positivos{ponto}:
+  "<ponto 1>"
+observacoes_gerais: "<síntese geral da obra considerando todos os ângulos analisados>"
+justificativa_percentual: "<explicação detalhada de como o percentual geral foi calculado>"
+recomendacoes_prioritarias{prioridade,acao,justificativa}:
+  <alta|média|baixa>,"<descrição da ação>","<por que é importante>"
+  ... (uma linha por recomendação)
+cobertura_analise{total_fotos_analisadas,fotos_com_sucesso,fotos_com_erro,areas_cobertas}:
+  <número>,<número>,<número>,"[area1,area2]"
 
 IMPORTANTE:
-- Retorne APENAS o JSON, sem markdown ou explicações adicionais
+- Retorne APENAS o TOON, sem markdown ou explicações adicionais
 - Seja RIGOROSO na consolidação
 - Dê preferência a avaliações conservadoras quando houver discrepâncias
-- Considere a obra como um TODO, não apenas partes isoladas`;
+- Considere a obra como um TODO, não apenas partes isoladas
+
+REGRAS DE FORMATAÇÃO TOON:
+- NÃO inclua colchetes com contagem (ex.: [3], [max 3]) nos headers; use apenas {colunas}
+- Use aspas apenas quando necessário em strings com vírgulas`;
 
     // Fazer requisição para a API do Gemini
     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -683,8 +767,8 @@ IMPORTANTE:
           temperature: 0.1,
           topK: 20,
           topP: 0.8,
-          maxOutputTokens: 8192,  // Aumentado para evitar truncamento
-          responseMimeType: "application/json"
+          maxOutputTokens: 16384,  // Aumentado para evitar truncamento
+          responseMimeType: "text/plain"
         }
       })
     });
@@ -706,7 +790,7 @@ IMPORTANTE:
     console.log('📝 TIPO DA RESPOSTA CONSOLIDADA:', typeof textResponse);
     console.log('📏 TAMANHO DA RESPOSTA CONSOLIDADA:', textResponse.length, 'caracteres');
 
-    // Parse do JSON
+    // Parse do TOON
     let consolidatedResult;
     try {
       let cleanedText = textResponse.trim();
@@ -715,23 +799,76 @@ IMPORTANTE:
       cleanedText = cleanedText.replace(/^```json\s*/gmi, '');
       cleanedText = cleanedText.replace(/^```\s*/gm, '');
       cleanedText = cleanedText.replace(/```\s*$/gm, '');
-      
-      const jsonStartIndex = cleanedText.indexOf('{');
-      if (jsonStartIndex > 0) {
-        cleanedText = cleanedText.substring(jsonStartIndex);
-      }
-      
-      const jsonEndIndex = cleanedText.lastIndexOf('}');
-      if (jsonEndIndex > 0 && jsonEndIndex < cleanedText.length - 1) {
-        cleanedText = cleanedText.substring(0, jsonEndIndex + 1);
-      }
+
+      // Remover colchetes de contagem nos headers antes de "{"
+      cleanedText = cleanedText.replace(/\[[^\]]*\](?=\s*\{)/g, '');
       
       console.log('🧹 TEXTO CONSOLIDADO LIMPO (primeiros 500 chars):', cleanedText.substring(0, 500));
       
-      consolidatedResult = JSON.parse(cleanedText.trim());
+      // Tentar parsear com a lib oficial, com fallback para parser customizado
+      try {
+        consolidatedResult = decode(cleanedText.trim());
+      } catch (libErr) {
+        console.warn('⚠️ Falha no decode oficial TOON (consolidação). Usando parser customizado.');
+        consolidatedResult = parseToonCustom(cleanedText.trim());
+      }
       
-      console.log('✅ JSON CONSOLIDADO parseado com sucesso!');
+      console.log('✅ TOON CONSOLIDADO parseado com sucesso!');
       console.log('📊 OBJETO CONSOLIDADO PARSEADO:', JSON.stringify(consolidatedResult, null, 2));
+
+      // Normalizações para compatibilidade
+      if (consolidatedResult.observacoes_generais && !consolidatedResult.observacoes_gerais) {
+        consolidatedResult.observacoes_gerais = consolidatedResult.observacoes_generais;
+        delete consolidatedResult.observacoes_generais;
+      }
+      if (Array.isArray(consolidatedResult.distribuicao_percentuais)) {
+        consolidatedResult.distribuicao_percentuais = consolidatedResult.distribuicao_percentuais[0];
+      }
+      if (Array.isArray(consolidatedResult.conformidade_geral)) {
+        consolidatedResult.conformidade_geral = consolidatedResult.conformidade_geral[0];
+      }
+      if (Array.isArray(consolidatedResult.elementos_faltantes_consolidados) && consolidatedResult.elementos_faltantes_consolidados.length > 0 && typeof consolidatedResult.elementos_faltantes_consolidados[0] === 'object') {
+        consolidatedResult.elementos_faltantes_consolidados = consolidatedResult.elementos_faltantes_consolidados
+          .map(e => e.item ?? e.value ?? e.nome)
+          .filter(Boolean);
+      }
+      if (Array.isArray(consolidatedResult.areas_criticas) && consolidatedResult.areas_criticas.length > 0 && typeof consolidatedResult.areas_criticas[0] === 'object') {
+        consolidatedResult.areas_criticas = consolidatedResult.areas_criticas
+          .map(a => a.area ?? a.value ?? a.nome)
+          .filter(Boolean);
+      }
+      if (Array.isArray(consolidatedResult.pontos_positivos) && consolidatedResult.pontos_positivos.length > 0 && typeof consolidatedResult.pontos_positivos[0] === 'object') {
+        consolidatedResult.pontos_positivos = consolidatedResult.pontos_positivos
+          .map(p => p.ponto ?? p.value ?? p.texto)
+          .filter(Boolean);
+      }
+      if (Array.isArray(consolidatedResult.recomendacoes_prioritarias) && consolidatedResult.recomendacoes_prioritarias.length > 0) {
+        // garantir que cada item tenha {prioridade, acao, justificativa}
+        consolidatedResult.recomendacoes_prioritarias = consolidatedResult.recomendacoes_prioritarias.map(r => ({
+          prioridade: r.prioridade ?? r.nivel ?? r.importancia ?? 'média',
+          acao: r.acao ?? r.descricao ?? r.texto ?? '',
+          justificativa: r.justificativa ?? r.motivo ?? ''
+        }));
+      }
+      if (consolidatedResult.problemas_consolidados && Array.isArray(consolidatedResult.problemas_consolidados)) {
+        consolidatedResult.problemas_consolidados = consolidatedResult.problemas_consolidados.map(p => {
+          let fotos = p.fotos_afetadas;
+          if (typeof fotos === 'string') {
+            const cleaned = fotos.replace(/^\s*\[|\]\s*$/g, '').trim();
+            const arr = cleaned.length ? cleaned.split(/\s*,\s*/).map(n => Number(n)).filter(n => Number.isFinite(n)) : [];
+            return { ...p, fotos_afetadas: arr };
+          }
+          return p;
+        });
+      }
+      if (consolidatedResult.cobertura_analise && typeof consolidatedResult.cobertura_analise === 'object') {
+        const ac = consolidatedResult.cobertura_analise;
+        if (typeof ac.areas_cobertas === 'string') {
+          const cleaned = ac.areas_cobertas.replace(/^\s*\[|\]\s*$/g, '').trim();
+          ac.areas_cobertas = cleaned.length ? cleaned.split(/\s*,\s*/).map(s => s.replace(/^"|"$/g, '')) : [];
+        }
+        consolidatedResult.cobertura_analise = ac;
+      }
       
     } catch (parseError) {
       console.error('❌ Erro ao fazer parse da consolidação:', parseError);

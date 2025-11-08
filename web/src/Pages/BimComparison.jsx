@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import projectService from '../services/projectService';
@@ -30,6 +30,7 @@ function BimComparison() {
   const [showResults, setShowResults] = useState(false);
   const [userContext, setUserContext] = useState('');
   const [progress, setProgress] = useState({ current: 0, total: 0, message: '', phase: '' });
+  const progressTimerRef = useRef(null);
 
   const menuItems = [
     { icon: '🏠', label: 'Home', path: '/home' },
@@ -157,22 +158,29 @@ function BimComparison() {
 
       // Determinar quantos pares serão comparados
       const totalPairs = Math.min(selectedBimPhotos.length, selectedObraPhotos.length);
-      const pairComparisons = [];
+      setProgress({ current: 0, total: totalPairs, message: 'Iniciando comparações em pares...', phase: 'pairs', percent: 0 });
 
-      // Fazer comparações em pares
-      for (let i = 0; i < totalPairs; i++) {
+      // Iniciar avanço automático até 56% durante as comparações
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+      }
+      progressTimerRef.current = setInterval(() => {
+        setProgress(prev => {
+          if (prev.phase !== 'pairs') return prev;
+          const currentPercent = typeof prev.percent === 'number' ? prev.percent : 0;
+          if (currentPercent >= 56) return prev;
+          const next = Math.min(56, currentPercent + 0.5);
+          return { ...prev, percent: next };
+        });
+      }, 100);
+
+      // Executar comparações em pares em paralelo
+      let completed = 0;
+      const tasks = Array.from({ length: totalPairs }).map((_, i) => (async () => {
         const bimPhoto = selectedBimPhotos[i];
         const obraPhoto = selectedObraPhotos[i];
 
         console.log(`Comparando par ${i + 1}/${totalPairs}...`);
-        
-        setProgress({
-          current: i + 1,
-          total: totalPairs,
-          phase: 'pairs',
-          message: `Comparando par ${i + 1} de ${totalPairs}: BIM ${i + 1} ↔ Obra ${i + 1}`
-        });
-
         try {
           const result = await vertexAIService.compareImages(
             bimPhoto.url,
@@ -183,75 +191,79 @@ function BimComparison() {
           console.log(`📊 RESULTADO DO PAR ${i + 1}:`, JSON.stringify(result, null, 2));
 
           if (result.success) {
-            // Verificar se é análise parcial
             if (result.isPartial) {
               console.warn(`⚠️ Par ${i + 1} retornou análise parcial (MAX_TOKENS)`);
             }
-            
-            pairComparisons.push({
+            return {
               pairIndex: i + 1,
-              bimPhoto: {
-                url: bimPhoto.url,
-                fileName: bimPhoto.fileName
-              },
-              obraPhoto: {
-                url: obraPhoto.url,
-                fileName: obraPhoto.fileName
-              },
+              bimPhoto: { url: bimPhoto.url, fileName: bimPhoto.fileName },
+              obraPhoto: { url: obraPhoto.url, fileName: obraPhoto.fileName },
               analysis: result
-            });
+            };
           } else {
             throw new Error(result.error || 'Erro desconhecido');
           }
-
         } catch (pairError) {
           console.error(`❌ Erro no par ${i + 1}:`, pairError);
-          
-          // Verificar se é erro de MAX_TOKENS
-          const isMaxTokensError = pairError.message?.includes('MAX_TOKENS') || 
-                                    pairError.message?.includes('limite de tokens');
-          
+          const isMaxTokensError = pairError.message?.includes('MAX_TOKENS') || pairError.message?.includes('limite de tokens');
           let errorMessage = pairError.message || 'Erro ao comparar este par';
           if (isMaxTokensError) {
             errorMessage = 'Análise muito detalhada. Tentando análise parcial...';
             console.warn(`⚠️ Par ${i + 1} excedeu limite - análise parcial será usada`);
           }
-          
-          // Adicionar como erro (mas comparação continuará)
-          pairComparisons.push({
+          return {
             pairIndex: i + 1,
-            bimPhoto: {
-              url: bimPhoto.url,
-              fileName: bimPhoto.fileName
-            },
-            obraPhoto: {
-              url: obraPhoto.url,
-              fileName: obraPhoto.fileName
-            },
+            bimPhoto: { url: bimPhoto.url, fileName: bimPhoto.fileName },
+            obraPhoto: { url: obraPhoto.url, fileName: obraPhoto.fileName },
             analysis: {
               success: false,
               error: errorMessage,
               isMaxTokensError: isMaxTokensError
             }
-          });
+          };
+        } finally {
+          completed += 1;
+          setProgress(prev => ({
+            ...prev,
+            current: completed,
+            total: totalPairs,
+            phase: 'pairs',
+            message: `Concluído par ${completed} de ${totalPairs}`
+          }));
         }
+      })());
 
-        // Delay entre comparações (2s para evitar rate limiting)
-        if (i < totalPairs - 1) {
-          console.log('⏳ Aguardando 2s antes da próxima comparação...');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-      }
+      const pairComparisons = await Promise.all(tasks);
+
+      // Garantir ordem por índice do par
+      pairComparisons.sort((a, b) => a.pairIndex - b.pairIndex);
 
       // Consolidar todas as comparações
-      setProgress({
+      // Parar avanço automático e levar para 78% ao finalizar os pares
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
+      setProgress(prev => ({
+        ...prev,
         current: totalPairs,
         total: totalPairs,
         phase: 'consolidation',
-        message: 'Consolidando todas as comparações...'
-      });
+        message: 'Consolidando todas as comparações...',
+        percent: 78
+      }));
 
-      const consolidatedResult = await consolidatePairComparisons(pairComparisons, userContext);
+      // Montar estrutura esperada pelo serviço de consolidação (com TOON)
+      const individualAnalyses = pairComparisons.map((pair) => ({
+        imageIndex: pair.pairIndex,
+        imageUrl: pair.obraPhoto?.url || '',
+        analysis: pair.analysis
+      }));
+
+      const consolidatedResult = await vertexAIService.consolidateAnalyses(individualAnalyses, userContext);
+
+      // Consolidador retornou: avançar para 98%
+      setProgress(prev => ({ ...prev, phase: 'post_consolidation', message: 'Consolidação concluída. Preparando exibição...', percent: 98 }));
 
       console.log('🎯 RESULTADO DA CONSOLIDAÇÃO:', JSON.stringify(consolidatedResult, null, 2));
 
@@ -267,6 +279,10 @@ function BimComparison() {
       console.log('Resultado consolidado:', result);
       setComparisonResult(result);
       setShowResults(true);
+      // Só bater 100% quando a interface exibir os resultados
+      setTimeout(() => {
+        setProgress(prev => ({ ...prev, phase: 'done', message: 'Resultados exibidos', percent: 100 }));
+      }, 0);
 
       // Salvar relatório no DynamoDB
       try {
@@ -323,7 +339,10 @@ function BimComparison() {
       alert('Erro ao realizar comparações. Tente novamente.');
     } finally {
       setComparing(false);
-      setProgress({ current: 0, total: 0, message: '', phase: '' });
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
     }
   };
 
@@ -748,11 +767,31 @@ Consolide e retorne APENAS JSON no formato:
                 <div className="progress-bar-container">
                   <div 
                     className="progress-bar-fill"
-                    style={{ width: `${(progress.current / progress.total) * 100}%` }}
+                    style={{ width: `${(() => {
+                      if (typeof progress.percent === 'number') return progress.percent;
+                      if (progress.phase === 'pairs' && progress.total > 0) {
+                        const fraction = Math.min(progress.current / progress.total, 1);
+                        return Math.floor(fraction * 78);
+                      }
+                      if (progress.phase === 'consolidation') return 78;
+                      if (progress.phase === 'post_consolidation') return 98;
+                      if (progress.phase === 'done') return 100;
+                      return 0;
+                    })()}%` }}
                   />
                 </div>
                 <p className="progress-stats">
-                  {progress.current} de {progress.total} ({Math.round((progress.current / progress.total) * 100)}%)
+                  {progress.current} de {progress.total} ({(() => {
+                    if (typeof progress.percent === 'number') return progress.percent;
+                    if (progress.phase === 'pairs' && progress.total > 0) {
+                      const fraction = Math.min(progress.current / progress.total, 1);
+                      return Math.floor(fraction * 78);
+                    }
+                    if (progress.phase === 'consolidation') return 78;
+                    if (progress.phase === 'post_consolidation') return 98;
+                    if (progress.phase === 'done') return 100;
+                    return 0;
+                  })()}%)
                 </p>
               </div>
             )}
