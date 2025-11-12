@@ -7,6 +7,27 @@ import projectService from '../services/projectService';
 import vertexAIService from '../services/vertexAIService';
 import reportService from '../services/reportService';
 import '../Style/BimComparison.css';
+import {
+  MdArrowBack,
+  MdDownload,
+  MdSync,
+  MdBarChart,
+  MdTrendingUp,
+  MdRule,
+  MdReportProblem,
+  MdCheckCircle,
+  MdNotes,
+  MdDescription,
+  MdLightbulb,
+  MdArchitecture,
+  MdConstruction,
+  MdCompareArrows,
+  MdImage,
+  MdWarningAmber,
+  MdClose,
+  MdCancel,
+  MdHelpOutline
+} from 'react-icons/md';
 
 function BimComparison() {
   const { projectId } = useParams();
@@ -562,12 +583,14 @@ function BimComparison() {
   const getConformityIcon = (status) => {
     switch (status?.toLowerCase()) {
       case 'conforme':
-        return '✅';
+        return <MdCheckCircle />;
       case 'não_conforme':
       case 'nao_conforme':
-        return '❌';
+        return <MdCancel />;
+      case 'parcialmente_conforme':
+        return <MdWarningAmber />;
       default:
-        return '❓';
+        return <MdHelpOutline />;
     }
   };
 
@@ -616,9 +639,9 @@ function BimComparison() {
               className="back-button"
               onClick={() => navigate(`/project/${projectId}`)}
             >
-              ← Voltar
+              <MdArrowBack style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
             </button>
-            <h1>🔍 Comparação BIM com IA</h1>
+            <h1>Comparação BIM com IA</h1>
             <p className="subtitle">{project?.projectName}</p>
           </div>
         </header>
@@ -631,9 +654,9 @@ function BimComparison() {
             <div className="selection-grid">
               {/* Seleção de Fotos do BIM (Múltiplas) */}
               <div className="selection-column">
-                <h3>📐 Fotos do Modelo BIM (Múltiplas)</h3>
+                <h3><MdArchitecture style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos do Modelo BIM (Múltiplas)</h3>
                 <p className="multi-select-hint">
-                  💡 Clique para selecionar/desselecionar múltiplas fotos
+                  <MdLightbulb style={{ verticalAlign: 'middle', marginRight: 6 }} /> Clique para selecionar/desselecionar múltiplas fotos
                 </p>
                 {loadingPhotos ? (
                   <p>Carregando fotos...</p>
@@ -674,9 +697,9 @@ function BimComparison() {
 
               {/* Seleção de Fotos da Obra (Múltiplas) */}
               <div className="selection-column">
-                <h3>🏗️ Fotos da Obra Real (Múltiplas)</h3>
+                <h3><MdConstruction style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra Real (Múltiplas)</h3>
                 <p className="multi-select-hint">
-                  💡 Clique para selecionar/desselecionar múltiplas fotos
+                  <MdLightbulb style={{ verticalAlign: 'middle', marginRight: 6 }} /> Clique para selecionar/desselecionar múltiplas fotos
                 </p>
                 {loadingPhotos ? (
                   <p>Carregando fotos...</p>
@@ -723,7 +746,7 @@ function BimComparison() {
 
             {/* Campo de Contexto Adicional */}
             <div className="context-section">
-              <h3>💬 Informações Adicionais (Opcional)</h3>
+              <h3><MdNotes style={{ verticalAlign: 'middle', marginRight: 6 }} /> Informações Adicionais (Opcional)</h3>
               <p className="context-hint">
                 Forneça detalhes adicionais sobre a obra que podem ajudar na análise (ex: problemas conhecidos, materiais específicos, etapa da construção, etc.)
               </p>
@@ -747,17 +770,17 @@ function BimComparison() {
                 onClick={handleCompare}
                 disabled={selectedBimPhotos.length === 0 || selectedObraPhotos.length === 0 || comparing}
               >
-                {comparing ? '🔄 Analisando...' : 
+                {comparing ? (<><MdSync style={{ verticalAlign: 'middle', marginRight: 6 }} /> Analisando...</>) : 
                  selectedBimPhotos.length > 0 && selectedObraPhotos.length > 0 
-                   ? `🚀 Comparar ${Math.min(selectedBimPhotos.length, selectedObraPhotos.length)} Par(es)` 
-                   : '🚀 Comparar com IA'}
+                   ? (<><MdCompareArrows style={{ verticalAlign: 'middle', marginRight: 6 }} /> {`Comparar ${Math.min(selectedBimPhotos.length, selectedObraPhotos.length)} Par(es)`}</>) 
+                   : (<><MdCompareArrows style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparar com IA</>)}
               </button>
               <button
                 className="btn-reset"
                 onClick={handleReset}
                 disabled={comparing}
               >
-                🔄 Resetar
+                <MdSync style={{ verticalAlign: 'middle', marginRight: 6 }} /> Resetar
               </button>
             </div>
 
@@ -766,11 +789,11 @@ function BimComparison() {
               <div className="pairs-info">
                 {selectedBimPhotos.length === selectedObraPhotos.length ? (
                   <p className="info-message success">
-                    ✅ {selectedBimPhotos.length} par(es) será(ão) comparado(s)
+                    <MdCheckCircle style={{ verticalAlign: 'middle', marginRight: 6 }} /> {selectedBimPhotos.length} par(es) será(ão) comparado(s)
                   </p>
                 ) : (
                   <p className="info-message warning">
-                    ⚠️ Você selecionou {selectedBimPhotos.length} BIM e {selectedObraPhotos.length} Obra. 
+                    <MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 6 }} /> Você selecionou {selectedBimPhotos.length} BIM e {selectedObraPhotos.length} Obra. 
                     Serão comparados {Math.min(selectedBimPhotos.length, selectedObraPhotos.length)} pares.
                   </p>
                 )}
@@ -781,7 +804,7 @@ function BimComparison() {
             {comparing && progress.total > 0 && (
               <div className="progress-section">
                 <h3>
-                  {progress.phase === 'pairs' ? '📸 Comparando Pares' : '🔄 Consolidando Comparações'}
+                  {progress.phase === 'pairs' ? (<><MdImage style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparando Pares</>) : (<><MdSync style={{ verticalAlign: 'middle', marginRight: 6 }} /> Consolidando Comparações</>)}
                 </h3>
                 <p className="progress-message">{progress.message}</p>
                 <div className="progress-bar-container">
@@ -826,26 +849,26 @@ function BimComparison() {
             return (
               <section className="results-section">
                 <div className="results-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
-                  <h2 style={{ margin: 0 }}>📊 Resultados da Análise</h2>
+                  <h2 style={{ margin: 0 }}><MdBarChart style={{ verticalAlign: 'middle', marginRight: 6 }} /> Resultados da Análise</h2>
                   <button
                     onClick={handleDownloadPdf}
                     className="btn-download-pdf"
                     title="Baixar relatório em PDF"
                     style={{ padding: '8px 12px', borderRadius: 6, border: 'none', background: '#1976D2', color: '#fff', cursor: 'pointer' }}
                   >
-                    ⬇️ Baixar PDF
+                    <MdDownload style={{ verticalAlign: 'middle', marginRight: 6 }} /> Baixar PDF
                   </button>
                 </div>
                 {isPairAnalysis && comparisonResult.totalPairs > 1 && (
                   <p className="analysis-type-badge">
-                    🔄 Análise em Pares - {comparisonResult.totalPairs} comparações realizadas
+                    <MdSync style={{ verticalAlign: 'middle', marginRight: 6 }} /> Análise em Pares - {comparisonResult.totalPairs} comparações realizadas
                   </p>
                 )}
 
                 {/* Progresso Geral */}
                 <div className="result-card progress-card">
                   <div className="card-header">
-                    <h3>📈 Progresso da Obra {isPairAnalysis && comparisonResult.totalPairs > 1 && '(Consolidado)'}</h3>
+                    <h3><MdTrendingUp style={{ verticalAlign: 'middle', marginRight: 6 }} /> Progresso da Obra {isPairAnalysis && comparisonResult.totalPairs > 1 && '(Consolidado)'}</h3>
                   </div>
                   <div className="progress-content">
                     <div className="progress-circle-large">
@@ -887,7 +910,7 @@ function BimComparison() {
                 {isPairAnalysis && comparisonResult.totalPairs > 1 && consolidatedData.distribuicao_percentuais && (
                   <div className="result-card distribution-card">
                     <div className="card-header">
-                      <h3>📊 Distribuição dos Percentuais</h3>
+                      <h3><MdBarChart style={{ verticalAlign: 'middle', marginRight: 6 }} /> Distribuição dos Percentuais</h3>
                     </div>
                     <div className="distribution-grid">
                       <div className="distribution-item">
@@ -913,7 +936,7 @@ function BimComparison() {
                 {/* Conformidade */}
                 <div className="result-card conformity-card">
                   <div className="card-header">
-                    <h3>✅ Análise de Conformidade {isPairAnalysis && comparisonResult.totalPairs > 1 && '(Geral)'}</h3>
+                    <h3><MdRule style={{ verticalAlign: 'middle', marginRight: 6 }} /> Análise de Conformidade {isPairAnalysis && comparisonResult.totalPairs > 1 && '(Geral)'}</h3>
                   </div>
                   <div className="conformity-grid">
                     <div className="conformity-item">
@@ -951,7 +974,7 @@ function BimComparison() {
                 {isPairAnalysis && comparisonResult.totalPairs > 1 && consolidatedData.areas_criticas && consolidatedData.areas_criticas.length > 0 && (
                   <div className="result-card critical-areas-card">
                     <div className="card-header">
-                      <h3>🚨 Áreas Críticas</h3>
+                      <h3><MdReportProblem style={{ verticalAlign: 'middle', marginRight: 6 }} /> Áreas Críticas</h3>
                     </div>
                     <ul className="critical-areas-list">
                       {consolidatedData.areas_criticas.map((area, index) => (
@@ -965,7 +988,7 @@ function BimComparison() {
                 {isPairAnalysis && comparisonResult.totalPairs > 1 && consolidatedData.pontos_positivos && consolidatedData.pontos_positivos.length > 0 && (
                   <div className="result-card positive-points-card">
                     <div className="card-header">
-                      <h3>✅ Pontos Positivos</h3>
+                      <h3><MdCheckCircle style={{ verticalAlign: 'middle', marginRight: 6 }} /> Pontos Positivos</h3>
                     </div>
                     <ul className="positive-points-list">
                       {consolidatedData.pontos_positivos.map((ponto, index) => (
@@ -980,7 +1003,7 @@ function BimComparison() {
                  (consolidatedData.problemas_consolidados || consolidatedData.problemas_detectados).length > 0 && (
                   <div className="result-card problems-card">
                     <div className="card-header">
-                      <h3>⚠️ Problemas e Anomalias Detectados</h3>
+                      <h3><MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 6 }} /> Problemas e Anomalias Detectados</h3>
                     </div>
                     <div className="problems-list">
                       {(consolidatedData.problemas_consolidados || consolidatedData.problemas_detectados).map((problema, index) => (
@@ -1002,7 +1025,7 @@ function BimComparison() {
                             <p>{problema.descricao}</p>
                             {problema.frequencia && (
                               <p className="problem-frequency">
-                                <small>📊 {problema.frequencia}</small>
+                                <small><MdBarChart style={{ verticalAlign: 'middle', marginRight: 4 }} /> {problema.frequencia}</small>
                               </p>
                             )}
                           </div>
@@ -1016,7 +1039,7 @@ function BimComparison() {
                 {consolidatedData.observacoes_gerais && (
                   <div className="result-card observations-card">
                     <div className="card-header">
-                      <h3>📝 Observações Gerais</h3>
+                      <h3><MdNotes style={{ verticalAlign: 'middle', marginRight: 6 }} /> Observações Gerais</h3>
                     </div>
                     <div className="observations-content">
                       <p>{consolidatedData.observacoes_gerais}</p>
@@ -1028,7 +1051,7 @@ function BimComparison() {
                 {consolidatedData.justificativa_percentual && (
                   <div className="result-card justification-card">
                     <div className="card-header">
-                      <h3>📋 Justificativa do Percentual</h3>
+                      <h3><MdDescription style={{ verticalAlign: 'middle', marginRight: 6 }} /> Justificativa do Percentual</h3>
                     </div>
                     <div className="justification-content">
                       <p style={{ fontStyle: 'italic' }}>{consolidatedData.justificativa_percentual}</p>
@@ -1041,7 +1064,7 @@ function BimComparison() {
                   (consolidatedData.recomendacoes && consolidatedData.recomendacoes.length > 0)) && (
                   <div className="result-card recommendations-card">
                     <div className="card-header">
-                      <h3>💡 Recomendações {isPairAnalysis && comparisonResult.totalPairs > 1 && 'Prioritárias'}</h3>
+                      <h3><MdLightbulb style={{ verticalAlign: 'middle', marginRight: 6 }} /> Recomendações {isPairAnalysis && comparisonResult.totalPairs > 1 && 'Prioritárias'}</h3>
                     </div>
                     {consolidatedData.recomendacoes_prioritarias ? (
                       <div className="priority-recommendations">
@@ -1068,7 +1091,7 @@ function BimComparison() {
                 {isPairAnalysis && comparisonResult.pairComparisons && (
                   <div className="result-card individual-analyses-card">
                     <div className="card-header">
-                      <h3>🔄 Comparações por Par</h3>
+                      <h3><MdSync style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparações por Par</h3>
                     </div>
                     <div className="individual-analyses-grid">
                       {comparisonResult.pairComparisons.map((pair) => (
@@ -1077,20 +1100,20 @@ function BimComparison() {
                             Par {pair.pairIndex}
                             {pair.analysis.isPartial && (
                               <span className="partial-badge" title="Análise resumida devido a limitação de resposta">
-                                ⚠️ Parcial
+                                <MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 4 }} /> Parcial
                               </span>
                             )}
                           </h4>
                           <div className="pair-files">
                             <div className="pair-file">
-                              <span className="file-icon">📐</span>
+                              <span className="file-icon"><MdArchitecture /></span>
                               <span className="file-name" title={pair.bimPhoto.fileName}>
                                 {pair.bimPhoto.fileName.substring(0, 20)}...
                               </span>
                             </div>
-                            <div className="pair-arrow">↔</div>
+                            <div className="pair-arrow"><MdCompareArrows /></div>
                             <div className="pair-file">
-                              <span className="file-icon">🏗️</span>
+                              <span className="file-icon"><MdConstruction /></span>
                               <span className="file-name" title={pair.obraPhoto.fileName}>
                                 {pair.obraPhoto.fileName.substring(0, 20)}...
                               </span>
@@ -1105,11 +1128,11 @@ function BimComparison() {
                                 {pair.analysis.data.analise_progresso?.substring(0, 120)}...
                               </p>
                               <div className="individual-stats">
-                                <span>⚠️ {pair.analysis.data.problemas_detectados?.length || 0} problemas</span>
+                                <span><MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 4 }} /> {pair.analysis.data.problemas_detectados?.length || 0} problemas</span>
                               </div>
                             </>
                           ) : (
-                            <p className="error-message">❌ {pair.analysis.error || 'Erro na análise'}</p>
+                            <p className="error-message"><MdClose style={{ verticalAlign: 'middle', marginRight: 4 }} /> {pair.analysis.error || 'Erro na análise'}</p>
                           )}
                         </div>
                       ))}
@@ -1120,11 +1143,11 @@ function BimComparison() {
                 {/* Imagens Comparadas */}
                 <div className="result-card images-card">
                   <div className="card-header">
-                    <h3>🖼️ Imagens Analisadas ({comparisonResult.totalPairs || 1} Par{comparisonResult.totalPairs > 1 ? 'es' : ''})</h3>
+                    <h3><MdImage style={{ verticalAlign: 'middle', marginRight: 6 }} /> Imagens Analisadas ({comparisonResult.totalPairs || 1} Par{comparisonResult.totalPairs > 1 ? 'es' : ''})</h3>
                   </div>
                   <div className="compared-images">
                     <div className="compared-image-item">
-                      <h4>📐 Modelos BIM ({selectedBimPhotos.length})</h4>
+                      <h4><MdArchitecture style={{ verticalAlign: 'middle', marginRight: 6 }} /> Modelos BIM ({selectedBimPhotos.length})</h4>
                       <div className="multiple-images-preview">
                         {selectedBimPhotos.slice(0, 4).map((photo, index) => (
                           <img key={index} src={photo.url} alt={`BIM ${index + 1}`} className="thumb" />
@@ -1135,7 +1158,7 @@ function BimComparison() {
                       </div>
                     </div>
                     <div className="compared-image-item">
-                      <h4>🏗️ Fotos da Obra ({selectedObraPhotos.length})</h4>
+                      <h4><MdConstruction style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra ({selectedObraPhotos.length})</h4>
                       <div className="multiple-images-preview">
                         {selectedObraPhotos.slice(0, 4).map((photo, index) => (
                           <img key={index} src={photo.url} alt={`Obra ${index + 1}`} className="thumb" />

@@ -4,6 +4,21 @@ import Layout from '../components/Layout';
 import documentService from '../services/documentService';
 import projectService from '../services/projectService';
 import '../Style/Documents.css';
+import {
+  MdInsertDriveFile,
+  MdPictureAsPdf,
+  MdDescription,
+  MdTableChart,
+  MdImage,
+  MdArchive,
+  MdMovie,
+  MdFolderOpen,
+  MdUpload,
+  MdCheck,
+  MdAssignment,
+  MdArrowBack,
+  MdDelete
+} from 'react-icons/md';
 
 function Documents() {
   const { projectId } = useParams();
@@ -263,6 +278,19 @@ function Documents() {
     }
   };
 
+  const getFileIconComponent = (extension) => {
+    const ext = (extension || '').toLowerCase();
+    if (['pdf'].includes(ext)) return <MdPictureAsPdf />;
+    if (['doc', 'docx', 'rtf', 'txt'].includes(ext)) return <MdDescription />;
+    if (['xls', 'xlsx', 'csv'].includes(ext)) return <MdTableChart />;
+    if (['ppt', 'pptx'].includes(ext)) return <MdAssignment />;
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(ext)) return <MdImage />;
+    if (['dwg', 'dxf', 'dwf'].includes(ext)) return <MdImage />; // fallback; could be CAD-specific icon
+    if (['zip', 'rar', '7z'].includes(ext)) return <MdArchive />;
+    if (['mp4', 'avi', 'mov', 'wmv'].includes(ext)) return <MdMovie />;
+    return <MdInsertDriveFile />;
+  };
+
   // Drag and drop
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -310,7 +338,7 @@ function Documents() {
               onClick={() => navigate(`/project/${projectId}`)}
               title="Voltar para detalhes do projeto"
             >
-              ← Voltar
+              <MdArrowBack style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
             </button>
             <h1>Documentos - {project.projectName}</h1>
           </div>
@@ -320,20 +348,20 @@ function Documents() {
               className="action-button primary"
               onClick={() => setShowNewFolderModal(true)}
             >
-              📁 Nova Pasta
+              <MdFolderOpen style={{ verticalAlign: 'middle', marginRight: 6 }} /> Nova Pasta
             </button>
             <button 
               className="action-button primary"
               onClick={() => fileInputRef.current?.click()}
             >
-              📤 Enviar Arquivos
+              <MdUpload style={{ verticalAlign: 'middle', marginRight: 6 }} /> Enviar Arquivos
             </button>
             {selectedItems.length > 0 && (
               <button 
                 className="action-button danger"
                 onClick={handleDeleteSelected}
               >
-                🗑️ Deletar ({selectedItems.length})
+                <MdDelete style={{ verticalAlign: 'middle', marginRight: 6 }} /> Deletar ({selectedItems.length})
               </button>
             )}
           </div>
@@ -390,7 +418,7 @@ function Documents() {
               {currentPath !== '' && (
                 <div className="navigation-bar">
                   <button className="nav-button" onClick={goBack}>
-                    ← Voltar
+                    <MdArrowBack style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
                   </button>
                 </div>
               )}
@@ -418,12 +446,12 @@ function Documents() {
                         toggleItemSelection(folder);
                       }}
                     >
-                      <div className="item-icon">📁</div>
+                      <div className="item-icon"><MdFolderOpen /></div>
                       <div className="item-info">
                         <div className="item-name">{folder.name}</div>
                         <div className="item-details">Pasta</div>
                       </div>
-                      {isSelected && <div className="selection-indicator">✓</div>}
+                      {isSelected && <div className="selection-indicator"><MdCheck /></div>}
                     </div>
                   );
                 })}
@@ -450,7 +478,7 @@ function Documents() {
                       }}
                     >
                       <div className="item-icon">
-                        {documentService.getFileIcon(file.extension)}
+                        {getFileIconComponent(file.extension)}
                       </div>
                       <div className="item-info">
                         <div className="item-name" title={file.name}>{file.name}</div>
@@ -461,7 +489,7 @@ function Documents() {
                           {new Date(file.lastModified).toLocaleDateString('pt-BR')}
                         </div>
                       </div>
-                      {isSelected && <div className="selection-indicator">✓</div>}
+                      {isSelected && <div className="selection-indicator"><MdCheck /></div>}
                     </div>
                   );
                 })}
@@ -469,7 +497,7 @@ function Documents() {
                 {/* Empty State */}
                 {folders.length === 0 && files.length === 0 && (
                   <div className="empty-state">
-                    <div className="empty-icon">📂</div>
+                    <div className="empty-icon"><MdFolderOpen /></div>
                     <h3>Pasta vazia</h3>
                     <p>Arraste arquivos aqui ou use o botão "Enviar Arquivos" para adicionar documentos.</p>
                   </div>
@@ -483,7 +511,7 @@ function Documents() {
         {showUploadArea && (
           <div className="upload-overlay">
             <div className="upload-message">
-              <div className="upload-icon">📤</div>
+              <div className="upload-icon"><MdUpload /></div>
               <h3>Solte os arquivos aqui</h3>
               <p>Os arquivos serão enviados para: {breadcrumb.map(b => b.name).join(' › ')}</p>
             </div>

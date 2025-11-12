@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import userService from '../services/userService';
 import '../Style/Users.css';
+import {
+  MdPeople,
+  MdPersonAdd,
+  MdPersonOutline,
+  MdAdminPanelSettings,
+  MdEdit,
+  MdDelete,
+  MdClose
+} from 'react-icons/md';
 
 function Users() {
   const navigate = useNavigate();
@@ -196,17 +205,17 @@ function Users() {
     <Layout menuItems={menuItems}>
       <div className="users-container">
         <header className="users-header">
-          <h1>👥 Gerenciamento de Usuários</h1>
+          <h1><MdPeople style={{ verticalAlign: 'middle', marginRight: 6 }} /> Gerenciamento de Usuários</h1>
           <p className="subtitle">Total: {users.length} usuários</p>
           <button className="btn-create-user" onClick={handleCreateUser}>
-            ➕ Novo Usuário
+            <MdPersonAdd style={{ verticalAlign: 'middle', marginRight: 6 }} /> Novo Usuário
           </button>
         </header>
 
         <main className="users-main">
           {users.length === 0 ? (
             <div className="users-empty">
-              <div className="empty-icon">👤</div>
+              <div className="empty-icon"><MdPersonOutline /></div>
               <h3>Nenhum usuário encontrado</h3>
               <p>Clique em "Novo Usuário" para criar o primeiro usuário.</p>
             </div>
@@ -229,7 +238,7 @@ function Users() {
                     <tr key={user.username}>
                       <td className="username-cell">
                         <strong>{user.username}</strong>
-                        {user.isAdmin && <span className="admin-badge">👑 ADMIN</span>}
+                        {user.isAdmin && <span className="admin-badge"><MdAdminPanelSettings style={{ verticalAlign: 'middle', marginRight: 6 }} /> ADMIN</span>}
                       </td>
                       <td className="name-cell">{user.name || '-'}</td>
                       <td className="email-cell">{user.email}</td>
@@ -248,7 +257,7 @@ function Users() {
                           onClick={() => handleEditUser(user)}
                           title="Editar"
                         >
-                          ✏️
+                          <MdEdit />
                         </button>
                         <button 
                           className="btn-delete"
@@ -256,7 +265,7 @@ function Users() {
                           disabled={user.username === currentUser.username}
                           title="Excluir"
                         >
-                          🗑️
+                          <MdDelete />
                         </button>
                       </td>
                     </tr>
@@ -272,8 +281,8 @@ function Users() {
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h2>{modalMode === 'create' ? '➕ Novo Usuário' : '✏️ Editar Usuário'}</h2>
-                <button className="btn-close" onClick={() => setShowModal(false)}>✕</button>
+                <h2>{modalMode === 'create' ? (<><MdPersonAdd style={{ verticalAlign: 'middle', marginRight: 6 }} /> Novo Usuário</>) : (<><MdEdit style={{ verticalAlign: 'middle', marginRight: 6 }} /> Editar Usuário</>)}</h2>
+                <button className="btn-close" onClick={() => setShowModal(false)}><MdClose /></button>
               </div>
               
               <form onSubmit={handleSubmit} className="user-form">

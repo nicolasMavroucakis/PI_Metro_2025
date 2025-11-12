@@ -3,6 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import projectService from '../services/projectService';
 import '../Style/Home-new.css';
+import {
+  MdWbSunny,
+  MdPerson,
+  MdSettings,
+  MdConstruction,
+  MdShield,
+  MdLogout
+} from 'react-icons/md';
 
 function Home() {
   const navigate = useNavigate();
@@ -56,22 +64,7 @@ function Home() {
     }
   };
 
-  // Função para calcular progresso baseado nas datas
-  const calculateProgress = (startDate, endDate) => {
-    if (!startDate || !endDate) return 0;
-    
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const now = new Date();
-    
-    if (now < start) return 0;
-    if (now > end) return 100;
-    
-    const total = end - start;
-    const elapsed = now - start;
-    
-    return Math.round((elapsed / total) * 100);
-  };
+  // (removido) calculateProgress não é mais utilizado
 
   // Função para verificar se o projeto tem imagem real
   const hasRealImage = (project) => {
@@ -139,7 +132,9 @@ function Home() {
         <header className="main-header">
           <h1>Home</h1>
           <div className="header-controls">
-            <button className="theme-toggle">☀️</button>
+            <button className="theme-toggle" aria-label="Trocar tema">
+              <MdWbSunny />
+            </button>
             
             {/* User Menu com Dropdown */}
             <div className="user-menu-container">
@@ -147,13 +142,13 @@ function Home() {
                 className="user-menu"
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               >
-                👤
+                <MdPerson />
               </button>
               
               {userDropdownOpen && (
                 <div className="user-dropdown">
                   <div className="user-dropdown-header">
-                    <div className="user-avatar">👤</div>
+                    <div className="user-avatar"><MdPerson /></div>
                     <div className="user-info">
                       <strong>{user.name || user.username || 'Usuário'}</strong>
                       <small>{user.email || 'Email não disponível'}</small>
@@ -165,7 +160,7 @@ function Home() {
                   <div className="user-dropdown-items">
                     {user.isAdmin && (
                       <div className="user-dropdown-badge">
-                        🛡️ Administrador
+                        <MdShield style={{ verticalAlign: 'middle', marginRight: 6 }} /> Administrador
                       </div>
                     )}
                     <button 
@@ -175,20 +170,22 @@ function Home() {
                         navigate('/profile');
                       }}
                     >
-                      <span>👤</span> Meu Perfil
+                      <span><MdPerson style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Meu Perfil
                     </button>
                     <button 
                       className="user-dropdown-item logout"
                       onClick={handleLogout}
                     >
-                      <span>🚪</span> Sair
+                      <span><MdLogout style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Sair
                     </button>
                   </div>
                 </div>
               )}
             </div>
             
-            <button className="settings">⚙️</button>
+            <button className="settings" aria-label="Configurações">
+              <MdSettings />
+            </button>
           </div>
         </header>
 
@@ -264,7 +261,7 @@ function Home() {
                       />
                       {!hasRealImage(project) && (
                         <div className="construction-icon">
-                          🏗️
+                          <MdConstruction />
                         </div>
                       )}
                     </div>

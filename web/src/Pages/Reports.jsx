@@ -1,9 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import projectService from '../services/projectService';
 import reportService from '../services/reportService';
 import '../Style/Reports.css';
+import {
+  MdAssessment,
+  MdBarChart,
+  MdAssignment,
+  MdCheckCircle,
+  MdCancel,
+  MdSmartToy,
+  MdSearch,
+  MdVisibility,
+  MdDelete
+} from 'react-icons/md';
 
 function Reports() {
   const navigate = useNavigate();
@@ -61,14 +72,7 @@ function Reports() {
     loadProjects();
   }, [searchParams]);
 
-  // Carregar relatórios quando projeto é selecionado
-  useEffect(() => {
-    if (selectedProject) {
-      loadProjectReports();
-    }
-  }, [selectedProject]);
-
-  const loadProjectReports = async () => {
+  const loadProjectReports = useCallback(async () => {
     if (!selectedProject) return;
     
     try {
@@ -96,7 +100,14 @@ function Reports() {
     } finally {
       setLoadingReports(false);
     }
-  };
+  }, [selectedProject]);
+
+  // Carregar relatórios quando projeto é selecionado
+  useEffect(() => {
+    if (selectedProject) {
+      loadProjectReports();
+    }
+  }, [selectedProject, loadProjectReports]);
 
   const handleProjectChange = (e) => {
     const projectId = e.target.value;
@@ -200,7 +211,7 @@ function Reports() {
     <Layout menuItems={menuItems}>
       <div className="reports-container">
         <header className="reports-header">
-          <h1>📊 Relatórios de Comparação BIM</h1>
+          <h1><MdAssessment style={{ verticalAlign: 'middle', marginRight: 6 }} /> Relatórios de Comparação BIM</h1>
           <p className="subtitle">Visualize o histórico de análises realizadas com IA</p>
         </header>
 
@@ -226,31 +237,31 @@ function Reports() {
           {/* Estatísticas */}
           {selectedProject && stats && (
             <div className="stats-section">
-              <h2>📈 Estatísticas</h2>
+              <h2><MdBarChart style={{ verticalAlign: 'middle', marginRight: 6 }} /> Estatísticas</h2>
               <div className="stats-grid">
                 <div className="stat-card">
-                  <div className="stat-icon">📋</div>
+                  <div className="stat-icon"><MdAssignment /></div>
                   <div className="stat-content">
                     <div className="stat-value">{stats.total}</div>
                     <div className="stat-label">Total de Relatórios</div>
                   </div>
                 </div>
                 <div className="stat-card success">
-                  <div className="stat-icon">✅</div>
+                  <div className="stat-icon"><MdCheckCircle /></div>
                   <div className="stat-content">
                     <div className="stat-value">{stats.success}</div>
                     <div className="stat-label">Bem-Sucedidos</div>
                   </div>
                 </div>
                 <div className="stat-card failed">
-                  <div className="stat-icon">❌</div>
+                  <div className="stat-icon"><MdCancel /></div>
                   <div className="stat-content">
                     <div className="stat-value">{stats.failed}</div>
                     <div className="stat-label">Com Falha</div>
                   </div>
                 </div>
                 <div className="stat-card progress">
-                  <div className="stat-icon">📊</div>
+                  <div className="stat-icon"><MdBarChart /></div>
                   <div className="stat-content">
                     <div className="stat-value">{stats.avgProgress}%</div>
                     <div className="stat-label">Progresso Médio</div>
@@ -302,7 +313,7 @@ function Reports() {
                 </div>
               ) : filteredReports.length === 0 ? (
                 <div className="reports-empty">
-                  <div className="empty-icon">📭</div>
+                  <div className="empty-icon"><MdSearch /></div>
                   <h3>Nenhum relatório encontrado</h3>
                   <p>
                     {reports.length === 0
@@ -314,7 +325,7 @@ function Reports() {
                       className="btn-create-report"
                       onClick={() => navigate(`/project/${selectedProject.projectId}/bim-comparison`)}
                     >
-                      🤖 Criar Primeira Comparação
+                      <MdSmartToy style={{ verticalAlign: 'middle', marginRight: 6 }} /> Criar Primeira Comparação
                     </button>
                   )}
                 </div>
@@ -335,7 +346,7 @@ function Reports() {
                         <tr key={report.reportId}>
                           <td>
                             <span className={`status-badge ${report.status}`}>
-                              {report.status === 'success' ? '✅ Sucesso' : '❌ Falha'}
+                              {report.status === 'success' ? (<><MdCheckCircle style={{ verticalAlign: 'middle', marginRight: 4 }} /> Sucesso</>) : (<><MdCancel style={{ verticalAlign: 'middle', marginRight: 4 }} /> Falha</>)}
                             </span>
                           </td>
                           <td className="report-id">
@@ -366,14 +377,14 @@ function Reports() {
                                 onClick={() => handleViewReport(report.reportId)}
                                 title="Ver relatório"
                               >
-                                👁️ Ver
+                                <MdVisibility style={{ verticalAlign: 'middle', marginRight: 6 }} /> Ver
                               </button>
                               <button
                                 className="btn-delete"
                                 onClick={() => handleDeleteReport(report.reportId)}
                                 title="Deletar relatório"
                               >
-                                🗑️ Deletar
+                                <MdDelete style={{ verticalAlign: 'middle', marginRight: 6 }} /> Deletar
                               </button>
                             </div>
                           </td>

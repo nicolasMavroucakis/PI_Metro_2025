@@ -3,6 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import projectService from '../services/projectService';
 import '../Style/ProjectDetails.css';
+import {
+  MdFolderOpen,
+  MdSmartToy,
+  MdWarningAmber,
+  MdCalendarMonth,
+  MdCameraAlt,
+  MdConstruction,
+  MdArchitecture
+} from 'react-icons/md';
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -315,30 +324,7 @@ function ProjectDetails() {
     }
   };
 
-  // Deletar alerta
-  const handleDeleteAlert = async (alertId) => {
-    if (!window.confirm('Tem certeza que deseja deletar este alerta?')) {
-      return;
-    }
-
-    try {
-      const updatedAlerts = alerts.filter(alert => alert.id !== alertId);
-      
-      const result = await projectService.updateProject(projectId, {
-        alerts: updatedAlerts
-      });
-
-      if (result.success) {
-        setAlerts(updatedAlerts);
-        alert('Alerta deletado com sucesso!');
-      } else {
-        alert(`Erro ao deletar alerta: ${result.message}`);
-      }
-    } catch (error) {
-      console.error('Erro ao deletar alerta:', error);
-      alert('Erro ao deletar alerta');
-    }
-  };
+  // (removido) handleDeleteAlert não é mais utilizado
 
   // Formatar tamanho do arquivo
   const formatFileSize = (bytes) => {
@@ -420,14 +406,14 @@ function ProjectDetails() {
             onClick={() => navigate(`/project/${projectId}/documents`)}
             title="Ver documentos do projeto"
           >
-            📁 Documentos
+            <MdFolderOpen style={{ verticalAlign: 'middle', marginRight: 6 }} /> Documentos
           </button>
           <button 
             className="bim-comparison-button"
             onClick={() => navigate(`/project/${projectId}/bim-comparison`)}
             title="Comparação BIM com IA - Análise de Progresso e Conformidade"
           >
-            🤖 Comparação IA
+            <MdSmartToy style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparação IA
           </button>
         </div>
       </header>
@@ -481,7 +467,7 @@ function ProjectDetails() {
           <div className="captures-card">
             <div className="card-header">
               <h3 className="card-title">Últimas Capturas</h3>
-              <span className="camera-icon">📷</span>
+              <span className="camera-icon"><MdCameraAlt /></span>
             </div>
             
             {loadingPhotos ? (
@@ -528,7 +514,7 @@ function ProjectDetails() {
           <div className="alerts-card">
             <div className="card-header">
               <h3 className="card-title">Alertas</h3>
-              <span className="alert-icon">⚠️</span>
+              <span className="alert-icon"><MdWarningAmber /></span>
             </div>
             <div className="alerts-content">
               {alerts.length === 0 ? (
@@ -551,7 +537,7 @@ function ProjectDetails() {
             </div>
             <div className="alerts-actions">
               <button className="add-alert-btn" onClick={() => setShowAddAlertModal(true)}>
-                ➕ Adicionar Alerta
+                + Adicionar Alerta
               </button>
             </div>
           </div>
@@ -560,7 +546,7 @@ function ProjectDetails() {
           <div className="next-steps-card">
             <div className="card-header">
               <h3 className="card-title">Informações do Projeto</h3>
-              <span className="calendar-icon">📅</span>
+              <span className="calendar-icon"><MdCalendarMonth /></span>
             </div>
             <div className="steps-list">
               <div className="step-item active">
@@ -683,7 +669,7 @@ function ProjectDetails() {
             
             <div className="capture-type-options">
               <div className="capture-option">
-                <h4>🏗️ Fotos da Obra</h4>
+                <h4><MdConstruction style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra</h4>
                 <p>Imagens do progresso da construção</p>
                 <input
                   type="file"
@@ -705,7 +691,7 @@ function ProjectDetails() {
               </div>
               
               <div className="capture-option">
-                <h4>📐 Fotos do BIM</h4>
+                <h4><MdArchitecture style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos do BIM</h4>
                 <p>Imagens de modelos e desenhos técnicos</p>
                 <input
                   type="file"
@@ -777,13 +763,13 @@ function ProjectDetails() {
                 className={`filter-button ${photoCategory === 'categoria1' ? 'active' : ''}`}
                 onClick={() => handleFilterPhotos('categoria1')}
               >
-                🏗️ Fotos da Obra
+                <MdConstruction style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra
               </button>
               <button 
                 className={`filter-button ${photoCategory === 'categoria2' ? 'active' : ''}`}
                 onClick={() => handleFilterPhotos('categoria2')}
               >
-                📐 Fotos do BIM
+                <MdArchitecture style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos do BIM
               </button>
             </div>
 
@@ -962,21 +948,21 @@ function ProjectDetails() {
                     className={`alert-level-btn alert-level-verde ${newAlertLevel === 'verde' ? 'selected' : ''}`}
                     onClick={() => setNewAlertLevel('verde')}
                   >
-                    🟢 Verde
+                    <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', backgroundColor: '#43a047', marginRight: 8 }} /> Verde
                     <span className="level-description">Informativo</span>
                   </button>
                   <button
                     className={`alert-level-btn alert-level-amarelo ${newAlertLevel === 'amarelo' ? 'selected' : ''}`}
                     onClick={() => setNewAlertLevel('amarelo')}
                   >
-                    🟡 Amarelo
+                    <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', backgroundColor: '#fbc02d', marginRight: 8 }} /> Amarelo
                     <span className="level-description">Atenção</span>
                   </button>
                   <button
                     className={`alert-level-btn alert-level-vermelho ${newAlertLevel === 'vermelho' ? 'selected' : ''}`}
                     onClick={() => setNewAlertLevel('vermelho')}
                   >
-                    🔴 Vermelho
+                    <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', backgroundColor: '#e53935', marginRight: 8 }} /> Vermelho
                     <span className="level-description">Crítico</span>
                   </button>
                 </div>
