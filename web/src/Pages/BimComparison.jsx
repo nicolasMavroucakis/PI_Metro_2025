@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import projectService from '../services/projectService';
 import vertexAIService from '../services/vertexAIService';
 import reportService from '../services/reportService';
@@ -32,12 +34,216 @@ function BimComparison() {
   const [progress, setProgress] = useState({ current: 0, total: 0, message: '', phase: '' });
   const progressTimerRef = useRef(null);
 
+  const sanitizeFile = (name) => {
+    return (name || 'projeto')
+      .toString()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9-_]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .toLowerCase();
+  };
+
+  const formatDateForFile = (d = new Date()) => {
+    const pad = (n) => String(n).padStart(2, '0');
+    const dd = pad(d.getDate());
+    const mm = pad(d.getMonth() + 1);
+    const yy = String(d.getFullYear()).slice(-2);
+    const hh = pad(d.getHours());
+    const mi = pad(d.getMinutes());
+    const ss = pad(d.getSeconds());
+    return { date: `${dd}-${mm}-${yy}`, time: `${hh}-${mi}-${ss}` };
+  };
+
+  const handleDownloadPdf = async () => {
+    try {
+      if (!comparisonResult) return;
+      const consolidated = comparisonResult.consolidatedAnalysis?.data || comparisonResult.data || {};
+      const pairs = comparisonResult.pairComparisons || [];
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+
+      const { date, time } = formatDateForFile(new Date());
+      const projectName = project?.projectName || 'Projeto';
+
+      // Cabeçalho
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(16);
+      pdf.text('Relatório de Análise BIM × Obra', 14, 16);
+
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Projeto: ${projectName}`, 14, 25);
+      pdf.text(`Data: ${date.replace(/-/g, '/')}`, 14, 31);
+      pdf.text(`Horário: ${time.replace(/-/g, ':')}`, 14, 37);
+
+      // Overview
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(13);
+      pdf.text('Resumo Geral', 14, 47);
+
+      pdf.setFont('helvetica', 'normal');
+      const resumoY = 53;
+      const percentual = consolidated.percentual_conclusao_geral ?? consolidated.percentual_conclusao ?? 0;
+      pdf.text(`Percentual Concluído: ${percentual}%`, 14, resumoY);
+      if (consolidated.analise_consolidada || consolidated.analise_progresso) {
+        const text = consolidated.analise_consolidada || consolidated.analise_progresso;
+        const wrapped = pdf.splitTextToSize(text, pageWidth - 28);
+        pdf.text(wrapped, 14, resumoY + 7);
+      }
+
+      let cursorY = resumoY + 7 + 6 *  (consolidated.analise_consolidada || consolidated.analise_progresso ?  (pdf.splitTextToSize(consolidated.analise_consolidada || consolidated.analise_progresso, pageWidth - 28).length) : 0);
+      if (cursorY < 70) cursorY = 70;
+
+      // Distribuição de Percentuais
+      if (consolidated.distribuicao_percentuais) {
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(13);
+        pdf.text('Distribuição dos Percentuais', 14, cursorY);
+        cursorY += 4;
+        autoTable(pdf, {
+          startY: cursorY,
+          head: [['Mínimo', 'Máximo', 'Média', 'Desvio']],
+          body: [[
+            `${consolidated.distribuicao_percentuais.minimo ?? '-'}`,
+            `${consolidated.distribuicao_percentuais.maximo ?? '-'}`,
+            `${consolidated.distribuicao_percentuais.media ?? '-'}`,
+            `${consolidated.distribuicao_percentuais.desvio_padrao ?? '-'}`
+          ]],
+          styles: { fontSize: 10 },
+          headStyles: { fillColor: [25, 118, 210] }
+        });
+        cursorY = pdf.lastAutoTable.finalY + 8;
+      }
+
+      // Conformidade Geral
+      const conf = consolidated.conformidade_geral || consolidated.conformidade;
+      if (conf) {
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(13);
+        pdf.text('Conformidade', 14, cursorY);
+        cursorY += 4;
+        autoTable(pdf, {
+          startY: cursorY,
+          head: [['Estrutura', 'Dimensões', 'Acabamento', 'Posicionamento']],
+          body: [[
+            conf.estrutura ?? 'não_identificado',
+            conf.dimensoes ?? 'não_identificado',
+            conf.acabamento ?? 'não_identificado',
+            conf.posicionamento ?? 'não_identificado'
+          ]],
+          styles: { fontSize: 10 },
+          headStyles: { fillColor: [25, 118, 210] }
+        });
+        cursorY = pdf.lastAutoTable.finalY + 8;
+      }
+
+      // Problemas consolidados / detectados
+      const problemas = consolidated.problemas_consolidados || consolidated.problemas_detectados || [];
+      if (problemas.length > 0) {
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(13);
+        pdf.text('Problemas Detectados', 14, cursorY);
+        cursorY += 4;
+        autoTable(pdf, {
+          startY: cursorY,
+          head: [['Tipo', 'Descrição', 'Severidade', 'Frequência / Pares']],
+          body: problemas.map(p => [
+            p.tipo || '-', 
+            p.descricao || '-', 
+            p.severidade || '-', 
+            p.frequencia ? `${p.frequencia} ${p.fotos_afetadas ? `(${p.fotos_afetadas.join(',')})` : ''}` : '-'
+          ]),
+          styles: { fontSize: 10, cellWidth: 'wrap' },
+          headStyles: { fillColor: [25, 118, 210] },
+          columnStyles: { 1: { cellWidth: 120 } }
+        });
+        cursorY = pdf.lastAutoTable.finalY + 8;
+      }
+
+      // Recomendações
+      const recs = consolidated.recomendacoes_prioritarias || consolidated.recomendacoes || [];
+      if (recs.length > 0) {
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(13);
+        pdf.text('Recomendações', 14, cursorY);
+        cursorY += 4;
+        autoTable(pdf, {
+          startY: cursorY,
+          head: [['Prioridade', 'Ação', 'Justificativa']],
+          body: recs.map(r => [r.prioridade || '-', r.acao || '-', r.justificativa || '-']),
+          styles: { fontSize: 10 },
+          headStyles: { fillColor: [25, 118, 210] },
+          columnStyles: { 1: { cellWidth: 100 } }
+        });
+        cursorY = pdf.lastAutoTable.finalY + 8;
+      }
+
+      // Resumo por Par (se houver múltiplos)
+      if (pairs.length > 0) {
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(13);
+        pdf.text('Resumo por Par', 14, cursorY);
+        cursorY += 4;
+        autoTable(pdf, {
+          startY: cursorY,
+          head: [['Par', '%', 'Resumo']],
+          body: pairs.map(p => {
+            const d = p.analysis?.data || {};
+            return [
+              String(p.pairIndex),
+              String(d.percentual_conclusao ?? '-'),
+              (d.analise_progresso || '').slice(0, 140)
+            ];
+          }),
+          styles: { fontSize: 10 },
+          headStyles: { fillColor: [25, 118, 210] },
+          columnStyles: { 2: { cellWidth: 130 } }
+        });
+        cursorY = pdf.lastAutoTable.finalY + 8;
+      }
+
+      // Rodapé simples com paginação
+      const pageCount = pdf.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(9);
+        pdf.setTextColor(120);
+        pdf.text(`Projeto: ${projectName}  •  ${date.replace(/-/g,'/')} ${time.replace(/-/g,':')}  •  Página ${i}/${pageCount}`, 14, 290);
+      }
+
+      const fileProject = sanitizeFile(projectName);
+      const filename = `relatorio-${fileProject}-${date}-${time}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      console.error('Erro ao gerar PDF estruturado:', err);
+      alert('Não foi possível gerar o PDF. Tente novamente.');
+    }
+  };
+
   const menuItems = [
     { icon: '🏠', label: 'Home', path: '/home' },
     { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
     { icon: '📊', label: 'Relatórios', path: '/reports' },
     { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' }
   ];
+
+  // Carregar fotos do projeto (definir antes do useEffect para evitar no-use-before-define)
+  const loadPhotos = useCallback(async () => {
+    try {
+      setLoadingPhotos(true);
+
+      // Carregar fotos do BIM (categoria2)
+      const bimPhotosData = await projectService.getProjectPhotosById(projectId, 'categoria2', 50);
+      setBimPhotos(bimPhotosData);
+
+      // Carregar fotos da obra (categoria1)
+      const obraPhotosData = await projectService.getProjectPhotosById(projectId, 'categoria1', 50);
+      setObraPhotos(obraPhotosData);
+
+    } catch (err) {
+      console.error('Erro ao carregar fotos:', err);
+      setError('Erro ao carregar fotos do projeto');
+    } finally {
+      setLoadingPhotos(false);
+    }
+  }, [projectId]);
 
   // Carregar dados do projeto
   useEffect(() => {
@@ -69,28 +275,9 @@ function BimComparison() {
     };
 
     loadProjectData();
-  }, [projectId]);
+  }, [projectId, loadPhotos]);
 
-  // Carregar fotos do projeto
-  const loadPhotos = async () => {
-    try {
-      setLoadingPhotos(true);
-
-      // Carregar fotos do BIM (categoria2)
-      const bimPhotosData = await projectService.getProjectPhotosById(projectId, 'categoria2', 50);
-      setBimPhotos(bimPhotosData);
-
-      // Carregar fotos da obra (categoria1)
-      const obraPhotosData = await projectService.getProjectPhotosById(projectId, 'categoria1', 50);
-      setObraPhotos(obraPhotosData);
-
-    } catch (err) {
-      console.error('Erro ao carregar fotos:', err);
-      setError('Erro ao carregar fotos do projeto');
-    } finally {
-      setLoadingPhotos(false);
-    }
-  };
+  // Carregar fotos do projeto (mantido para referência do local anterior)
 
   // Toggle seleção de foto BIM (permite múltiplas)
   const toggleBimPhotoSelection = (photo) => {
@@ -343,173 +530,6 @@ function BimComparison() {
         clearInterval(progressTimerRef.current);
         progressTimerRef.current = null;
       }
-    }
-  };
-
-  // Consolidar comparações de pares
-  const consolidatePairComparisons = async (pairComparisons, userContext) => {
-    try {
-      console.log('🔄 INICIANDO CONSOLIDAÇÃO DE PARES...');
-      console.log('📊 PARES RECEBIDOS:', JSON.stringify(pairComparisons, null, 2));
-      
-      // Preparar resumo das comparações
-      const pairSummaries = pairComparisons.map((pair) => {
-        if (!pair.analysis.success) {
-          return `PAR ${pair.pairIndex}: Erro na análise - ${pair.analysis.error}`;
-        }
-
-        const data = pair.analysis.data;
-        return `
-PAR ${pair.pairIndex}:
-- BIM: ${pair.bimPhoto.fileName}
-- Obra: ${pair.obraPhoto.fileName}
-- Percentual: ${data.percentual_conclusao}%
-- Análise: ${data.analise_progresso}
-- Problemas: ${data.problemas_detectados?.length || 0}
-- Conformidade: ${data.conformidade?.estrutura || 'não_identificado'}
-`;
-      }).join('\n---\n');
-
-      // Prompt para consolidação de pares
-      const prompt = `Você é um engenheiro civil especialista. Você recebeu análises de ${pairComparisons.length} comparações PAREADAS entre modelos BIM e fotos da obra.
-
-Cada PAR compara UMA foto BIM específica com UMA foto da obra correspondente.
-
-Sua tarefa é CONSOLIDAR todas essas comparações pareadas em um RELATÓRIO ÚNICO.${userContext ? `\n\nCONTEXTO: ${userContext}` : ''}
-
-COMPARAÇÕES PAREADAS:
-${pairSummaries}
-
-Consolide e retorne APENAS JSON no formato:
-{
-  "percentual_conclusao_geral": <média dos percentuais>,
-  "analise_consolidada": "<síntese de todos os pares>",
-  "distribuicao_percentuais": {
-    "minimo": <menor %>,
-    "maximo": <maior %>,
-    "media": <média>,
-    "desvio_padrao": <desvio>
-  },
-  "problemas_consolidados": [
-    {
-      "tipo": "<tipo>",
-      "descricao": "<descrição>",
-      "severidade": "<baixa|média|alta>",
-      "pares_afetados": [<índices dos pares>]
-    }
-  ],
-  "conformidade_geral": {
-    "estrutura": "<conforme|parcialmente_conforme|não_conforme>",
-    "dimensoes": "<conforme|parcialmente_conforme|não_conforme>",
-    "acabamento": "<conforme|parcialmente_conforme|não_conforme>",
-    "posicionamento": "<conforme|parcialmente_conforme|não_conforme>"
-  },
-  "areas_criticas": ["<áreas problemáticas>"],
-  "pontos_positivos": ["<aspectos bem executados>"],
-  "observacoes_gerais": "<síntese geral>",
-  "recomendacoes_prioritarias": [
-    {
-      "prioridade": "<alta|média|baixa>",
-      "acao": "<descrição>",
-      "justificativa": "<por que>"
-    }
-  ]
-}`;
-
-      console.log('🚀 ENVIANDO REQUISIÇÃO DE CONSOLIDAÇÃO...');
-      console.log('📝 PROMPT DE CONSOLIDAÇÃO (primeiros 1000 chars):', prompt.substring(0, 1000));
-
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.REACT_APP_GOOGLE_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 8192,  // Aumentado para evitar truncamento
-            responseMimeType: "application/json"
-          }
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Erro na API do Gemini (consolidação):', errorData);
-        throw new Error('Erro na consolidação');
-      }
-
-      const data = await response.json();
-      
-      console.log('📦 RESPOSTA DA API DE CONSOLIDAÇÃO:', JSON.stringify(data, null, 2));
-      
-      // Validar estrutura da resposta
-      if (!data.candidates || data.candidates.length === 0) {
-        throw new Error('Nenhuma resposta foi gerada pela IA na consolidação');
-      }
-
-      if (!data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
-        console.error('Estrutura de resposta inválida na consolidação:', data);
-        throw new Error('Resposta da IA com estrutura inválida');
-      }
-
-      const textResponse = data.candidates[0].content.parts[0].text;
-
-      console.log('📝 TEXTO DA RESPOSTA DE CONSOLIDAÇÃO (primeiros 500 chars):', textResponse.substring(0, 500));
-
-      // Parse e limpeza
-      let cleanedText = textResponse.trim()
-        .replace(/^```json\s*/gmi, '')
-        .replace(/^```\s*/gm, '')
-        .replace(/```\s*$/gm, '');
-
-      const jsonStartIndex = cleanedText.indexOf('{');
-      if (jsonStartIndex > 0) cleanedText = cleanedText.substring(jsonStartIndex);
-
-      const jsonEndIndex = cleanedText.lastIndexOf('}');
-      if (jsonEndIndex > 0 && jsonEndIndex < cleanedText.length - 1) {
-        cleanedText = cleanedText.substring(0, jsonEndIndex + 1);
-      }
-
-      console.log('🧹 TEXTO CONSOLIDADO LIMPO (primeiros 500 chars):', cleanedText.substring(0, 500));
-
-      const consolidatedResult = JSON.parse(cleanedText.trim());
-
-      console.log('✅ CONSOLIDAÇÃO PARSEADA COM SUCESSO!');
-      console.log('📊 RESULTADO CONSOLIDADO PARSEADO:', JSON.stringify(consolidatedResult, null, 2));
-
-      return {
-        success: true,
-        data: consolidatedResult,
-        timestamp: new Date().toISOString()
-      };
-
-    } catch (error) {
-      console.error('❌ ERRO NA CONSOLIDAÇÃO:', error);
-      console.error('🔍 DETALHES DO ERRO:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
-      
-      // Fallback: consolidação manual
-      console.log('🔄 USANDO CONSOLIDAÇÃO MANUAL (FALLBACK)');
-      const validPairs = pairComparisons.filter(p => p.analysis.success);
-      const percentuais = validPairs.map(p => p.analysis.data.percentual_conclusao);
-      const media = percentuais.length > 0 
-        ? Math.round(percentuais.reduce((sum, p) => sum + p, 0) / percentuais.length)
-        : 0;
-
-      return {
-        success: true,
-        data: {
-          percentual_conclusao_geral: media,
-          analise_consolidada: `Análise baseada em ${pairComparisons.length} pares de comparação.`,
-          distribuicao_percentuais: {
-            minimo: Math.min(...percentuais),
-            maximo: Math.max(...percentuais),
-            media: media,
-            desvio_padrao: 0
-          },
-          observacoes_gerais: 'Consolidação automática. Veja análises individuais dos pares.'
-        },
-        timestamp: new Date().toISOString()
-      };
     }
   };
 
@@ -805,7 +825,17 @@ Consolide e retorne APENAS JSON no formato:
             
             return (
               <section className="results-section">
-                <h2>📊 Resultados da Análise</h2>
+                <div className="results-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+                  <h2 style={{ margin: 0 }}>📊 Resultados da Análise</h2>
+                  <button
+                    onClick={handleDownloadPdf}
+                    className="btn-download-pdf"
+                    title="Baixar relatório em PDF"
+                    style={{ padding: '8px 12px', borderRadius: 6, border: 'none', background: '#1976D2', color: '#fff', cursor: 'pointer' }}
+                  >
+                    ⬇️ Baixar PDF
+                  </button>
+                </div>
                 {isPairAnalysis && comparisonResult.totalPairs > 1 && (
                   <p className="analysis-type-badge">
                     🔄 Análise em Pares - {comparisonResult.totalPairs} comparações realizadas
