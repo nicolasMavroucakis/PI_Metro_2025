@@ -4,23 +4,23 @@ import Layout from '../components/Layout';
 import reportService from '../services/reportService';
 import '../Style/BimComparison.css';
 import {
-  MdArrowBack,
-  MdDescription,
-  MdAssessment,
-  MdTrendingUp,
-  MdBarChart,
-  MdRule,
-  MdReportProblem,
-  MdCheckCircle,
-  MdCancel,
-  MdWarningAmber,
-  MdLightbulb,
-  MdArchitecture,
-  MdConstruction,
-  MdCompareArrows,
-  MdImage,
-  MdHelpOutline
-} from 'react-icons/md';
+  ArrowLeft,
+  ScrollText,
+  FileText,
+  TrendingUp,
+  BarChart3,
+  Ruler,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Lightbulb,
+  Building2,
+  HardHat,
+  ArrowLeftRight,
+  Image,
+  HelpCircle
+} from 'lucide-react';
 
 function ReportDetails() {
   const { reportId } = useParams();
@@ -98,14 +98,14 @@ function ReportDetails() {
   const getConformityIcon = (status) => {
     switch (status?.toLowerCase()) {
       case 'conforme':
-        return <MdCheckCircle />;
+        return <CheckCircle className="conformity-icon-success" />;
       case 'não_conforme':
       case 'nao_conforme':
-        return <MdCancel />;
+        return <XCircle className="conformity-icon-danger" />;
       case 'parcialmente_conforme':
-        return <MdWarningAmber />;
+        return <AlertCircle className="conformity-icon-warning" />;
       default:
-        return <MdHelpOutline />;
+        return <HelpCircle className="conformity-icon-default" />;
     }
   };
 
@@ -141,9 +141,9 @@ function ReportDetails() {
     return (
       <Layout menuItems={menuItems}>
         <div className="report-details-error">
-          <h2><MdCancel style={{ verticalAlign: 'middle', marginRight: 6 }} /> {error || 'Relatório não encontrado'}</h2>
+          <h2><XCircle size={24} style={{ verticalAlign: 'middle', marginRight: 6 }} /> {error || 'Relatório não encontrado'}</h2>
           <button onClick={handleBack} className="btn-back">
-            <MdArrowBack style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar para Relatórios
+            <ArrowLeft size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar para Relatórios
           </button>
         </div>
       </Layout>
@@ -166,11 +166,11 @@ function ReportDetails() {
               className="back-button"
               onClick={handleBack}
             >
-              <MdArrowBack style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
+              <ArrowLeft size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
             </button>
-            <h1><MdDescription style={{ verticalAlign: 'middle', marginRight: 6 }} /> Relatório de Análise BIM</h1>
+            <h1><ScrollText size={28} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Relatório de Análise BIM</h1>
             <span className={`status-badge ${report.status}`}>
-              {report.status === 'success' ? (<><MdCheckCircle style={{ verticalAlign: 'middle', marginRight: 4 }} /> Sucesso</>) : (<><MdCancel style={{ verticalAlign: 'middle', marginRight: 4 }} /> Falha</>)}
+              {report.status === 'success' ? (<><CheckCircle size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} /> Sucesso</>) : (<><XCircle size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} /> Falha</>)}
             </span>
           </div>
         </header>
@@ -179,7 +179,7 @@ function ReportDetails() {
           {/* Resultados da Análise */}
           {report.status === 'success' && analysis ? (
             <section className="results-section">
-              <h2><MdAssessment style={{ verticalAlign: 'middle', marginRight: 6 }} /> Resultados da Análise</h2>
+              <h2><FileText size={24} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Resultados da Análise</h2>
               
               {/* Informações do Relatório */}
               <div className="report-info-card">
@@ -206,20 +206,20 @@ function ReportDetails() {
               {/* Contexto do Usuário */}
               {report.userContext && (
                 <div className="context-info-card">
-                  <h4><MdDescription style={{ verticalAlign: 'middle', marginRight: 6 }} /> Contexto Adicional</h4>
+                  <h4><ScrollText size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Contexto Adicional</h4>
                   <p>{report.userContext}</p>
                 </div>
               )}
               {isPairAnalysis && totalPairs > 1 && (
                 <p className="analysis-type-badge">
-                  <MdCompareArrows style={{ verticalAlign: 'middle', marginRight: 6 }} /> Análise em Pares - {totalPairs} comparações realizadas
+                  <ArrowLeftRight size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Análise em Pares - {totalPairs} comparações realizadas
                 </p>
               )}
 
               {/* Progresso Geral */}
               <div className="result-card progress-card">
                 <div className="card-header">
-                  <h3><MdTrendingUp style={{ verticalAlign: 'middle', marginRight: 6 }} /> Progresso da Obra {isPairAnalysis && totalPairs > 1 && '(Consolidado)'}</h3>
+                  <h3><TrendingUp size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Progresso da Obra {isPairAnalysis && totalPairs > 1 && '(Consolidado)'}</h3>
                 </div>
                 <div className="progress-content">
                   <div className="progress-circle-large">
@@ -261,7 +261,7 @@ function ReportDetails() {
               {isPairAnalysis && totalPairs > 1 && consolidatedData.distribuicao_percentuais && (
                 <div className="result-card distribution-card">
                   <div className="card-header">
-                    <h3><MdBarChart style={{ verticalAlign: 'middle', marginRight: 6 }} /> Distribuição dos Percentuais</h3>
+                    <h3><BarChart3 size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Distribuição dos Percentuais</h3>
                   </div>
                   <div className="distribution-grid">
                     <div className="distribution-item">
@@ -288,7 +288,7 @@ function ReportDetails() {
               {(consolidatedData.conformidade_geral || consolidatedData.conformidade) && (
                 <div className="result-card conformity-card">
                   <div className="card-header">
-                    <h3><MdRule style={{ verticalAlign: 'middle', marginRight: 6 }} /> Análise de Conformidade {isPairAnalysis && totalPairs > 1 && '(Geral)'}</h3>
+                    <h3><Ruler size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Análise de Conformidade {isPairAnalysis && totalPairs > 1 && '(Geral)'}</h3>
                   </div>
                   <div className="conformity-grid">
                     <div className="conformity-item">
@@ -327,7 +327,7 @@ function ReportDetails() {
               {isPairAnalysis && totalPairs > 1 && consolidatedData.areas_criticas && consolidatedData.areas_criticas.length > 0 && (
                 <div className="result-card critical-areas-card">
                   <div className="card-header">
-                    <h3><MdReportProblem style={{ verticalAlign: 'middle', marginRight: 6 }} /> Áreas Críticas</h3>
+                    <h3><AlertTriangle size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Áreas Críticas</h3>
                   </div>
                   <ul className="critical-areas-list">
                     {consolidatedData.areas_criticas.map((area, index) => (
@@ -341,7 +341,7 @@ function ReportDetails() {
               {isPairAnalysis && totalPairs > 1 && consolidatedData.pontos_positivos && consolidatedData.pontos_positivos.length > 0 && (
                 <div className="result-card positive-points-card">
                   <div className="card-header">
-                    <h3><MdCheckCircle style={{ verticalAlign: 'middle', marginRight: 6 }} /> Pontos Positivos</h3>
+                    <h3><CheckCircle size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Pontos Positivos</h3>
                   </div>
                   <ul className="positive-points-list">
                     {consolidatedData.pontos_positivos.map((ponto, index) => (
@@ -356,7 +356,7 @@ function ReportDetails() {
                (consolidatedData.problemas_consolidados || consolidatedData.problemas_detectados).length > 0 && (
                 <div className="result-card problems-card">
                   <div className="card-header">
-                    <h3><MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 6 }} /> Problemas e Anomalias Detectados</h3>
+                    <h3><AlertCircle size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Problemas e Anomalias Detectados</h3>
                   </div>
                   <div className="problems-list">
                     {(consolidatedData.problemas_consolidados || consolidatedData.problemas_detectados).map((problema, index) => (
@@ -378,7 +378,7 @@ function ReportDetails() {
                           <p>{problema.descricao}</p>
                           {problema.frequencia && (
                             <p className="problem-frequency">
-                              <small><MdBarChart style={{ verticalAlign: 'middle', marginRight: 4 }} /> {problema.frequencia}</small>
+                              <small><BarChart3 size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} /> {problema.frequencia}</small>
                             </p>
                           )}
                           {problema.pares_afetados && (
@@ -398,7 +398,7 @@ function ReportDetails() {
                (consolidatedData.elementos_faltantes_consolidados || consolidatedData.elementos_faltantes).length > 0 && (
                 <div className="result-card missing-elements-card">
                   <div className="card-header">
-                    <h3><MdDescription style={{ verticalAlign: 'middle', marginRight: 6 }} /> Elementos Faltantes</h3>
+                    <h3><ScrollText size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Elementos Faltantes</h3>
                   </div>
                   <ul className="missing-elements-list">
                     {(consolidatedData.elementos_faltantes_consolidados || consolidatedData.elementos_faltantes).map((elemento, index) => (
@@ -412,7 +412,7 @@ function ReportDetails() {
               {consolidatedData.observacoes_gerais && (
                 <div className="result-card observations-card">
                   <div className="card-header">
-                    <h3><MdDescription style={{ verticalAlign: 'middle', marginRight: 6 }} /> Observações Gerais</h3>
+                    <h3><ScrollText size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Observações Gerais</h3>
                   </div>
                   <div className="observations-content">
                     <p>{consolidatedData.observacoes_gerais}</p>
@@ -424,7 +424,7 @@ function ReportDetails() {
               {consolidatedData.justificativa_percentual && (
                 <div className="result-card justification-card">
                   <div className="card-header">
-                    <h3><MdDescription style={{ verticalAlign: 'middle', marginRight: 6 }} /> Justificativa do Percentual</h3>
+                    <h3><ScrollText size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Justificativa do Percentual</h3>
                   </div>
                   <div className="justification-content">
                     <p style={{ fontStyle: 'italic' }}>{consolidatedData.justificativa_percentual}</p>
@@ -437,7 +437,7 @@ function ReportDetails() {
                 (consolidatedData.recomendacoes && consolidatedData.recomendacoes.length > 0)) && (
                 <div className="result-card recommendations-card">
                   <div className="card-header">
-                    <h3><MdLightbulb style={{ verticalAlign: 'middle', marginRight: 6 }} /> Recomendações {isPairAnalysis && totalPairs > 1 && 'Prioritárias'}</h3>
+                    <h3><Lightbulb size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Recomendações {isPairAnalysis && totalPairs > 1 && 'Prioritárias'}</h3>
                   </div>
                   {consolidatedData.recomendacoes_prioritarias ? (
                     <div className="priority-recommendations">
@@ -464,7 +464,7 @@ function ReportDetails() {
               {isPairAnalysis && report.pairComparisons && report.pairComparisons.length > 0 && (
                 <div className="result-card individual-analyses-card">
                   <div className="card-header">
-                    <h3><MdCompareArrows style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparações por Par</h3>
+                    <h3><ArrowLeftRight size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparações por Par</h3>
                   </div>
                   <div className="individual-analyses-grid">
                     {report.pairComparisons.map((pair) => (
@@ -472,14 +472,14 @@ function ReportDetails() {
                         <h4>Par {pair.pairIndex}</h4>
                         <div className="pair-files">
                           <div className="pair-file">
-                            <span className="file-icon"><MdArchitecture /></span>
+                            <span className="file-icon"><Building2 size={18} /></span>
                             <span className="file-name" title={pair.bimPhoto?.fileName || 'BIM'}>
                               {pair.bimPhoto?.fileName ? pair.bimPhoto.fileName.substring(0, 20) + '...' : 'BIM'}
                             </span>
                           </div>
-                          <div className="pair-arrow"><MdCompareArrows /></div>
+                          <div className="pair-arrow"><ArrowLeftRight size={18} /></div>
                           <div className="pair-file">
-                            <span className="file-icon"><MdConstruction /></span>
+                            <span className="file-icon"><HardHat size={18} /></span>
                             <span className="file-name" title={pair.obraPhoto?.fileName || 'Obra'}>
                               {pair.obraPhoto?.fileName ? pair.obraPhoto.fileName.substring(0, 20) + '...' : 'Obra'}
                             </span>
@@ -494,11 +494,11 @@ function ReportDetails() {
                               {pair.analysis.data.analise_progresso?.substring(0, 120)}...
                             </p>
                             <div className="individual-stats">
-                              <span><MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 4 }} /> {pair.analysis.data.problemas_detectados?.length || 0} problemas</span>
+                              <span><AlertCircle size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} /> {pair.analysis.data.problemas_detectados?.length || 0} problemas</span>
                             </div>
                           </>
                         ) : (
-                          <p className="error-message"><MdCancel style={{ verticalAlign: 'middle', marginRight: 4 }} /> {pair.analysis?.error || 'Erro na análise'}</p>
+                          <p className="error-message"><XCircle size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} /> {pair.analysis?.error || 'Erro na análise'}</p>
                         )}
                       </div>
                     ))}
@@ -509,11 +509,11 @@ function ReportDetails() {
               {/* Imagens Analisadas */}
               <div className="result-card images-card">
                 <div className="card-header">
-                  <h3><MdImage style={{ verticalAlign: 'middle', marginRight: 6 }} /> Imagens Analisadas ({totalPairs} Par{totalPairs > 1 ? 'es' : ''})</h3>
+                  <h3><Image size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Imagens Analisadas ({totalPairs} Par{totalPairs > 1 ? 'es' : ''})</h3>
                 </div>
                 <div className="compared-images">
                   <div className="compared-image-item">
-                    <h4><MdArchitecture style={{ verticalAlign: 'middle', marginRight: 6 }} /> Modelos BIM ({report.bimImages ? report.bimImages.length : (report.bimImage ? 1 : 0)})</h4>
+                    <h4><Building2 size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Modelos BIM ({report.bimImages ? report.bimImages.length : (report.bimImage ? 1 : 0)})</h4>
                     <div className="multiple-images-preview">
                       {report.bimImages && Array.isArray(report.bimImages) && report.bimImages.length > 0 ? (
                         <>
@@ -544,12 +544,12 @@ function ReportDetails() {
                           }}
                         />
                       ) : (
-                        <p className="no-images-text"><MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 6 }} /> Sem imagens BIM disponíveis</p>
+                        <p className="no-images-text"><AlertCircle size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Sem imagens BIM disponíveis</p>
                       )}
                     </div>
                   </div>
                   <div className="compared-image-item">
-                    <h4><MdConstruction style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra ({report.obraImages ? report.obraImages.length : (report.obraImage ? 1 : 0)})</h4>
+                    <h4><HardHat size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra ({report.obraImages ? report.obraImages.length : (report.obraImage ? 1 : 0)})</h4>
                     <div className="multiple-images-preview">
                       {report.obraImages && Array.isArray(report.obraImages) && report.obraImages.length > 0 ? (
                         <>
@@ -580,7 +580,7 @@ function ReportDetails() {
                           }}
                         />
                       ) : (
-                        <p className="no-images-text"><MdWarningAmber style={{ verticalAlign: 'middle', marginRight: 6 }} /> Sem fotos da obra disponíveis</p>
+                        <p className="no-images-text"><AlertCircle size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Sem fotos da obra disponíveis</p>
                       )}
                     </div>
                   </div>
@@ -589,7 +589,7 @@ function ReportDetails() {
             </section>
           ) : (
             <div className="error-message">
-              <p><MdCancel style={{ verticalAlign: 'middle', marginRight: 6 }} /> Não foi possível carregar os resultados da análise</p>
+              <p><XCircle size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Não foi possível carregar os resultados da análise</p>
             </div>
           )}
         </main>

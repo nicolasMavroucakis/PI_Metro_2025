@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import MetroLogo from '../assets/metro.png';
 import { 
-  MdHome,
-  MdPeople,
-  MdAssessment,
-  MdAddCircleOutline,
-  MdChevronRight
-} from 'react-icons/md';
+  Home,
+  Users,
+  FileText,
+  PlusCircle,
+  ChevronRight
+} from 'lucide-react';
 
 const Sidebar = ({ 
   menuItems = [],
@@ -43,19 +43,19 @@ const Sidebar = ({
     const key = (item.label || '').toLowerCase();
     switch (key) {
       case 'home':
-        return <MdHome size={26} />;
+        return <Home size={22} strokeWidth={2} />;
       case 'gerenciamento de usuários':
       case 'usuários':
       case 'usuarios':
-        return <MdPeople size={26} />;
+        return <Users size={22} strokeWidth={2} />;
       case 'relatórios':
       case 'relatorios':
-        return <MdAssessment size={26} />;
+        return <FileText size={22} strokeWidth={2} />;
       case 'adicionar projeto':
       case 'novo projeto':
-        return <MdAddCircleOutline size={26} />;
+        return <PlusCircle size={22} strokeWidth={2} />;
       default:
-        return <MdChevronRight size={26} />;
+        return <ChevronRight size={22} strokeWidth={2} />;
     }
   };
 

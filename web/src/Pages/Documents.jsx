@@ -5,20 +5,20 @@ import documentService from '../services/documentService';
 import projectService from '../services/projectService';
 import '../Style/Documents.css';
 import {
-  MdInsertDriveFile,
-  MdPictureAsPdf,
-  MdDescription,
-  MdTableChart,
-  MdImage,
-  MdArchive,
-  MdMovie,
-  MdFolderOpen,
-  MdUpload,
-  MdCheck,
-  MdAssignment,
-  MdArrowBack,
-  MdDelete
-} from 'react-icons/md';
+  File,
+  FileText,
+  ScrollText,
+  Table,
+  Image,
+  Archive,
+  Film,
+  FolderOpen,
+  Upload,
+  Check,
+  ClipboardList,
+  ArrowLeft,
+  Trash2
+} from 'lucide-react';
 
 function Documents() {
   const { projectId } = useParams();
@@ -280,15 +280,15 @@ function Documents() {
 
   const getFileIconComponent = (extension) => {
     const ext = (extension || '').toLowerCase();
-    if (['pdf'].includes(ext)) return <MdPictureAsPdf />;
-    if (['doc', 'docx', 'rtf', 'txt'].includes(ext)) return <MdDescription />;
-    if (['xls', 'xlsx', 'csv'].includes(ext)) return <MdTableChart />;
-    if (['ppt', 'pptx'].includes(ext)) return <MdAssignment />;
-    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(ext)) return <MdImage />;
-    if (['dwg', 'dxf', 'dwf'].includes(ext)) return <MdImage />; // fallback; could be CAD-specific icon
-    if (['zip', 'rar', '7z'].includes(ext)) return <MdArchive />;
-    if (['mp4', 'avi', 'mov', 'wmv'].includes(ext)) return <MdMovie />;
-    return <MdInsertDriveFile />;
+    if (['pdf'].includes(ext)) return <FileText size={20} />;
+    if (['doc', 'docx', 'rtf', 'txt'].includes(ext)) return <ScrollText size={20} />;
+    if (['xls', 'xlsx', 'csv'].includes(ext)) return <Table size={20} />;
+    if (['ppt', 'pptx'].includes(ext)) return <ClipboardList size={20} />;
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(ext)) return <Image size={20} />;
+    if (['dwg', 'dxf', 'dwf'].includes(ext)) return <Image size={20} />; // fallback; could be CAD-specific icon
+    if (['zip', 'rar', '7z'].includes(ext)) return <Archive size={20} />;
+    if (['mp4', 'avi', 'mov', 'wmv'].includes(ext)) return <Film size={20} />;
+    return <File size={20} />;
   };
 
   // Drag and drop
@@ -338,7 +338,7 @@ function Documents() {
               onClick={() => navigate(`/project/${projectId}`)}
               title="Voltar para detalhes do projeto"
             >
-              <MdArrowBack style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
+              <ArrowLeft size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
             </button>
             <h1>Documentos - {project.projectName}</h1>
           </div>
@@ -348,20 +348,20 @@ function Documents() {
               className="action-button primary"
               onClick={() => setShowNewFolderModal(true)}
             >
-              <MdFolderOpen style={{ verticalAlign: 'middle', marginRight: 6 }} /> Nova Pasta
+              <FolderOpen size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Nova Pasta
             </button>
             <button 
               className="action-button primary"
               onClick={() => fileInputRef.current?.click()}
             >
-              <MdUpload style={{ verticalAlign: 'middle', marginRight: 6 }} /> Enviar Arquivos
+              <Upload size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Enviar Arquivos
             </button>
             {selectedItems.length > 0 && (
               <button 
                 className="action-button danger"
                 onClick={handleDeleteSelected}
               >
-                <MdDelete style={{ verticalAlign: 'middle', marginRight: 6 }} /> Deletar ({selectedItems.length})
+                <Trash2 size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Deletar ({selectedItems.length})
               </button>
             )}
           </div>
@@ -418,7 +418,7 @@ function Documents() {
               {currentPath !== '' && (
                 <div className="navigation-bar">
                   <button className="nav-button" onClick={goBack}>
-                    <MdArrowBack style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
+                    <ArrowLeft size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Voltar
                   </button>
                 </div>
               )}
@@ -446,12 +446,12 @@ function Documents() {
                         toggleItemSelection(folder);
                       }}
                     >
-                      <div className="item-icon"><MdFolderOpen /></div>
+                      <div className="item-icon"><FolderOpen size={24} /></div>
                       <div className="item-info">
                         <div className="item-name">{folder.name}</div>
                         <div className="item-details">Pasta</div>
                       </div>
-                      {isSelected && <div className="selection-indicator"><MdCheck /></div>}
+                      {isSelected && <div className="selection-indicator"><Check size={16} /></div>}
                     </div>
                   );
                 })}
@@ -489,7 +489,7 @@ function Documents() {
                           {new Date(file.lastModified).toLocaleDateString('pt-BR')}
                         </div>
                       </div>
-                      {isSelected && <div className="selection-indicator"><MdCheck /></div>}
+                      {isSelected && <div className="selection-indicator"><Check size={16} /></div>}
                     </div>
                   );
                 })}
@@ -497,7 +497,7 @@ function Documents() {
                 {/* Empty State */}
                 {folders.length === 0 && files.length === 0 && (
                   <div className="empty-state">
-                    <div className="empty-icon"><MdFolderOpen /></div>
+                    <div className="empty-icon"><FolderOpen size={48} /></div>
                     <h3>Pasta vazia</h3>
                     <p>Arraste arquivos aqui ou use o botão "Enviar Arquivos" para adicionar documentos.</p>
                   </div>
@@ -511,7 +511,7 @@ function Documents() {
         {showUploadArea && (
           <div className="upload-overlay">
             <div className="upload-message">
-              <div className="upload-icon"><MdUpload /></div>
+              <div className="upload-icon"><Upload size={48} /></div>
               <h3>Solte os arquivos aqui</h3>
               <p>Os arquivos serão enviados para: {breadcrumb.map(b => b.name).join(' › ')}</p>
             </div>

@@ -4,13 +4,13 @@ import Layout from '../components/Layout';
 import projectService from '../services/projectService';
 import '../Style/Home-new.css';
 import {
-  MdWbSunny,
-  MdPerson,
-  MdSettings,
-  MdConstruction,
-  MdShield,
-  MdLogout
-} from 'react-icons/md';
+  Sun,
+  User,
+  Settings,
+  HardHat,
+  Shield,
+  LogOut
+} from 'lucide-react';
 
 function Home() {
   const navigate = useNavigate();
@@ -133,7 +133,7 @@ function Home() {
           <h1>Home</h1>
           <div className="header-controls">
             <button className="theme-toggle" aria-label="Trocar tema">
-              <MdWbSunny />
+              <Sun size={20} />
             </button>
             
             {/* User Menu com Dropdown */}
@@ -142,13 +142,13 @@ function Home() {
                 className="user-menu"
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               >
-                <MdPerson />
+                <User size={20} />
               </button>
               
               {userDropdownOpen && (
                 <div className="user-dropdown">
                   <div className="user-dropdown-header">
-                    <div className="user-avatar"><MdPerson /></div>
+                    <div className="user-avatar"><User size={24} /></div>
                     <div className="user-info">
                       <strong>{user.name || user.username || 'Usuário'}</strong>
                       <small>{user.email || 'Email não disponível'}</small>
@@ -160,7 +160,7 @@ function Home() {
                   <div className="user-dropdown-items">
                     {user.isAdmin && (
                       <div className="user-dropdown-badge">
-                        <MdShield style={{ verticalAlign: 'middle', marginRight: 6 }} /> Administrador
+                        <Shield size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Administrador
                       </div>
                     )}
                     <button 
@@ -170,13 +170,13 @@ function Home() {
                         navigate('/profile');
                       }}
                     >
-                      <span><MdPerson style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Meu Perfil
+                      <span><User size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Meu Perfil
                     </button>
                     <button 
                       className="user-dropdown-item logout"
                       onClick={handleLogout}
                     >
-                      <span><MdLogout style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Sair
+                      <span><LogOut size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Sair
                     </button>
                   </div>
                 </div>
@@ -184,7 +184,7 @@ function Home() {
             </div>
             
             <button className="settings" aria-label="Configurações">
-              <MdSettings />
+              <Settings size={20} />
             </button>
           </div>
         </header>
@@ -261,7 +261,7 @@ function Home() {
                       />
                       {!hasRealImage(project) && (
                         <div className="construction-icon">
-                          <MdConstruction />
+                          <HardHat size={48} />
                         </div>
                       )}
                     </div>

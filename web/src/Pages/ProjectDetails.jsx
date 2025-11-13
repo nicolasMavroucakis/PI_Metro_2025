@@ -4,14 +4,14 @@ import Layout from '../components/Layout';
 import projectService from '../services/projectService';
 import '../Style/ProjectDetails.css';
 import {
-  MdFolderOpen,
-  MdSmartToy,
-  MdWarningAmber,
-  MdCalendarMonth,
-  MdCameraAlt,
-  MdConstruction,
-  MdArchitecture
-} from 'react-icons/md';
+  FolderOpen,
+  Bot,
+  AlertTriangle,
+  Calendar,
+  Camera,
+  HardHat,
+  Building2
+} from 'lucide-react';
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -406,14 +406,14 @@ function ProjectDetails() {
             onClick={() => navigate(`/project/${projectId}/documents`)}
             title="Ver documentos do projeto"
           >
-            <MdFolderOpen style={{ verticalAlign: 'middle', marginRight: 6 }} /> Documentos
+            <FolderOpen size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Documentos
           </button>
           <button 
             className="bim-comparison-button"
             onClick={() => navigate(`/project/${projectId}/bim-comparison`)}
             title="Comparação BIM com IA - Análise de Progresso e Conformidade"
           >
-            <MdSmartToy style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparação IA
+            <Bot size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Comparação IA
           </button>
         </div>
       </header>
@@ -467,7 +467,7 @@ function ProjectDetails() {
           <div className="captures-card">
             <div className="card-header">
               <h3 className="card-title">Últimas Capturas</h3>
-              <span className="camera-icon"><MdCameraAlt /></span>
+              <span className="camera-icon"><Camera size={20} /></span>
             </div>
             
             {loadingPhotos ? (
@@ -514,7 +514,7 @@ function ProjectDetails() {
           <div className="alerts-card">
             <div className="card-header">
               <h3 className="card-title">Alertas</h3>
-              <span className="alert-icon"><MdWarningAmber /></span>
+              <span className="alert-icon"><AlertTriangle size={20} /></span>
             </div>
             <div className="alerts-content">
               {alerts.length === 0 ? (
@@ -546,7 +546,7 @@ function ProjectDetails() {
           <div className="next-steps-card">
             <div className="card-header">
               <h3 className="card-title">Informações do Projeto</h3>
-              <span className="calendar-icon"><MdCalendarMonth /></span>
+              <span className="calendar-icon"><Calendar size={20} /></span>
             </div>
             <div className="steps-list">
               <div className="step-item active">
@@ -669,7 +669,7 @@ function ProjectDetails() {
             
             <div className="capture-type-options">
               <div className="capture-option">
-                <h4><MdConstruction style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra</h4>
+                <h4><HardHat size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra</h4>
                 <p>Imagens do progresso da construção</p>
                 <input
                   type="file"
@@ -691,7 +691,7 @@ function ProjectDetails() {
               </div>
               
               <div className="capture-option">
-                <h4><MdArchitecture style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos do BIM</h4>
+                <h4><Building2 size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos do BIM</h4>
                 <p>Imagens de modelos e desenhos técnicos</p>
                 <input
                   type="file"
@@ -763,13 +763,13 @@ function ProjectDetails() {
                 className={`filter-button ${photoCategory === 'categoria1' ? 'active' : ''}`}
                 onClick={() => handleFilterPhotos('categoria1')}
               >
-                <MdConstruction style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra
+                <HardHat size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos da Obra
               </button>
               <button 
                 className={`filter-button ${photoCategory === 'categoria2' ? 'active' : ''}`}
                 onClick={() => handleFilterPhotos('categoria2')}
               >
-                <MdArchitecture style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos do BIM
+                <Building2 size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Fotos do BIM
               </button>
             </div>
 

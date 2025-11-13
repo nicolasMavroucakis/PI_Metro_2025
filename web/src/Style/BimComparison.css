@@ -1299,3 +1299,51 @@
   gap: 8px;
 }
 
+/* ============================================
+   LUCIDE ICONS STYLES
+   ============================================ */
+
+/* Animação de spin para ícones de loading */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Cores dos ícones de conformidade */
+.conformity-icon-success {
+  color: #4CAF50 !important;
+}
+
+.conformity-icon-danger {
+  color: #F44336 !important;
+}
+
+.conformity-icon-warning {
+  color: #FF9800 !important;
+}
+
+.conformity-icon-default {
+  color: #9E9E9E !important;
+}
+
+/* Estilo para botões com ícones Lucide */
+.back-button svg,
+.btn-compare svg,
+.btn-reset svg {
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* Lucide icons alignment */
+svg[data-lucide] {
+  display: inline-block;
+  vertical-align: middle;
+}
