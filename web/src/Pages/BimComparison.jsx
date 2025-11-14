@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import PageHeader from '../components/PageHeader/PageHeader';
+import { menuItemsConfig } from '../config/menuItems';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import projectService from '../services/projectService';
@@ -239,12 +240,8 @@ function BimComparison() {
     }
   };
 
-  const menuItems = [
-    { icon: '🏠', label: 'Home', path: '/home' },
-    { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
-    { icon: '📊', label: 'Relatórios', path: '/reports' },
-    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' }
-  ];
+  // Nenhum item de menu ativo nesta página de sub-feature
+  const menuItems = menuItemsConfig.map(item => ({ ...item, active: false }));
 
   // Carregar fotos do projeto (definir antes do useEffect para evitar no-use-before-define)
   const loadPhotos = useCallback(async () => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import PageHeader from '../components/PageHeader/PageHeader';
+import { menuItemsConfig } from '../config/menuItems';
 import userService from '../services/userService';
 import '../Style/Users.css';
 import headerStyles from '../components/PageHeader/PageHeader.module.css';
@@ -35,12 +36,10 @@ function Users() {
     isActive: true
   });
 
-  const menuItems = [
-    { icon: '🏠', label: 'Home', path: '/home' },
-    { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
-    { icon: '📊', label: 'Relatórios', path: '/reports' },
-    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' }
-  ];
+  const usersMenuItems = menuItemsConfig.map(item => ({
+    ...item,
+    active: item.path === '/users'
+  }));
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -195,7 +194,7 @@ function Users() {
 
   if (loading) {
     return (
-      <Layout menuItems={menuItems}>
+      <Layout menuItems={usersMenuItems}>
         <div className="users-loading">
           <p>Carregando usuários...</p>
         </div>
@@ -204,7 +203,7 @@ function Users() {
   }
 
   return (
-    <Layout menuItems={menuItems}>
+    <Layout menuItems={usersMenuItems}>
       <div className="users-container">
         <PageHeader
           title={<><UsersIcon size={28} style={{ verticalAlign: 'middle', marginRight: 10 }} /> Gerenciamento de Usuários</>}

@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader/PageHeader';
 import '../Style/AddProject.css';
 import projectService from '../services/projectService';
 import { PlusCircle } from 'lucide-react';
+import { menuItemsConfig } from '../config/menuItems';
 
 function AddProject() {
   const [formData, setFormData] = useState({
@@ -19,12 +20,10 @@ function AddProject() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const menuItems = [
-    { icon: '🏠', label: 'Home', path: '/home' },
-    { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
-    { icon: '📊', label: 'Relatórios', path: '/reports' },
-    { icon: '➕', label: 'Adicionar Projeto', active: true, path: '/add-project' }
-  ];
+  const addProjectMenuItems = menuItemsConfig.map(item => ({
+    ...item,
+    active: item.path === '/add-project'
+  }));
 
   const statusOptions = [
     { value: '', label: 'Selecione o status' },
@@ -176,7 +175,7 @@ function AddProject() {
   };
 
   return (
-    <Layout menuItems={menuItems}>
+    <Layout menuItems={addProjectMenuItems}>
       <PageHeader
         title={<><PlusCircle size={28} style={{ verticalAlign: 'middle', marginRight: 10 }} /> Adicionar Novo Projeto</>}
         subtitle="Preencha os dados abaixo para cadastrar um novo projeto no sistema."

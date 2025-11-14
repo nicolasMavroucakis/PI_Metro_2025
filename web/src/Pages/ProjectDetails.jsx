@@ -21,6 +21,7 @@ import ViewMorePhotosModal from '../components/ProjectDetails/modals/ViewMorePho
 import UpdateProgressModal from '../components/ProjectDetails/modals/UpdateProgressModal';
 import AddAlertModal from '../components/ProjectDetails/modals/AddAlertModal';
 import ConfirmationModal from '../components/shared/ConfirmationModal/ConfirmationModal';
+import { menuItemsConfig } from '../config/menuItems';
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -103,12 +104,8 @@ function ProjectDetails() {
     setShowProgressModal(true);
   };
 
-  const menuItems = [
-    { icon: '🏠', label: 'Home', path: '/home' },
-    { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
-    { icon: '📊', label: 'Relatórios', path: '/reports' },
-    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' }
-  ];
+  // Nenhuma página específica de detalhes do projeto está ativa, então não marcamos nenhum item.
+  const menuItems = menuItemsConfig.map(item => ({ ...item, active: false }));
 
   const handleNewCapture = () => {
     setShowNewPhotoModal(true);

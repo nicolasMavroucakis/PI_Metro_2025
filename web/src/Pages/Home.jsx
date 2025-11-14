@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import { menuItemsConfig } from '../config/menuItems';
 import projectService from '../services/projectService';
 import '../Style/Home.css';
 import {
@@ -18,6 +19,12 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  // Define o item de menu ativo para a Home
+  const homeMenuItems = menuItemsConfig.map(item => ({
+    ...item,
+    active: item.path === '/home'
+  }));
 
   // Função para capitalizar o status
   const capitalizeStatus = (status) => {
@@ -134,7 +141,7 @@ function Home() {
   }, [userDropdownOpen]);
 
   return (
-    <Layout menuItems={menuItems}>
+    <Layout menuItems={homeMenuItems}>
         <header className="main-header">
           <h1>Home</h1>
           <div className="header-controls">

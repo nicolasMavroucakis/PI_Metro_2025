@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import PageHeader from '../components/PageHeader/PageHeader';
+import { menuItemsConfig } from '../config/menuItems';
 import projectService from '../services/projectService';
 import reportService from '../services/reportService';
 import '../Style/Reports.css';
@@ -32,21 +33,20 @@ function Reports() {
   const [loading, setLoading] = useState(true);
   const [loadingReports, setLoadingReports] = useState(false);
   const [error, setError] = useState(null);
-  
+  const [loadingError, setLoadingError] = useState('');
+
+  // Define o item de menu ativo
+  const reportsMenuItems = menuItemsConfig.map(item => ({
+    ...item,
+    active: item.path === '/reports'
+  }));
+
   // Filtros
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const menuItems = [
-    { icon: <Home size={20} />, label: 'Home', path: '/home' },
-    { icon: <Users size={20} />, label: 'Gerenciamento de Usuários', path: '/users' },
-    { icon: <BarChart3 size={20} />, label: 'Relatórios', path: '/reports' },
-    { icon: <PlusCircle size={20} />, label: 'Adicionar Projeto', path: '/add-project' }
-  ];
-
-  // Carregar lista de projetos
   useEffect(() => {
-    const loadProjects = async () => {
+    const fetchProjects = async () => {
       try {
         setLoading(true);
         const allProjects = await projectService.getAllProjects();
@@ -73,7 +73,7 @@ function Reports() {
       }
     };
 
-    loadProjects();
+    fetchProjects();
   }, [searchParams]);
 
   const loadProjectReports = useCallback(async () => {
@@ -203,7 +203,7 @@ function Reports() {
 
   if (loading) {
     return (
-      <Layout menuItems={menuItems}>
+      <Layout menuItems={reportsMenuItems}>
         <div className="reports-loading">
           <p>Carregando projetos...</p>
         </div>
@@ -212,7 +212,7 @@ function Reports() {
   }
 
   return (
-    <Layout menuItems={menuItems}>
+    <Layout menuItems={reportsMenuItems}>
       <div className="reports-container">
         <PageHeader
           title={<><FileText size={28} style={{ verticalAlign: 'middle', marginRight: 10 }} /> Relatórios de Comparação BIM</>}

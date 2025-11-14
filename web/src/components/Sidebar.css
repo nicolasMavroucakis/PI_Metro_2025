@@ -145,6 +145,11 @@
   justify-self: center; /* centro na coluna fixa de 70px */
 }
 
+.nav-icon svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
 .nav-label {
   font-size: 14px;
   font-weight: 500;
