@@ -1,5 +1,5 @@
 import React from 'react';
-import { HardHat, Building2 } from 'lucide-react';
+import { HardHat, Building2, Trash2 } from 'lucide-react';
 import { formatFileSize } from '../../../utils/formatters';
 import styles from '../../../Style/ProjectDetails.module.css';
 
@@ -10,7 +10,8 @@ const ViewMorePhotosModal = ({
   onFilterPhotos, 
   loadingAllPhotos, 
   allPhotos,
-  getCategoryName
+  getCategoryName,
+  onDeletePhoto
 }) => {
   if (!show) {
     return null;
@@ -85,6 +86,13 @@ const ViewMorePhotosModal = ({
                         onClick={() => window.open(photo.url, '_blank')}
                       >
                         Ver Foto
+                      </button>
+                      <button 
+                        className={`${styles['action-button']} ${styles.small} ${styles.danger}`}
+                        onClick={() => onDeletePhoto(photo)}
+                      >
+                        <Trash2 size={14} style={{ marginRight: '4px' }} />
+                        Apagar
                       </button>
                     </div>
                   </div>

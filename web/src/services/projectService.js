@@ -762,6 +762,33 @@ class ProjectService {
       };
     }
   }
+
+  /**
+   * Apagar uma foto do S3
+   * @param {string} key - A chave do objeto no S3 (ex: 'nome-projeto/fotos/categoria1/foto-123.jpg')
+   * @returns {Promise<Object>} Resultado da operação
+   */
+  async deletePhoto(key) {
+    try {
+      const params = {
+        Bucket: S3_BUCKET,
+        Key: key,
+      };
+
+      await s3.deleteObject(params).promise();
+
+      return {
+        success: true,
+        message: 'Foto apagada com sucesso',
+      };
+    } catch (error) {
+      console.error('Erro ao apagar foto do S3:', error);
+      return {
+        success: false,
+        message: error.message || 'Erro ao apagar foto',
+      };
+    }
+  }
 }
 
 const projectServiceInstance = new ProjectService();

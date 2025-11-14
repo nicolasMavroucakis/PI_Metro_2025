@@ -20,6 +20,7 @@ import NewPhotoModal from '../components/ProjectDetails/modals/NewPhotoModal';
 import ViewMorePhotosModal from '../components/ProjectDetails/modals/ViewMorePhotosModal';
 import UpdateProgressModal from '../components/ProjectDetails/modals/UpdateProgressModal';
 import AddAlertModal from '../components/ProjectDetails/modals/AddAlertModal';
+import ConfirmationModal from '../components/shared/ConfirmationModal/ConfirmationModal';
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -55,6 +56,9 @@ function ProjectDetails() {
   const [newAlertText, setNewAlertText] = useState('');
   const [newAlertLevel, setNewAlertLevel] = useState('amarelo');
   const [addingAlert, setAddingAlert] = useState(false);
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [photoToDelete, setPhotoToDelete] = useState(null);
 
   // Função para atualizar progresso
   const handleUpdateProgress = async () => {
@@ -227,6 +231,40 @@ function ProjectDetails() {
     }
   };
 
+  // Apagar foto
+  const handleDeletePhoto = async () => {
+    if (!photoToDelete) return;
+
+    try {
+      // Chamar serviço para apagar a foto no S3
+      const result = await projectService.deletePhoto(photoToDelete.key);
+
+      if (result.success) {
+        // Remover a foto da lista atual `allPhotos`
+        setAllPhotos(prevPhotos => prevPhotos.filter(p => p.key !== photoToDelete.key));
+        
+        // Opcional: Recarregar dados do projeto para atualizar a visão geral
+        await reloadProjectData();
+
+        alert('Foto apagada com sucesso!');
+      } else {
+        alert(`Erro ao apagar foto: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Erro ao apagar foto:', error);
+      alert('Erro ao apagar foto. Tente novamente.');
+    } finally {
+      setShowConfirmModal(false);
+      setPhotoToDelete(null);
+    }
+  };
+  
+  // Abrir modal de confirmação para apagar foto
+  const requestDeletePhoto = (photo) => {
+    setPhotoToDelete(photo);
+    setShowConfirmModal(true);
+  };
+
   // (removido) handleDeleteAlert não é mais utilizado
 
   // Se estiver carregando
@@ -339,6 +377,7 @@ function ProjectDetails() {
         loadingAllPhotos={loadingAllPhotos}
         allPhotos={allPhotos}
         getCategoryName={getCategoryName}
+        onDeletePhoto={requestDeletePhoto}
       />
 
       {/* Modal de Atualização de Progresso */}
@@ -363,6 +402,15 @@ function ProjectDetails() {
         setNewAlertText={setNewAlertText}
         newAlertLevel={newAlertLevel}
         setNewAlertLevel={setNewAlertLevel}
+      />
+
+      {/* Modal de Confirmação de Exclusão */}
+      <ConfirmationModal
+        show={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleDeletePhoto}
+        title="Confirmar Exclusão"
+        message={`Tem certeza que deseja apagar a foto "${photoToDelete?.fileName}"? Esta ação não pode ser desfeita.`}
       />
     </Layout>
   );

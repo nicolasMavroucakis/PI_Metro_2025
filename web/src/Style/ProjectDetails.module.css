@@ -343,8 +343,19 @@
 }
 
 .action-button.small {
-  padding: 6px 12px;
-  font-size: 12px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.action-button.danger {
+  background-color: #f44336;
+  border-color: #d32f2f;
+  color: white;
+}
+
+.action-button.danger:hover {
+  background-color: #d32f2f;
+  border-color: #c62828;
 }
 
 .action-button:disabled {
