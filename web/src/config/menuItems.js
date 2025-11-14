@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Users, FileText, PlusCircle } from 'lucide-react';
+import { Home, Users, BarChart3, PlusCircle } from 'lucide-react';
 
 export const menuItemsConfig = [
   { 
@@ -13,7 +13,7 @@ export const menuItemsConfig = [
     path: '/users' 
   },
   { 
-    icon: <FileText size={22} strokeWidth={2} />, 
+    icon: <BarChart3 size={22} strokeWidth={2} />, 
     label: 'Relatórios', 
     path: '/reports' 
   },

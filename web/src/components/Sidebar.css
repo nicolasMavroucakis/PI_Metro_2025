@@ -104,10 +104,9 @@
 
 .nav-item {
   display: grid;
-  grid-template-columns: 70px 1fr; /* coluna fixa do ícone + coluna do rótulo */
-  column-gap: 12px;
-  align-items: center; /* vertical center */
-  padding: 15px 20px 15px 0; /* sem padding à esquerda */
+  grid-template-columns: 70px 1fr;
+  align-items: center;
+  padding: 15px 20px 15px 0;
   color: white;
   background: none;
   border: none;
@@ -118,7 +117,7 @@
   font-family: inherit;
   text-align: left;
   width: 100%;
-  min-height: 48px; /* altura consistente para centralização perceptível */
+  min-height: 48px;
 }
 
 .nav-item:hover {
@@ -140,9 +139,9 @@
   font-size: 20px;
   text-align: center;
   display: flex;
-  align-items: center;   /* centro vertical do ícone */
-  justify-content: center; /* centro horizontal do ícone */
-  justify-self: center; /* centro na coluna fixa de 70px */
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
 }
 
 .nav-icon svg {
@@ -152,9 +151,9 @@
 
 .nav-label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
-  align-items: center; /* centro vertical do texto */
+  align-items: center;
   opacity: 0;
   transform: translateX(-8px);
   transition: opacity 0.25s ease, transform 0.25s ease;
