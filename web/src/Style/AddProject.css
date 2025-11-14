@@ -1,23 +1,13 @@
 /* Estilos para a página Adicionar Projeto */
 
-.page-header {
+.add-project-header-style {
   background: white;
-  padding: 20px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
-  height: 70px;
-  box-sizing: border-box;
-  border-bottom: 1px solid #e0e0e0;
 }
 
-.page-header h1 {
-  font-size: 28px;
+.add-project-header-style .pageHeader_title,
+.add-project-header-style .pageHeader_subtitle {
   color: #333;
-  font-weight: 600;
-  margin: 0;
 }
 
 .add-project-main {

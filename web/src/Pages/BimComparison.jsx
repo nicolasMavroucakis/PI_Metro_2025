@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import PageHeader from '../components/PageHeader/PageHeader';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import projectService from '../services/projectService';
@@ -633,18 +634,18 @@ function BimComparison() {
   return (
     <Layout menuItems={menuItems}>
       <div className="bim-comparison-container">
-        <header className="bim-comparison-header">
-          <div className="header-content">
-            <button 
-              className="back-button"
-              onClick={() => navigate(`/project/${projectId}`)}
-            >
-              <ArrowLeft size={18} /> Voltar
-            </button>
-            <h1>Comparação BIM com IA</h1>
-            <p className="subtitle">{project?.projectName}</p>
-          </div>
-        </header>
+        <PageHeader
+          title="Comparação BIM com IA"
+          subtitle={project?.projectName}
+          headerStyle="bim-header-style"
+        >
+          <button 
+            className="back-button"
+            onClick={() => navigate(`/project/${projectId}`)}
+          >
+            <ArrowLeft size={18} /> Voltar
+          </button>
+        </PageHeader>
 
         <main className="bim-comparison-main">
           {/* Seção de Seleção de Fotos */}

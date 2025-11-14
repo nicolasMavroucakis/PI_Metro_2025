@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import PageHeader from '../components/PageHeader/PageHeader';
 import userService from '../services/userService';
 import '../Style/Users.css';
+import headerStyles from '../components/PageHeader/PageHeader.module.css';
 import {
   Users as UsersIcon,
   UserPlus,
@@ -204,13 +206,15 @@ function Users() {
   return (
     <Layout menuItems={menuItems}>
       <div className="users-container">
-        <header className="users-header">
-          <h1><UsersIcon size={28} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Gerenciamento de Usuários</h1>
-          <p className="subtitle">Total: {users.length} usuários</p>
-          <button className="btn-create-user" onClick={handleCreateUser}>
+        <PageHeader
+          title={<><UsersIcon size={28} style={{ verticalAlign: 'middle', marginRight: 10 }} /> Gerenciamento de Usuários</>}
+          subtitle={`Total: ${users.length} usuários`}
+          headerStyle="users-header"
+        >
+          <button className={`${headerStyles.pageHeader_button} btn-create-user`} onClick={handleCreateUser}>
             <UserPlus size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Novo Usuário
           </button>
-        </header>
+        </PageHeader>
 
         <main className="users-main">
           {users.length === 0 ? (

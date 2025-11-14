@@ -1,61 +1,46 @@
 /* Estilos para a página de detalhes do projeto */
 
-.project-header {
+/* Aplicação do estilo visual ao header do projeto */
+.projectHeader {
   background: white;
-  padding: 20px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
-  height: 70px;
-  box-sizing: border-box;
-  border-bottom: 1px solid #e0e0e0;
 }
 
-.project-header-actions {
-  display: flex;
-  gap: 10px;
+.projectHeader .pageHeader_title,
+.projectHeader .pageHeader_subtitle {
+  color: #333;
 }
 
-.documents-button {
+/* Botão de Documentos */
+.docsButton {
+  background: transparent;
+  border: 1px solid #1976D2;
+  color: #1976D2;
+}
+.docsButton:hover {
   background: #1976D2;
   color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.documents-button:hover {
-  background: #1565C0;
-}
-
-.bim-comparison-button {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-}
-
-.bim-comparison-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+}
+
+/* Botão de Comparação BIM */
+.bimButton {
+  background: transparent;
+  border: 1px solid #7C3AED;
+  color: #7C3AED;
+}
+.bimButton:hover {
+  background: #7C3AED;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Estilos para o modal de ver mais fotos */
+.photoModal {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Impede o scroll do modal inteiro */
+  height: 80vh; /* Define uma altura fixa para o modal */
 }
 
 /* Estilos para modais de captura */
@@ -212,7 +197,30 @@
 
 /* Conteúdo das capturas */
 .captures-content {
-  min-height: 400px;
+  flex: 1; /* Ocupa o espaço restante */
+  overflow-y: auto; /* Adiciona scroll vertical apenas a esta área */
+  min-height: 0; /* Necessário para o flexbox funcionar corretamente com overflow */
+  padding-right: 15px; /* Espaço para a barra de rolagem não sobrepor o conteúdo */
+  margin-right: -15px; /* Compensa o padding para alinhar o grid */
+}
+
+/* Estilização da barra de rolagem para o catálogo de fotos */
+.captures-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.captures-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.captures-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.captures-content::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
 }
 
 .loading-captures,
@@ -483,7 +491,7 @@
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   color: #333;
   margin: 0 0 20px 0;
@@ -728,7 +736,9 @@
 
 .chart-header {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -1319,3 +1329,58 @@
   }
 }
 
+/* Estilos para o modal de Atualizar Progresso */
+.updateProgressModal {
+  min-width: 450px;
+  max-width: 500px;
+}
+
+.updateProgressModal h3 {
+  text-align: center;
+  margin: 0 0 25px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.progressModalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.progressFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.progressFormGroup label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #1976D2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 90px;
+}

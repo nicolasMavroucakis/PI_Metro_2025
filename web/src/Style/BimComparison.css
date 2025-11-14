@@ -7,34 +7,42 @@
 }
 
 /* Header */
-.bim-comparison-header {
-  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
-  color: white;
-  padding: 25px 40px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.bim-header-style {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
+.bim-header-style .pageHeader_title,
+.bim-header-style .pageHeader_subtitle {
+  color: #333;
+}
+
+.bim-header-style .pageHeader_actions {
+  /* Alinha o botão "Voltar" à esquerda */
+  width: 100%;
+  justify-content: flex-start;
+  order: -1; /* Move os botões para cima do título em layout de coluna */
+  margin-bottom: 15px;
 }
 
 .back-button {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: #333;
+  border: 1px solid #ccc;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  margin-bottom: 15px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateX(-3px);
+  background: #f0f0f0;
+  border-color: #aaa;
 }
 
 .bim-comparison-header h1 {

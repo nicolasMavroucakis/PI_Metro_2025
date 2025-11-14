@@ -257,6 +257,7 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  color: #000; /* Garante que o texto dentro do card seja preto */
 }
 
 .project-main-info {
@@ -292,14 +293,14 @@ html, body {
   margin-bottom: 8px;
 }
 
-.info-label {
+.project-card .info-label {
   font-size: 13px;
   color: #666;
   font-weight: 500;
   min-width: fit-content;
 }
 
-.info-value {
+.project-card .info-value {
   font-size: 13px;
   color: #333;
   font-weight: 600;

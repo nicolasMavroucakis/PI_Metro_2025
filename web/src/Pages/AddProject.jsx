@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import PageHeader from '../components/PageHeader/PageHeader';
 import '../Style/AddProject.css';
 import projectService from '../services/projectService';
+import { PlusCircle } from 'lucide-react';
 
 function AddProject() {
   const [formData, setFormData] = useState({
@@ -175,9 +177,11 @@ function AddProject() {
 
   return (
     <Layout menuItems={menuItems}>
-      <header className="page-header">
-        <h1>Projetos</h1>
-      </header>
+      <PageHeader
+        title={<><PlusCircle size={28} style={{ verticalAlign: 'middle', marginRight: 10 }} /> Adicionar Novo Projeto</>}
+        subtitle="Preencha os dados abaixo para cadastrar um novo projeto no sistema."
+        headerStyle="add-project-header-style"
+      />
       
       <main className="add-project-main">
         <div className="add-project-container">
@@ -265,7 +269,7 @@ function AddProject() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Imagem do Projeto</label>
+              <label className="form-label">Imagem de Capa</label>
               <div 
                 className={`file-upload-area ${dragActive ? 'drag-active' : ''}`}
                 onDragEnter={handleDrag}

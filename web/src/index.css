@@ -9,6 +9,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Removendo a regra global que anula as sombras dos headers */
+/* 
+header {
+  box-shadow: none !important;
+} 
+*/
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

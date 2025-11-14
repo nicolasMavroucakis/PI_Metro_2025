@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
+import PageHeader from '../components/PageHeader/PageHeader';
 import projectService from '../services/projectService';
 import reportService from '../services/reportService';
 import '../Style/Reports.css';
@@ -213,10 +214,11 @@ function Reports() {
   return (
     <Layout menuItems={menuItems}>
       <div className="reports-container">
-        <header className="reports-header">
-          <h1><FileText size={28} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Relatórios de Comparação BIM</h1>
-          <p className="subtitle">Visualize o histórico de análises realizadas com IA</p>
-        </header>
+        <PageHeader
+          title={<><FileText size={28} style={{ verticalAlign: 'middle', marginRight: 10 }} /> Relatórios de Comparação BIM</>}
+          subtitle="Visualize o histórico de análises realizadas com IA"
+          headerStyle="reports-header"
+        />
 
         <main className="reports-main">
           {/* Seletor de Projeto */}
