@@ -246,7 +246,7 @@ function ProjectDetails() {
         // Opcional: Recarregar dados do projeto para atualizar a visão geral
         await reloadProjectData();
 
-        alert('Foto apagada com sucesso!');
+        // alert('Foto apagada com sucesso!'); -> Removido para não exibir pop-up
       } else {
         alert(`Erro ao apagar foto: ${result.message}`);
       }
