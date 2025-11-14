@@ -386,6 +386,12 @@
   background-color: #f5f5f5;
 }
 
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .project-title-section {
   margin-bottom: 30px;
 }
@@ -401,8 +407,8 @@
 .project-content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto auto auto;
-  gap: 40px 40px; /* linha coluna */
+  grid-template-rows: auto auto;
+  gap: 40px;
   align-items: stretch;
 }
 
@@ -435,13 +441,9 @@
 
 /* Widgets que ocupam linha completa */
 .chart-section {
-  grid-column: 1 / -1; /* Ocupa toda a largura */
-  grid-row: 3;
-  margin-top: -20px; /* Reduz distância dos widgets acima */
-  margin-bottom: 15px;
+  margin-top: 40px;
 }
 
-/* .new-capture-section removida - botão movido para widget de capturas */
 
 /* Estilo para widgets menores */
 .alerts-card,
@@ -483,7 +485,8 @@
 .progress-card,
 .captures-card,
 .alerts-card,
-.next-steps-card {
+.next-steps-card,
+.chart-section {
   background: white;
   border-radius: 12px;
   padding: 25px;
@@ -496,7 +499,8 @@
 .progress-card:hover,
 .captures-card:hover,
 .alerts-card:hover,
-.next-steps-card:hover {
+.next-steps-card:hover,
+.chart-section:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
@@ -562,8 +566,6 @@
   font-weight: 700;
   color: #1976D2;
 }
-
-/* .progress-status removido - não será mais usado */
 
 /* Últimas Capturas */
 .captures-grid {
@@ -734,15 +736,6 @@
 
 .view-more-btn:hover {
   background: #1565C0;
-}
-
-/* Seção do Gráfico */
-.chart-section {
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  /* margin-bottom removido - será controlado pelo grid */
 }
 
 .chart-header {

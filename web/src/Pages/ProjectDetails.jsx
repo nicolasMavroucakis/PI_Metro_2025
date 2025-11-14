@@ -333,8 +333,6 @@ function ProjectDetails() {
       <ProjectHeader projectId={projectId} projectName={project?.projectName} />
       
       <main className={styles['project-details-main']}>
-        {/* O título h2 foi removido daqui pois agora está no header */}
-
         <div className={styles['project-content-grid']}>
           {/* Progresso da Obra */}
           <ProgressCard project={project} onUpdateProgress={handleOpenProgressModal} />
@@ -356,7 +354,6 @@ function ProjectDetails() {
 
         {/* Gráfico de Progresso */}
         <ProgressChart chartData={chartData} onGenerateReport={handleGenerateReport} />
-
       </main>
 
       {/* Modal de Nova Foto */}
