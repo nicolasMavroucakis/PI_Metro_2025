@@ -1125,11 +1125,11 @@
   gap: 15px;
   margin-top: 15px;
   margin-bottom: 25px;
-  width: 100%;
+  justify-content: center; /* Centraliza os botões */
 }
 
 .alert-level-btn {
-  flex: 1;
+  flex: 0 1 120px; /* Define uma largura base para os botões e evita que estiquem */
   padding: 18px 12px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
@@ -1193,6 +1193,7 @@
   font-weight: 600;
   color: #333;
   font-size: 15px;
+  text-align: center; /* Centraliza o título */
 }
 
 .alert-textarea {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import projectService from '../services/projectService';
-import '../Style/Home-new.css';
+import '../Style/Home.css';
 import {
   Sun,
   User,
@@ -18,6 +18,12 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  // Função para capitalizar o status
+  const capitalizeStatus = (status) => {
+    if (!status) return 'N/A';
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
 
   // Carregar projetos do DynamoDB
   useEffect(() => {
@@ -170,13 +176,13 @@ function Home() {
                         navigate('/profile');
                       }}
                     >
-                      <span><User size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Meu Perfil
+                      <span><User size={16} /></span> Meu Perfil
                     </button>
                     <button 
                       className="user-dropdown-item logout"
                       onClick={handleLogout}
                     >
-                      <span><LogOut size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} /></span> Sair
+                      <span><LogOut size={16} /></span> Sair
                     </button>
                   </div>
                 </div>
@@ -279,7 +285,7 @@ function Home() {
                           </div>
                           <div className="info-row">
                             <span className="info-label">Status:</span>
-                            <span className="info-value">{project.status}</span>
+                            <span className="info-value">{capitalizeStatus(project.status)}</span>
                           </div>
                         </div>
                       </div>

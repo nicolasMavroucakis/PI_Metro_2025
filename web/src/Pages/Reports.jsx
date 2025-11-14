@@ -13,7 +13,10 @@ import {
   Bot,
   Search,
   Eye,
-  Trash2
+  Trash2,
+  Home,
+  Users,
+  PlusCircle,
 } from 'lucide-react';
 
 function Reports() {
@@ -34,10 +37,10 @@ function Reports() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const menuItems = [
-    { icon: '🏠', label: 'Home', path: '/home' },
-    { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
-    { icon: '📊', label: 'Relatórios', path: '/reports' },
-    { icon: '➕', label: 'Adicionar Projeto', path: '/add-project' }
+    { icon: <Home size={20} />, label: 'Home', path: '/home' },
+    { icon: <Users size={20} />, label: 'Gerenciamento de Usuários', path: '/users' },
+    { icon: <BarChart3 size={20} />, label: 'Relatórios', path: '/reports' },
+    { icon: <PlusCircle size={20} />, label: 'Adicionar Projeto', path: '/add-project' }
   ];
 
   // Carregar lista de projetos
@@ -127,7 +130,7 @@ function Reports() {
 
   const handleDeleteReport = async (reportId) => {
     const confirmed = window.confirm(
-      '⚠️ Tem certeza que deseja deletar este relatório?\n\nEsta ação não pode ser desfeita.'
+      'Tem certeza que deseja deletar este relatório?\n\nEsta ação não pode ser desfeita.'
     );
     
     if (!confirmed) return;
@@ -138,7 +141,7 @@ function Reports() {
       const result = await reportService.deleteReport(reportId, selectedProject.projectId);
       
       if (result.success) {
-        alert('✅ Relatório deletado com sucesso!');
+        alert('Relatório deletado com sucesso!');
         
         // Recarregar relatórios
         const reportsData = await reportService.getProjectReports(selectedProject.projectId);
@@ -155,11 +158,11 @@ function Reports() {
           });
         }
       } else {
-        alert(`❌ Erro ao deletar relatório: ${result.message}`);
+        alert(`Erro ao deletar relatório: ${result.message}`);
       }
     } catch (err) {
       console.error('Erro ao deletar relatório:', err);
-      alert('❌ Erro ao deletar relatório. Tente novamente.');
+      alert('Erro ao deletar relatório. Tente novamente.');
     } finally {
       setLoadingReports(false);
     }
@@ -400,7 +403,7 @@ function Reports() {
           {/* Mensagem inicial quando nenhum projeto selecionado */}
           {!selectedProject && !loading && (
             <div className="no-selection">
-              <div className="no-selection-icon">🔍</div>
+              <div className="no-selection-icon"><Search size={48} color="#666" /></div>
               <h3>Selecione um projeto</h3>
               <p>Escolha um projeto acima para visualizar seus relatórios de comparação BIM.</p>
             </div>

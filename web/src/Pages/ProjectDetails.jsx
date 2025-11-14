@@ -491,7 +491,7 @@ function ProjectDetails() {
                 </div>
                 
                 <p className="last-capture">
-                  {capturePhotos.length} foto{capturePhotos.length !== 1 ? 's' : ''} disponível{capturePhotos.length !== 1 ? 'is' : ''}
+                  {capturePhotos.length} {capturePhotos.length !== 1 ? 'fotos' : 'foto'} {capturePhotos.length !== 1 ? 'disponíveis' : 'disponível'}
                 </p>
               </>
             ) : (
