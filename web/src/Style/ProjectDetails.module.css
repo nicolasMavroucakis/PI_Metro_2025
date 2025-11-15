@@ -481,11 +481,11 @@
   }
 }
 
-/* Cards base */
+/* Base dos cards */
 .progress-card,
 .captures-card,
 .alerts-card,
-.next-steps-card,
+.info-card, /* Adicionado para consistência */
 .chart-section {
   background: white;
   border-radius: 12px;
@@ -858,23 +858,20 @@
   .project-details-main {
     padding: 20px;
   }
-  
   .project-content-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: 1fr; /* Passa para 1 coluna em tablets */
     gap: 20px;
   }
-  
-  .project-header {
-    padding: 15px 20px;
-    height: 65px;
+  .progress-card,
+  .captures-card,
+  .alerts-card,
+  .info-card {
+    grid-column: auto; /* Reseta o posicionamento explícito no grid */
+    grid-row: auto;
+    min-height: auto; /* Remove altura mínima para empilhamento */
   }
-  
-  .project-header h1 {
-    font-size: 24px;
-  }
-  
-  .project-main-title {
-    font-size: 22px;
+  .chart-section {
+    margin-top: 0; /* Remove margem extra, o gap cuidará do espaçamento */
   }
 }
 
@@ -927,7 +924,7 @@
 /* Small Mobile */
 @media (max-width: 480px) {
   .project-details-main {
-    padding: 10px;
+    padding: 15px;
   }
   
   .progress-card,
@@ -935,7 +932,7 @@
   .alerts-card,
   .next-steps-card,
   .chart-section {
-    padding: 15px;
+    padding: 20px;
   }
   
   .project-main-title {
@@ -956,7 +953,7 @@
   }
   
   .captures-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas para imagens no mobile */
   }
   
   .chart-legend {

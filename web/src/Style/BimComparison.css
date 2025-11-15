@@ -615,42 +615,29 @@
   .bim-comparison-main {
     padding: 20px 15px;
   }
-
+  .selection-grid {
+    grid-template-columns: 1fr; /* Garante 1 coluna no mobile */
+  }
   .selection-section {
     padding: 20px;
   }
-
   .photo-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    max-height: 300px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    max-height: 250px;
   }
-
   .progress-card .progress-content {
     flex-direction: column;
     text-align: center;
   }
-
-  .progress-circle-large {
-    width: 180px;
-    height: 180px;
+  .conformity-grid {
+    grid-template-columns: 1fr; /* Garante 1 coluna no mobile */
   }
-
-  .progress-text-large {
-    max-width: 140px;
-  }
-
-  .progress-text-large .percentage {
-    font-size: 38px;
-  }
-
   .compared-images {
     grid-template-columns: 1fr;
   }
-
   .action-buttons {
     flex-direction: column;
   }
-
   .btn-compare,
   .btn-reset {
     width: 100%;
@@ -676,16 +663,12 @@
   }
 
   .photo-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
 
   .progress-circle-large {
     width: 150px;
     height: 150px;
-  }
-
-  .progress-text-large {
-    max-width: 120px;
   }
 
   .progress-text-large .percentage {

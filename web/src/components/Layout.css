@@ -22,6 +22,35 @@
   color: #333; /* Define a cor de texto padrão para todo o conteúdo */
 }
 
+/* --- Botão de Menu (Desktop) --- */
+.menu-toggle {
+  background: none;
+  border: none;
+  /* A cor será aplicada diretamente no SVG para garantir a herança */
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s, left 0.3s ease;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1200;
+}
+
+.menu-toggle svg {
+  color: white;
+  stroke-width: 2.5; /* Deixa o ícone um pouco mais grosso e visível */
+}
+
+.menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar.open ~ .menu-toggle {
+  left: calc(280px + 16px);
+}
+
 /* Overlay for mobile sidebar */
 .sidebar-overlay {
   position: fixed;
@@ -38,15 +67,15 @@
   display: block;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .layout-container {
-    flex-direction: row; /* Mantém flex-direction row para mobile */
+/* Em telas de tablet e celular, o conteúdo ganha padding na parte inferior */
+@media (max-width: 1024px) {
+  .layout-content {
+    margin-left: 0 !important;
+    padding-top: 0;
+    padding-bottom: 80px; /* Espaço para a barra de tarefas fixa inferior */
   }
-  
-  .layout-content.sidebar-open,
-  .layout-content.sidebar-closed {
-    margin-left: 0;
+  .menu-toggle {
+    display: none;
   }
 }
 

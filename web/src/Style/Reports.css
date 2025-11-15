@@ -420,7 +420,56 @@
   color: #F44336;
 }
 
-/* Responsive Design */
+/* --- RESPONSIVIDADE --- */
+
+@media (max-width: 768px) {
+  .reports-main {
+    padding: 15px 0;
+  }
+  .filters-section {
+    flex-direction: column;
+  }
+  .reports-table {
+    overflow-x: visible; /* Remover overflow para o novo layout */
+  }
+  .reports-table table {
+    min-width: 100%;
+  }
+  .reports-table thead {
+    display: none;
+  }
+  .reports-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+    background: white;
+  }
+  .reports-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    text-align: right;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .reports-table td:last-child {
+    border-bottom: none;
+  }
+  .reports-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: left;
+    margin-right: 15px;
+    color: #333;
+  }
+  .action-buttons-cell {
+    justify-content: flex-end;
+  }
+}
+
 @media (max-width: 1400px) {
   .reports-main {
     padding: 25px 20px;

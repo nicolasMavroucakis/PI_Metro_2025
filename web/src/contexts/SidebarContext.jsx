@@ -17,12 +17,16 @@ export const SidebarProvider = ({ children }) => {
   // Detecta mudanças no tamanho da tela
   React.useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
+      // Breakpoint para telas "não-desktop"
+      const isNotDesktop = window.innerWidth < 1025;
       
-      // Em mobile, fecha a sidebar por padrão
-      if (mobile) {
+      setIsMobile(isNotDesktop);
+      
+      // Em desktop, a sidebar começa aberta.
+      if (isNotDesktop) {
         setIsOpen(false);
+      } else {
+        setIsOpen(true);
       }
     };
 

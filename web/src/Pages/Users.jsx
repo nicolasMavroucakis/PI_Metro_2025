@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader/PageHeader';
 import { menuItemsConfig } from '../config/menuItems';
 import userService from '../services/userService';
 import '../Style/Users.css';
+import '../Style/Modals.css'; // Importar estilos globais de modal
 import headerStyles from '../components/PageHeader/PageHeader.module.css';
 import {
   Users as UsersIcon,
@@ -239,22 +240,22 @@ function Users() {
                 <tbody>
                   {users.map((user) => (
                     <tr key={user.username}>
-                      <td className="username-cell">
+                      <td data-label="Username" className="username-cell">
                         <strong>{user.username}</strong>
                         {user.isAdmin && <span className="admin-badge"><ShieldCheck size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} /> ADMIN</span>}
                       </td>
-                      <td className="name-cell">{user.name || '-'}</td>
-                      <td className="email-cell">{user.email}</td>
-                      <td>
+                      <td data-label="Nome" className="name-cell">{user.name || '-'}</td>
+                      <td data-label="Email" className="email-cell">{user.email}</td>
+                      <td data-label="Função">
                         <span className="role-badge">{user.role || 'user'}</span>
                       </td>
-                      <td>
+                      <td data-label="Status">
                         <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
                           {user.isActive ? 'Ativo' : 'Inativo'}
                         </span>
                       </td>
-                      <td className="last-login-cell">{formatDate(user.lastLogin)}</td>
-                      <td className="actions-cell">
+                      <td data-label="Último Login" className="last-login-cell">{formatDate(user.lastLogin)}</td>
+                      <td data-label="Ações" className="actions-cell">
                         <button 
                           className="btn-edit"
                           onClick={() => handleEditUser(user)}
@@ -284,11 +285,11 @@ function Users() {
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h2>{modalMode === 'create' ? (<><UserPlus size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Novo Usuário</>) : (<><Edit size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Editar Usuário</>)}</h2>
-                <button className="btn-close" onClick={() => setShowModal(false)}><X size={20} /></button>
+                <h2>{modalMode === 'create' ? (<><UserPlus /> Novo Usuário</>) : (<><Edit /> Editar Usuário</>)}</h2>
+                <button className="btn-close" onClick={() => setShowModal(false)}><X /></button>
               </div>
               
-              <form onSubmit={handleSubmit} className="user-form">
+              <form onSubmit={handleSubmit} className="modal-body user-form">
                 {/* Username */}
                 <div className="form-group">
                   <label htmlFor="username">Username *</label>
@@ -379,8 +380,7 @@ function Users() {
                   </label>
                 </div>
 
-                {/* Buttons */}
-                <div className="form-actions">
+                <div className="modal-footer">
                   <button type="button" className="btn-cancel" onClick={() => setShowModal(false)}>
                     Cancelar
                   </button>

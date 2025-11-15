@@ -1,5 +1,4 @@
-/* Sidebar Component Styles */
-
+/* --- Estilos de Desktop (> 1024px) --- */
 .sidebar {
   background: linear-gradient(180deg, #1976D2 0%, #1565C0 100%);
   color: white;
@@ -23,33 +22,7 @@
 .sidebar-header {
   padding: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 96px; /* espaço maior para afastar a logo do botão fixo */
-}
-
-.menu-toggle {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  padding: 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-  /* Fixa o botão na tela para não se mover ao expandir/recolher */
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1100;
-}
-
-.menu-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.menu-toggle:focus {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
+  padding-top: 96px;
 }
 
 .admin-section {
@@ -82,19 +55,18 @@
   letter-spacing: 1px;
 }
 
-/* Reservar espaço do nome do admin mesmo quando sidebar fechada */
 .admin-name {
   height: 22px;
   line-height: 22px;
   margin: 0;
   transition: opacity 0.2s ease;
 }
+
 .admin-name.hidden {
   opacity: 0;
   pointer-events: none;
 }
 
-/* Navigation */
 .sidebar-nav {
   flex: 1;
   padding: 20px 0;
@@ -128,11 +100,6 @@
 .nav-item.active {
   background-color: rgba(255, 255, 255, 0.15);
   border-left-color: white;
-}
-
-.nav-item:focus {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
 }
 
 .nav-icon {
@@ -169,11 +136,6 @@
   pointer-events: auto;
 }
 
-.sidebar.closed .nav-label {
-  transition-delay: 0s;
-}
-
-/* Sidebar footer */
 .sidebar-footer {
   padding: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -202,80 +164,12 @@
   opacity: 0.8;
 }
 
-/* Responsive Design */
-
-/* Tablet */
-@media (max-width: 1024px) {
-  .sidebar.open {
-    width: 260px;
-  }
-  
-  .sidebar-header {
-    padding: 15px;
-  }
-  
-  .nav-item {
-    padding: 12px 15px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .sidebar.open {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1001;
-    height: 100vh;
-  }
-  
-  .sidebar.closed {
-    display: none;
-  }
-  
-  .sidebar-header {
-    padding: 15px;
-  }
-  
-  .nav-item {
-    padding: 15px;
-  }
-  
-  .nav-label {
-    font-size: 16px;
-  }
-}
-
-/* Small mobile */
-@media (max-width: 480px) {
-  .admin-section h3 {
-    font-size: 16px;
-  }
-  
-  .nav-label {
-    font-size: 14px;
-  }
-  
-  .sidebar-header {
-    padding: 12px;
-  }
-  
-  .nav-item {
-    padding: 12px;
-  }
-}
-
-/* Removida animação de translateX para evitar “pulo” visual.
-   Mantemos apenas a transição de width já definida na classe .sidebar */
-
-/* Accessibility */
+/* Accessibility, High Contrast, Reduced Motion - Mantidos pois são gerais */
 .sidebar button:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   .sidebar {
     border-right: 2px solid #333;
@@ -288,21 +182,16 @@
   }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .sidebar {
-    transition: none;
-  }
-  
+  .sidebar,
   .nav-item {
     transition: none;
   }
-  
-  .menu-toggle {
-    transition: none;
-  }
-  
-  .sidebar.open {
-    animation: none;
+}
+
+/* --- Regra para esconder a Sidebar em telas menores --- */
+@media (max-width: 1024px) {
+  .sidebar {
+    display: none;
   }
 }

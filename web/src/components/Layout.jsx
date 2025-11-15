@@ -1,7 +1,9 @@
 import React from 'react';
 import Sidebar from './Sidebar';
+import BottomNavBar from './BottomNavBar'; // Importar o novo componente
 import { useSidebar } from '../contexts/SidebarContext';
 import './Layout.css';
+import { Menu } from 'lucide-react';
 
 const Layout = ({ 
   children, 
@@ -12,44 +14,32 @@ const Layout = ({
 }) => {
   const { isOpen, toggle, isMobile } = useSidebar();
 
-  // Overlay para mobile quando sidebar está aberta
-  const renderOverlay = () => {
-    if (isMobile && isOpen) {
-      return (
-        <div 
-          className="sidebar-overlay active" 
-          onClick={toggle}
-          aria-label="Close sidebar"
-        />
-      );
-    }
-    return null;
-  };
-
   return (
     <div className={`layout-container ${className}`}>
-      {renderOverlay()}
+      {/* Botão de toggle hamburger, visível apenas em desktop */}
+      {showSidebar && !isMobile && (
+        <button 
+          className="menu-toggle" 
+          onClick={toggle} 
+          aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
+        >
+          <Menu color="black" />
+        </button>
+      )}
 
-      {/* Botão de toggle fixo fora da sidebar para não sofrer com o transform da animação */}
-      <button 
-        className="menu-toggle" 
-        onClick={toggle} 
-        aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
-      >
-        ☰
-      </button>
-      
+      {/* Renderização condicional da navegação */}
       {showSidebar && (
-        <Sidebar
-          menuItems={menuItems}
-          isOpen={isOpen}
-          onToggle={toggle}
-          showToggleInSidebar={false}
-          {...sidebarProps}
-        />
+        isMobile 
+          ? <BottomNavBar menuItems={menuItems} /> 
+          : <Sidebar menuItems={menuItems} {...sidebarProps} />
       )}
       
-      <div className={`layout-content ${isOpen && !isMobile ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div 
+        className={`
+          layout-content 
+          ${!isMobile && (isOpen ? 'sidebar-open' : 'sidebar-closed')}
+        `}
+      >
         {children}
       </div>
     </div>

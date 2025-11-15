@@ -368,41 +368,61 @@
   box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
 }
 
-/* Responsive Design */
+/* --- RESPONSIVIDADE --- */
+
+/* Tablet: Adiciona rolagem horizontal à tabela */
 @media (max-width: 1024px) {
-  .users-main {
-    padding: 20px 15px;
-  }
-
-  .users-header {
-    padding: 25px 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .users-header {
-    padding: 20px 15px;
-  }
-
-  .users-header h1 {
-    font-size: 28px;
-  }
-
-  .users-main {
-    padding: 15px 10px;
-  }
-
   .users-table-container {
     overflow-x: auto;
   }
-
   .users-table {
     min-width: 800px;
   }
+}
 
-  .modal-content {
-    width: 95%;
-    max-height: 95vh;
+/* Mobile: Transforma tabela em layout de cards */
+@media (max-width: 768px) {
+  .users-main {
+    padding: 15px 0;
+  }
+
+  .users-table thead {
+    display: none; /* Esconde o cabeçalho da tabela */
+  }
+
+  .users-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+    background: white;
+  }
+
+  .users-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    text-align: right;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .users-table td:last-child {
+    border-bottom: none;
+  }
+
+  .users-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: left;
+    margin-right: 15px;
+    color: #333;
+  }
+
+  .actions-cell {
+    justify-content: flex-end; /* Alinha os botões de ação à direita */
   }
 }
 

@@ -349,15 +349,15 @@ function Reports() {
                     <tbody>
                       {filteredReports.map((report) => (
                         <tr key={report.reportId}>
-                          <td>
+                          <td data-label="Status">
                             <span className={`status-badge ${report.status}`}>
                               {report.status === 'success' ? (<><CheckCircle size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} /> Sucesso</>) : (<><XCircle size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} /> Falha</>)}
                             </span>
                           </td>
-                          <td className="report-id">
+                          <td data-label="ID do Relatório" className="report-id">
                             <code>{report.reportId}</code>
                           </td>
-                          <td>
+                          <td data-label="Progresso">
                             {report.status === 'success' && report.analysisResult ? (
                               <div className="progress-cell">
                                 <div className="progress-bar-small">
@@ -374,8 +374,8 @@ function Reports() {
                               <span className="na-text">N/A</span>
                             )}
                           </td>
-                          <td>{formatDate(report.createdAt)}</td>
-                          <td>
+                          <td data-label="Data">{formatDate(report.createdAt)}</td>
+                          <td data-label="Ações">
                             <div className="action-buttons-cell">
                               <button
                                 className="btn-view"

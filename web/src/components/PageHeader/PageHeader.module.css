@@ -45,3 +45,41 @@
 }
 
 /* --- FIM DO MODELO DE HEADER --- */
+
+/* --- RESPONSIVIDADE --- */
+
+@media (max-width: 768px) {
+  .pageHeader {
+    padding: 20px 15px;
+  }
+
+  .pageHeader_title {
+    font-size: 28px;
+  }
+
+  .pageHeader_subtitle {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .pageHeader_actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pageHeader_button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageHeader_title {
+    font-size: 24px;
+  }
+
+  .pageHeader_button {
+    width: 100%;
+    justify-content: center;
+  }
+}

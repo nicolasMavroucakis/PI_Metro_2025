@@ -5,7 +5,7 @@ import styles from '../../Style/ProjectDetails.module.css';
 
 const ProjectInfoCard = ({ project, onViewMore }) => {
   return (
-    <div className={styles['next-steps-card']}>
+    <div className={styles['info-card']}>
       <div className={styles['card-header']}>
         <h3 className={styles['card-title']}>Informações do Projeto</h3>
         <span className={styles['calendar-icon']}><Calendar size={20} /></span>

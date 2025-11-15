@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import MetroLogo from '../assets/metro.png';
+import { useSidebar } from '../contexts/SidebarContext'; // Importar o hook
 import { 
   Home,
   Users,
@@ -12,21 +13,14 @@ import {
 
 const Sidebar = ({ 
   menuItems = [],
-  isOpen: controlledIsOpen,
-  onToggle: controlledOnToggle,
   className = '',
   showMetroBranding = true,
-  adminName = 'ADMIN',
-  showToggleInSidebar = true
+  adminName = 'ADMIN'
 }) => {
-  // Estado interno se não for controlado externamente
-  const [internalIsOpen, setInternalIsOpen] = useState(true);
   const navigate = useNavigate();
+  // Usar o estado e funções do contexto
+  const { isOpen, closeOnMobile } = useSidebar();
   
-  // Usa props controladas se fornecidas, senão usa estado interno
-  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
-  const onToggle = controlledOnToggle || (() => setInternalIsOpen(!internalIsOpen));
-
   const defaultMenuItems = [
     { icon: '🏠', label: 'Home', active: true, path: '/home' },
     { icon: '👥', label: 'Gerenciamento de Usuários', path: '/users' },
@@ -68,16 +62,14 @@ const Sidebar = ({
     if (item.path) {
       navigate(item.path);
     }
+
+    // Fecha a sidebar em mobile após o clique
+    closeOnMobile();
   };
 
   return (
-    <div className={`sidebar ${isOpen ? 'open' : 'closed'} ${className}`}>
+    <aside className={`sidebar ${isOpen ? 'open' : 'closed'} ${className}`}>
       <div className="sidebar-header">
-        {showToggleInSidebar && (
-          <button className="menu-toggle" onClick={onToggle} aria-label="Toggle menu">
-            ☰
-          </button>
-        )}
         <div className="admin-section">
           <div className="admin-avatar">
             <img src={MetroLogo} alt="Admin Avatar" />
@@ -95,7 +87,7 @@ const Sidebar = ({
             aria-label={item.label}
           >
             <span className="nav-icon">{renderIcon(item)}</span>
-            {isOpen && <span className="nav-label">{item.label}</span>}
+            <span className={`nav-label ${isOpen ? 'visible' : 'hidden'}`}>{item.label}</span>
           </button>
         ))}
       </nav>
@@ -113,7 +105,7 @@ const Sidebar = ({
           </div>
         </div>
       )}
-    </div>
+    </aside>
   );
 };
 
