@@ -15,50 +15,34 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
  */
 async function imageUrlToBase64(imageUrl) {
   try {
-    // Adicionar cache busting para forçar nova requisição
     const cacheBuster = `?t=${Date.now()}`;
     const urlWithCacheBuster = imageUrl.includes('?') 
       ? `${imageUrl}&t=${Date.now()}` 
       : `${imageUrl}${cacheBuster}`;
     
-    console.log('🔄 Buscando imagem:', urlWithCacheBuster);
-    
-    // Configurar fetch com opções CORS e sem cache
     const response = await fetch(urlWithCacheBuster, {
       method: 'GET',
-      mode: 'cors', // Força modo CORS
-      cache: 'no-cache', // Não usar cache
-      headers: {
-        'Accept': 'image/*',
-      },
-      credentials: 'omit' // Não enviar cookies
+      mode: 'cors',
+      cache: 'no-cache',
     });
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    console.log('✅ Resposta recebida:', response.status, response.statusText);
-    
     const blob = await response.blob();
-    console.log('✅ Blob criado:', blob.size, 'bytes');
     
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // Remove o prefixo "data:image/...;base64," para obter apenas o Base64
         const base64String = reader.result.split(',')[1];
-        console.log('✅ Base64 gerado:', base64String.substring(0, 50) + '...');
         resolve(base64String);
       };
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
   } catch (error) {
-    console.error('❌ Erro ao converter imagem para Base64:', error);
-    console.error('   URL:', imageUrl);
-    console.error('   Tipo do erro:', error.name);
-    console.error('   Mensagem:', error.message);
+    console.error(`Erro ao converter imagem para Base64: ${imageUrl}`, error);
     throw new Error('Falha ao processar a imagem');
   }
 }
