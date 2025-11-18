@@ -1,0 +1,253 @@
+/* ============================================
+   TEMA PARA PROJECTDETAILS MODULE
+   Complemento para ProjectDetails.module.css
+   ============================================ */
+
+/* Background da página principal */
+.project-details-main {
+  background: var(--bg-secondary) !important;
+}
+
+/* Cards de projeto */
+.progress-card,
+.captures-card,
+.alerts-card,
+.info-card,
+.next-steps-card {
+  background: var(--bg-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+.chart-section {
+  background: var(--bg-card) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+/* Grid de conteúdo */
+.project-content-grid {
+  background: transparent !important;
+}
+
+/* Títulos e textos */
+.card-title,
+.step-title,
+.alert-title {
+  color: var(--text-primary) !important;
+}
+
+.card-description,
+.step-dates,
+.alert-description {
+  color: var(--text-secondary) !important;
+}
+
+/* Alertas específicos - manter cores funcionais mas ajustar backgrounds */
+.alert-verde {
+  background: var(--bg-card) !important;
+}
+
+.alert-amarelo {
+  background: var(--bg-card) !important;
+}
+
+.alert-vermelho {
+  background: var(--bg-card) !important;
+}
+
+.alert-text {
+  color: var(--text-primary) !important;
+}
+
+/* Botões de captura */
+.capture-option {
+  border-color: var(--border-color) !important;
+  background: var(--bg-card) !important;
+}
+
+.capture-option h4 {
+  color: var(--text-primary) !important;
+}
+
+.capture-option p {
+  color: var(--text-secondary) !important;
+}
+
+/* Filtros de foto */
+.filter-buttons button {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.filter-buttons button.active,
+.filter-buttons button:hover {
+  background: var(--color-primary) !important;
+  color: var(--text-inverse) !important;
+}
+
+/* Grid de fotos */
+.photo-grid-item {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+.photo-overlay {
+  background: var(--overlay-bg) !important;
+}
+
+.photo-info {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Form groups */
+.form-group label {
+  color: var(--text-primary) !important;
+}
+
+.form-input,
+.form-textarea,
+.alert-textarea {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder,
+.alert-textarea::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+/* Botões de nível de alerta */
+.alert-level-btn {
+  border-color: var(--border-color) !important;
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.alert-level-btn:hover {
+  border-color: var(--border-medium) !important;
+}
+
+/* Contador de caracteres */
+.char-counter,
+.level-description {
+  color: var(--text-tertiary) !important;
+}
+
+/* Progress modal */
+.progressFormGroup label {
+  color: var(--text-primary) !important;
+}
+
+/* Divisores */
+.alerts-actions,
+.sidebar-theme-toggle {
+  border-top-color: var(--border-color) !important;
+}
+
+/* Empty states */
+.captures-empty-state p,
+.no-alerts p {
+  color: var(--text-secondary) !important;
+}
+
+/* More items indicator */
+.more-alerts {
+  color: var(--text-tertiary) !important;
+}
+
+/* Photo items no grid */
+.photo-item-info {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+}
+
+.photo-item-name {
+  color: var(--text-primary) !important;
+}
+
+.photo-item-meta {
+  color: var(--text-secondary) !important;
+}
+
+/* Modais - cores dos headers e footers */
+.modal-actions {
+  border-top-color: var(--border-color) !important;
+}
+
+/* Progresso de upload */
+.upload-progress p {
+  color: var(--text-primary) !important;
+}
+
+.progress-bar {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Chart legend */
+.chart-legend-item {
+  color: var(--text-primary) !important;
+}
+
+.chart-y-axis,
+.chart-x-axis {
+  color: var(--text-secondary) !important;
+}
+
+/* Informações do projeto */
+.project-info-row {
+  border-bottom-color: var(--border-color) !important;
+}
+
+/* Hover states para cards */
+.project-card:hover,
+.capture-option:hover {
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* Textos específicos de progresso */
+.progress-info {
+  color: var(--text-secondary) !important;
+}
+
+/* Captura de imagens */
+.capture-item img {
+  opacity: 1 !important;
+}
+
+/* Progress circle */
+.progress-circle {
+  border-color: var(--border-color) !important;
+}
+
+/* Botões da barra de navegação */
+.nav-label {
+  color: var(--text-inverse) !important;
+}
+
+/* Descrições e labels adicionais */
+.alert-description,
+.step-description,
+.capture-description {
+  color: var(--text-secondary) !important;
+}
+
+/* Card icons */
+.camera-icon,
+.alert-icon,
+.calendar-icon {
+  color: var(--text-primary) !important;
+}
+
+/* Estatísticas */
+.stats-value {
+  color: var(--text-primary) !important;
+}
+
+.stats-label {
+  color: var(--text-secondary) !important;
+}
+

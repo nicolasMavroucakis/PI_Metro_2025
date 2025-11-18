@@ -1,0 +1,973 @@
+/* ============================================
+   OVERRIDES DE TEMA PARA COMPONENTES
+   Aplicar variáveis de tema em componentes existentes
+   ============================================ */
+
+/* --- HEADERS E TÍTULOS --- */
+.main-header,
+.page-header,
+.header {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.main-header h1,
+.page-header h1,
+.project-main-title {
+  color: var(--text-primary) !important;
+}
+
+/* --- SIDEBAR NAV ITEMS --- */
+/* Removido - agora está no Sidebar.css com !important */
+
+/* --- CARDS E CONTAINERS --- */
+/* Regras gerais para todos os temas */
+.card,
+.info-card,
+.report-card,
+.user-card,
+.document-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: var(--shadow-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* Project cards: mantém estilo padrão no tema claro, 
+   estilo escuro aplicado depois apenas para tema dark */
+
+/* --- DROPDOWNS E MENUS --- */
+.user-dropdown,
+.dropdown-menu,
+.context-menu {
+  background: var(--bg-modal) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: var(--shadow-xl) !important;
+}
+
+.dropdown-item,
+.menu-item {
+  color: var(--text-primary) !important;
+}
+
+.dropdown-item:hover,
+.menu-item:hover {
+  background: var(--bg-hover) !important;
+}
+
+.user-dropdown-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.user-name {
+  color: var(--text-primary) !important;
+}
+
+.user-role {
+  color: var(--text-secondary) !important;
+}
+
+/* --- INPUTS E FORMS --- */
+input,
+textarea,
+select,
+.form-input,
+.search-bar input {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px var(--color-primary-light) !important;
+}
+
+/* --- BOTÕES --- */
+.btn-secondary,
+.secondary-button,
+button.secondary {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.btn-secondary:hover,
+.secondary-button:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* Botões de controle do header */
+.header-controls button {
+  color: var(--text-primary) !important;
+}
+
+.header-controls button:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+/* Botões de modal (Usuários, etc) */
+.modal-footer .btn-cancel,
+.user-form .btn-cancel {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+}
+
+.modal-footer .btn-cancel:hover,
+.user-form .btn-cancel:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* --- TABELAS --- */
+.table,
+table {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.table thead th,
+table thead th {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.table tbody tr,
+table tbody tr {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.table tbody tr:hover,
+table tbody tr:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* --- MODALS --- */
+.modal,
+.modal-overlay {
+  background: var(--overlay-bg) !important;
+}
+
+.modal > div,
+.modal-content {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-xl) !important;
+}
+
+/* Modal específico de usuários */
+.user-form {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+}
+
+.user-form .form-group label {
+  color: var(--text-primary) !important;
+}
+
+.user-form .form-group input {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.user-form .modal-footer {
+  border-top-color: var(--border-color) !important;
+}
+
+.modal-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.modal h3,
+.modal h2 {
+  color: var(--text-primary) !important;
+}
+
+/* --- LISTAS --- */
+.list-item {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.list-item:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* --- BADGES E TAGS --- */
+.badge,
+.tag,
+.status-badge {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* --- DIVISORES --- */
+hr,
+.divider {
+  border-color: var(--border-color) !important;
+}
+
+/* --- TEXTO E LABELS --- */
+label,
+.label {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary,
+.subtitle,
+.description {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* --- EMPTY STATES --- */
+.empty-state,
+.no-data,
+.no-results {
+  color: var(--text-secondary) !important;
+}
+
+/* --- PROGRESS BARS --- */
+.progress-bar {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Progress específico para tema escuro */
+:root[data-theme="dark"] .project-card .progress-bar,
+:root[data-theme="dark"] .project-progress-wrapper .progress-bar,
+:root[data-theme="dark"] .progress-section .progress-bar {
+  background-color: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .project-card .progress-label,
+:root[data-theme="dark"] .progress-section .progress-label {
+  color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .project-card .progress-percentage,
+:root[data-theme="dark"] .progress-section .progress-percentage {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .project-card .progress-header {
+  color: var(--text-primary) !important;
+}
+
+/* --- TOOLTIPS --- */
+.tooltip {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* --- ALERTS E NOTIFICATIONS --- */
+.alert {
+  border-color: var(--border-color) !important;
+}
+
+/* --- PROJECT SPECIFIC --- */
+.project-content {
+  color: var(--text-primary) !important;
+}
+
+.project-title {
+  color: var(--text-primary) !important;
+}
+
+.project-subtitle {
+  color: var(--text-secondary) !important;
+}
+
+.info-label,
+.progress-label {
+  color: var(--text-secondary) !important;
+}
+
+.info-value,
+.progress-percentage {
+  color: var(--text-primary) !important;
+}
+
+/* --- HOME PAGE PROJECT CARDS APENAS NO TEMA ESCURO --- */
+:root[data-theme="dark"] .project-card {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+:root[data-theme="dark"] .project-card:hover {
+  box-shadow: var(--shadow-hover) !important;
+}
+
+:root[data-theme="dark"] .project-image {
+  background: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .project-card .info-label {
+  color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .project-card .info-value {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .project-card h3 {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .progress-bar {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* --- CHARTS --- */
+.chart-section {
+  background: var(--bg-card) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+/* --- SIDEBAR SPECIFICS --- */
+/* Removido - textos da sidebar são sempre brancos independente do tema */
+
+/* --- FILTERS E SEARCH --- */
+.filter-container,
+.search-container {
+  background: var(--bg-card) !important;
+}
+
+.filter-label {
+  color: var(--text-primary) !important;
+}
+
+/* --- PAGINATION --- */
+.pagination button {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.pagination button:hover {
+  background: var(--bg-hover) !important;
+}
+
+.pagination button.active {
+  background: var(--color-primary) !important;
+  color: var(--text-inverse) !important;
+}
+
+/* --- LOGIN/REGISTER PAGES --- */
+.login-container,
+.register-container {
+  background: var(--bg-primary) !important;
+}
+
+.login-card,
+.register-card,
+.auth-card {
+  background: var(--bg-card) !important;
+  box-shadow: var(--shadow-xl) !important;
+}
+
+.login-title,
+.register-title {
+  color: var(--text-primary) !important;
+}
+
+.login-subtitle,
+.register-subtitle {
+  color: var(--text-secondary) !important;
+}
+
+/* --- SPECIFIC COLORS THAT SHOULD NOT CHANGE --- */
+/* Mantém cores funcionais (sucesso, erro, aviso) */
+.success,
+.success-badge,
+.status-success {
+  background: var(--color-success) !important;
+}
+
+.error,
+.error-badge,
+.status-error {
+  background: var(--color-danger) !important;
+}
+
+.warning,
+.warning-badge,
+.status-warning {
+  background: var(--color-warning) !important;
+}
+
+.info,
+.info-badge,
+.status-info {
+  background: var(--color-info) !important;
+}
+
+/* --- IMAGENS E MEDIA --- */
+img {
+  /* Imagens devem manter sua aparência original */
+  transition: none !important;
+}
+
+/* Modo escuro: reduzir brilho das imagens levemente */
+:root[data-theme="dark"] img:not(.metro-logo):not([alt*="logo"]):not([alt*="Logo"]) {
+  opacity: 0.9;
+  filter: brightness(0.95);
+}
+
+/* --- BREADCRUMBS --- */
+.breadcrumb {
+  color: var(--text-secondary) !important;
+}
+
+.breadcrumb a {
+  color: var(--color-primary) !important;
+}
+
+.breadcrumb a:hover {
+  color: var(--color-primary-hover) !important;
+}
+
+/* --- BOTÕES DE AÇÃO (Users, etc) --- */
+/* Botão Novo Usuário - adapta ao tema */
+.btn-create-user {
+  background: transparent !important;
+  border: 1px solid var(--color-success) !important;
+  color: var(--color-success) !important;
+}
+
+.btn-create-user:hover {
+  background: var(--color-success) !important;
+  color: white !important;
+}
+
+/* Botões de edição e exclusão */
+:root[data-theme="dark"] .btn-edit:hover {
+  background: rgba(33, 150, 243, 0.2) !important;
+  color: var(--color-info) !important;
+}
+
+:root[data-theme="dark"] .btn-delete:hover:not(:disabled) {
+  background: rgba(244, 67, 54, 0.2) !important;
+  color: var(--color-danger) !important;
+}
+
+/* --- MODAIS NO TEMA ESCURO --- */
+:root[data-theme="dark"] .modal-content {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color);
+}
+
+:root[data-theme="dark"] .modal-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .modal-footer {
+  border-top-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .btn-cancel {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .btn-cancel:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+/* --- USER DROPDOWN NO TEMA ESCURO --- */
+:root[data-theme="dark"] .user-dropdown {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+:root[data-theme="dark"] .user-dropdown-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .user-info strong {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .user-info small {
+  color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .user-dropdown-divider {
+  background: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .user-dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .user-dropdown-item:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .user-dropdown-item.logout {
+  color: var(--color-danger) !important;
+  border-top-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .user-dropdown-item.logout:hover {
+  background-color: rgba(244, 67, 54, 0.15) !important;
+}
+
+/* Avatar do usuário com ícones SVG */
+:root[data-theme="dark"] .user-avatar svg {
+  color: white !important;
+}
+
+/* --- GARANTIR MODAL USERS ESCURO --- */
+:root[data-theme="dark"] .users-container .modal-content {
+  background: var(--bg-card) !important;
+}
+
+:root[data-theme="dark"] .users-container .modal-header h2 {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .users-container .form-group label {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .users-container .form-group input {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .users-container .form-group input:focus {
+  border-color: var(--color-success) !important;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2) !important;
+}
+
+:root[data-theme="dark"] .users-container .form-group-checkbox span {
+  color: var(--text-primary) !important;
+}
+
+/* --- BIM COMPARISON PAGE --- */
+/* Tema Claro - mantém cores originais */
+:root[data-theme="light"] .progress-section {
+  background: #f5f5f5 !important;
+  border-color: #1976D2 !important;
+}
+
+:root[data-theme="light"] .progress-bar-container {
+  background: #e0e0e0 !important;
+}
+
+/* Tema Escuro - cores adaptadas */
+:root[data-theme="dark"] .progress-section {
+  background: var(--bg-card) !important;
+  border-color: var(--color-primary) !important;
+}
+
+:root[data-theme="dark"] .progress-section h3 {
+  color: var(--color-primary) !important;
+}
+
+:root[data-theme="dark"] .progress-bar-container {
+  background: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .progress-message {
+  color: var(--text-primary) !important;
+}
+
+/* Outros elementos da página BIM Comparison */
+:root[data-theme="dark"] .comparison-container {
+  background: var(--bg-secondary) !important;
+}
+
+:root[data-theme="dark"] .comparison-header {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .model-viewer-container {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .analysis-panel {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .metric-card {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .metric-card h4 {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .metric-value {
+  color: var(--text-primary) !important;
+}
+
+/* Cards de recomendações BIM - Tema Escuro */
+:root[data-theme="dark"] .recommendations-list li {
+  background: var(--bg-tertiary) !important;
+  border-left-color: var(--color-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Priority Recommendations - Alta prioridade */
+:root[data-theme="dark"] .priority-rec.priority-alta {
+  background: rgba(244, 67, 54, 0.15) !important;
+  border-left-color: var(--color-danger) !important;
+}
+
+:root[data-theme="dark"] .priority-rec.priority-alta .rec-header {
+  color: var(--color-danger) !important;
+}
+
+:root[data-theme="dark"] .priority-rec.priority-alta p {
+  color: var(--text-primary) !important;
+}
+
+/* Priority Recommendations - Média prioridade */
+:root[data-theme="dark"] .priority-rec.priority-média,
+:root[data-theme="dark"] .priority-rec.priority-media {
+  background: rgba(255, 152, 0, 0.15) !important;
+  border-left-color: var(--color-warning) !important;
+}
+
+:root[data-theme="dark"] .priority-rec.priority-média .rec-header,
+:root[data-theme="dark"] .priority-rec.priority-media .rec-header {
+  color: var(--color-warning) !important;
+}
+
+:root[data-theme="dark"] .priority-rec.priority-média p,
+:root[data-theme="dark"] .priority-rec.priority-media p {
+  color: var(--text-primary) !important;
+}
+
+/* Priority Recommendations - Baixa prioridade */
+:root[data-theme="dark"] .priority-rec.priority-baixa {
+  background: rgba(33, 150, 243, 0.15) !important;
+  border-left-color: var(--color-info) !important;
+}
+
+:root[data-theme="dark"] .priority-rec.priority-baixa .rec-header {
+  color: var(--color-info) !important;
+}
+
+:root[data-theme="dark"] .priority-rec.priority-baixa p {
+  color: var(--text-primary) !important;
+}
+
+/* Descrição das recomendações */
+:root[data-theme="dark"] .rec-description {
+  color: var(--text-secondary) !important;
+}
+
+/* Itens críticos e pontos positivos */
+:root[data-theme="dark"] .critical-item {
+  background: rgba(244, 67, 54, 0.15) !important;
+  border-left-color: var(--color-danger) !important;
+  color: var(--color-danger) !important;
+}
+
+:root[data-theme="dark"] .positive-item {
+  background: rgba(76, 175, 80, 0.15) !important;
+  border-left-color: var(--color-success) !important;
+  color: var(--color-success) !important;
+}
+
+/* Justificativa */
+:root[data-theme="dark"] .justification-content {
+  background: rgba(255, 152, 0, 0.15) !important;
+  border-left-color: var(--color-warning) !important;
+}
+
+:root[data-theme="dark"] .justification-content p {
+  color: var(--text-primary) !important;
+}
+
+/* Frequência de problemas */
+:root[data-theme="dark"] .problem-frequency {
+  border-top-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .problem-frequency small {
+  color: var(--text-secondary) !important;
+}
+
+/* Cards de resultado - removido daqui, definido mais abaixo com fundo mais escuro */
+
+:root[data-theme="dark"] .card-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .card-header h3 {
+  color: var(--text-primary) !important;
+}
+
+/* Comparações de arquivos */
+:root[data-theme="dark"] .file-comparison {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .file-name {
+  color: var(--color-primary) !important;
+}
+
+/* Status badges do relatório BIM */
+:root[data-theme="dark"] .status-badge {
+  background: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .status-badge.success {
+  color: var(--color-success) !important;
+  background: rgba(76, 175, 80, 0.2) !important;
+}
+
+:root[data-theme="dark"] .status-badge.failed {
+  color: var(--color-danger) !important;
+  background: rgba(244, 67, 54, 0.2) !important;
+}
+
+/* Badge de tipo de análise */
+:root[data-theme="dark"] .analysis-type-badge {
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-hover) 100%) !important;
+}
+
+/* Report info card */
+:root[data-theme="dark"] .report-info-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* Subtítulos e descrições */
+:root[data-theme="dark"] .subtitle {
+  color: var(--text-secondary) !important;
+}
+
+/* Textos gerais dentro de cards BIM */
+:root[data-theme="dark"] .bim-comparison-main p {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .bim-comparison-main h1,
+:root[data-theme="dark"] .bim-comparison-main h2,
+:root[data-theme="dark"] .bim-comparison-main h3,
+:root[data-theme="dark"] .bim-comparison-main h4 {
+  color: var(--text-primary) !important;
+}
+
+/* Problem items e severity badges */
+:root[data-theme="dark"] .problem-item {
+  background: var(--bg-tertiary) !important;
+  border-left-color: var(--color-danger) !important;
+}
+
+:root[data-theme="dark"] .problem-content {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .problem-content p {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .problem-header {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .severity-badge {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Indicadores de severidade */
+:root[data-theme="dark"] .severity-indicator {
+  background: var(--border-color) !important;
+}
+
+/* Comparação de modelos (nomes de arquivo, etc) */
+:root[data-theme="dark"] .model-info,
+:root[data-theme="dark"] .file-info {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .model-name,
+:root[data-theme="dark"] .file-path {
+  color: var(--text-secondary) !important;
+}
+
+/* Cards de comparação por par - Fundo mais escuro */
+:root[data-theme="dark"] .result-card {
+  background: #1a1a1a !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+:root[data-theme="dark"] .pair-item {
+  background: #1a1a1a !important;
+  border-left-color: var(--color-primary) !important;
+}
+
+:root[data-theme="dark"] .pair-files {
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-color);
+}
+
+:root[data-theme="dark"] .pair-file {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .file-name {
+  color: var(--color-primary) !important;
+}
+
+:root[data-theme="dark"] .pair-arrow {
+  color: var(--color-primary) !important;
+}
+
+/* Individual analysis items */
+:root[data-theme="dark"] .individual-analysis-item {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .individual-analysis-item:hover {
+  border-color: var(--color-primary) !important;
+  background: var(--bg-card) !important;
+}
+
+/* Título do Par e outras informações */
+:root[data-theme="dark"] .pair-item h4,
+:root[data-theme="dark"] .pair-item h3 {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .pair-item p {
+  color: var(--text-primary) !important;
+}
+
+/* Score/percentual de similaridade */
+:root[data-theme="dark"] .individual-score {
+  color: var(--color-primary) !important;
+}
+
+/* Info messages (sucesso e warning) */
+:root[data-theme="dark"] .info-message.success {
+  background: rgba(76, 175, 80, 0.15) !important;
+  color: var(--color-success) !important;
+  border-color: var(--color-success) !important;
+}
+
+:root[data-theme="dark"] .info-message.warning {
+  background: rgba(255, 152, 0, 0.15) !important;
+  color: var(--color-warning) !important;
+  border-color: var(--color-warning) !important;
+}
+
+/* Percentual grande de progresso */
+:root[data-theme="dark"] .progress-text-large .percentage {
+  color: var(--color-primary) !important;
+}
+
+/* Descrição de obra/comparação */
+:root[data-theme="dark"] .comparison-description,
+:root[data-theme="dark"] .work-description {
+  color: var(--text-secondary) !important;
+}
+
+/* Contador de problemas */
+:root[data-theme="dark"] .problems-count,
+:root[data-theme="dark"] .issues-count {
+  color: var(--text-secondary) !important;
+}
+
+/* --- MODAIS GLOBAIS (Modals.css) --- */
+/* Tema Claro */
+:root[data-theme="light"] .modal-overlay {
+  background: #1e1e1e !important;
+}
+
+:root[data-theme="light"] .modal-content {
+  background: #ffffff !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+:root[data-theme="light"] .modal-header {
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+:root[data-theme="light"] .modal-header h2 {
+  color: #333 !important;
+}
+
+:root[data-theme="light"] .btn-close {
+  color: #666 !important;
+}
+
+:root[data-theme="light"] .btn-close:hover {
+  background: #f0f0f0 !important;
+  color: #333 !important;
+}
+
+:root[data-theme="light"] .modal-footer {
+  background: #f5f5f5 !important;
+  border-top: 1px solid #e0e0e0 !important;
+}
+
+/* Tema Escuro */
+:root[data-theme="dark"] .modal-overlay {
+  background: rgba(0, 0, 0, 0.75) !important;
+}
+
+:root[data-theme="dark"] .modal-content {
+  background: var(--bg-card) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+:root[data-theme="dark"] .modal-header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .modal-header h2 {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .btn-close {
+  color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .btn-close:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .modal-footer {
+  background: #1a1a1a !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .modal-body {
+  color: var(--text-primary) !important;
+}
+

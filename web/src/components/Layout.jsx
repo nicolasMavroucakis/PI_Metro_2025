@@ -23,7 +23,7 @@ const Layout = ({
           onClick={toggle} 
           aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
         >
-          <Menu color="black" />
+          <Menu color="white" />
         </button>
       )}
 

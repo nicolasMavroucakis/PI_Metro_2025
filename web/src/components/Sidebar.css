@@ -1,14 +1,19 @@
 /* --- Estilos de Desktop (> 1024px) --- */
 .sidebar {
-  background: linear-gradient(180deg, #1976D2 0%, #1565C0 100%);
-  color: white;
+  background: var(--bg-sidebar);
+  color: var(--text-inverse);
   transition: width 0.3s ease;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   flex-shrink: 0;
+}
+
+/* Gradiente apenas no modo claro */
+:root[data-theme="light"] .sidebar {
+  background: linear-gradient(180deg, #1976D2 0%, #1565C0 100%);
 }
 
 .sidebar.open {
@@ -53,6 +58,7 @@
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 1px;
+  color: white !important;
 }
 
 .admin-name {
@@ -60,6 +66,7 @@
   line-height: 22px;
   margin: 0;
   transition: opacity 0.2s ease;
+  color: white !important;
 }
 
 .admin-name.hidden {
@@ -127,6 +134,7 @@
   overflow: hidden;
   white-space: nowrap;
   pointer-events: none;
+  color: white !important;
 }
 
 .sidebar.open .nav-label {
@@ -134,6 +142,40 @@
   transform: translateX(0);
   transition-delay: 0.05s;
   pointer-events: auto;
+  color: white !important;
+}
+
+.sidebar-theme-toggle {
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle-btn {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  align-items: center;
+  padding: 15px 20px 15px 0;
+  color: white !important;
+  background: none;
+  border: none;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  min-height: 48px;
+}
+
+.theme-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left-color: white;
+}
+
+.theme-toggle-btn .nav-label {
+  color: white !important;
 }
 
 .sidebar-footer {
@@ -157,11 +199,13 @@
 .metro-title {
   font-size: 14px;
   font-weight: 600;
+  color: white !important;
 }
 
 .metro-subtitle {
   font-size: 12px;
   opacity: 0.8;
+  color: white !important;
 }
 
 /* Accessibility, High Contrast, Reduced Motion - Mantidos pois são gerais */

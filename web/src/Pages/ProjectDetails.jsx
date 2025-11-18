@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import projectService from '../services/projectService';
 import styles from '../Style/ProjectDetails.module.css';
+import '../Style/ProjectDetails-theme.css';
 import {
   Calendar,
 } from 'lucide-react';
@@ -117,10 +118,6 @@ function ProjectDetails() {
 
   const handleNewCapture = () => {
     setShowNewPhotoModal(true);
-  };
-
-  const handleGenerateReport = () => {
-    alert('Funcionalidade de Gerar Relatório será implementada');
   };
 
   const handleViewMore = (section) => {
@@ -449,7 +446,7 @@ function ProjectDetails() {
         </div>
 
         {/* Gráfico de Progresso */}
-        <ProgressChart chartData={chartData} onGenerateReport={handleGenerateReport} />
+        <ProgressChart chartData={chartData} />
       </main>
 
       {/* Modal de Nova Foto */}

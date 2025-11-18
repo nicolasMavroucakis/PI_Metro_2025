@@ -1,0 +1,206 @@
+/* ============================================
+   VARIÁVEIS DE TEMA - MODO CLARO E ESCURO
+   Sistema de tema para Metro SP
+   ============================================ */
+
+:root[data-theme="light"] {
+  /* Cores de fundo */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: hsl(0, 0%, 100%);
+  --bg-hover: #f0f0f0;
+  --bg-card: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-input: #ffffff;
+  --bg-sidebar: #1a237e;
+  
+  /* Cores de texto */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --text-inverse: #ffffff;
+  --text-muted: #757575;
+  
+  /* Cores de borda */
+  --border-color: #e0e0e0;
+  --border-light: #f0f0f0;
+  --border-medium: #d0d0d0;
+  --border-dark: #bdbdbd;
+  
+  /* Cores de destaque */
+  --color-primary: #1976D2;
+  --color-primary-hover: #1565C0;
+  --color-primary-light: rgba(25, 118, 210, 0.1);
+  
+  --color-secondary: #4CAF50;
+  --color-secondary-hover: #45a049;
+  --color-secondary-light: rgba(76, 175, 80, 0.1);
+  
+  --color-danger: #F44336;
+  --color-danger-hover: #e53935;
+  --color-danger-light: rgba(244, 67, 54, 0.1);
+  
+  --color-warning: #FF9800;
+  --color-warning-hover: #FB8C00;
+  --color-warning-light: rgba(255, 152, 0, 0.1);
+  
+  --color-info: #2196F3;
+  --color-info-hover: #1976D2;
+  --color-info-light: rgba(33, 150, 243, 0.1);
+  
+  --color-success: #4CAF50;
+  --color-success-hover: #43A047;
+  --color-success-light: rgba(76, 175, 80, 0.1);
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  
+  /* Estados */
+  --status-progress: #4CAF50;
+  --status-warning: #FF9800;
+  --status-danger: #F44336;
+  --status-info: #2196F3;
+}
+
+:root[data-theme="dark"] {
+  /* Cores de fundo - tons escuros para ambientes com pouca luz */
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #252525;
+  --bg-hover: #2a2a2a;
+  --bg-card: #1e1e1e;
+  --bg-modal: #1e1e1e;
+  --bg-input: #2a2a2a;
+  --bg-sidebar: #0d1117;
+  
+  /* Cores de texto - alto contraste para legibilidade */
+  --text-primary: #e8e8e8;
+  --text-secondary: #b8b8b8;
+  --text-tertiary: #888888;
+  --text-inverse: #121212;
+  --text-muted: #888888;
+  
+  /* Cores de borda - sutis mas visíveis */
+  --border-color: #333333;
+  --border-light: #2a2a2a;
+  --border-medium: #404040;
+  --border-dark: #555555;
+  
+  /* Cores de destaque - mais vibrantes para contraste */
+  --color-primary: #42a5f5;
+  --color-primary-hover: #64b5f6;
+  --color-primary-light: rgba(66, 165, 245, 0.15);
+  
+  --color-secondary: #66bb6a;
+  --color-secondary-hover: #81c784;
+  --color-secondary-light: rgba(102, 187, 106, 0.15);
+  
+  --color-danger: #ef5350;
+  --color-danger-hover: #f44336;
+  --color-danger-light: rgba(239, 83, 80, 0.15);
+  
+  --color-warning: #ffa726;
+  --color-warning-hover: #ffb74d;
+  --color-warning-light: rgba(255, 167, 38, 0.15);
+  
+  --color-info: #42a5f5;
+  --color-info-hover: #64b5f6;
+  --color-info-light: rgba(66, 165, 245, 0.15);
+  
+  --color-success: #66bb6a;
+  --color-success-hover: #81c784;
+  --color-success-light: rgba(102, 187, 106, 0.15);
+  
+  /* Sombras - mais sutis no modo escuro */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.6);
+  
+  /* Overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.75);
+  
+  /* Estados */
+  --status-progress: #66bb6a;
+  --status-warning: #ffa726;
+  --status-danger: #ef5350;
+  --status-info: #42a5f5;
+}
+
+/* Transições suaves entre temas */
+* {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Exceções para elementos que não devem ter transição */
+input[type="range"],
+input[type="checkbox"],
+input[type="radio"],
+.no-transition,
+.progress-fill,
+canvas {
+  transition: none;
+}
+
+/* Garantir que imagens não sejam afetadas pelo tema */
+img {
+  transition: none;
+}
+
+/* Estilos base que usam as variáveis */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Scrollbar personalizada para modo escuro */
+:root[data-theme="dark"] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: 6px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #666666;
+}
+
+/* Scrollbar para modo claro */
+:root[data-theme="light"] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+:root[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+:root[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 6px;
+}
+
+:root[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--border-dark);
+}
+

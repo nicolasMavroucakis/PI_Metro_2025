@@ -6,15 +6,17 @@ import projectService from '../services/projectService';
 import '../Style/Home.css';
 import {
   Sun,
+  Moon,
   User,
-  Settings,
   HardHat,
   Shield,
   LogOut
 } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 function Home() {
   const navigate = useNavigate();
+  const { theme, toggleTheme, isDark } = useTheme();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -145,8 +147,14 @@ function Home() {
         <header className="main-header">
           <h1>Home</h1>
           <div className="header-controls">
-            <button className="theme-toggle" aria-label="Trocar tema">
-              <Sun size={20} />
+            {/* Botão de Tema ao lado do usuário */}
+            <button 
+              className="theme-toggle" 
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
+              title={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
+            >
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             
             {/* User Menu com Dropdown */}
@@ -195,10 +203,6 @@ function Home() {
                 </div>
               )}
             </div>
-            
-            <button className="settings" aria-label="Configurações">
-              <Settings size={20} />
-            </button>
           </div>
         </header>
 

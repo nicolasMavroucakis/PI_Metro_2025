@@ -2,13 +2,13 @@
 
 /* Aplicação do estilo visual ao header do projeto */
 .projectHeader {
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
 }
 
 .projectHeader .pageHeader_title,
 .projectHeader .pageHeader_subtitle {
-  color: #333;
+  color: var(--text-primary);
 }
 
 /* Botão de Documentos */
@@ -50,7 +50,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,7 +58,8 @@
 }
 
 .modal {
-  background: white;
+  background: var(--bg-modal);
+  color: var(--text-primary);
   border-radius: 12px;
   padding: 30px;
   min-width: 600px;
@@ -81,7 +82,7 @@
   align-items: center;
   margin: 0 0 30px 0;
   padding: 0 0 15px 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border-color);
   width: 100%;
   box-sizing: border-box;
 }
@@ -91,7 +92,7 @@
   padding: 0;
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .close-button {
@@ -99,14 +100,14 @@
   border: none;
   font-size: 20px;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   padding: 5px;
   border-radius: 4px;
   transition: background-color 0.2s;
 }
 
 .close-button:hover {
-  background: #f0f0f0;
+  background: var(--bg-hover);
 }
 
 /* Opções de tipo de captura */
@@ -383,7 +384,7 @@
   flex: 1;
   padding: 30px;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: var(--bg-secondary);
 }
 
 .layout-wrapper {
@@ -487,10 +488,11 @@
 .alerts-card,
 .info-card, /* Adicionado para consistência */
 .chart-section {
-  background: white;
+  background: var(--bg-card);
+  color: var(--text-primary);
   border-radius: 12px;
   padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   transition: transform 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
   overflow: visible;
@@ -508,7 +510,7 @@
 .card-title {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 20px 0;
 }
 
@@ -564,7 +566,7 @@
 .progress-percentage {
   font-size: 24px;
   font-weight: 700;
-  color: #1976D2;
+  color: var(--color-primary);
 }
 
 /* Últimas Capturas */
@@ -678,14 +680,14 @@
 .step-title {
   font-size: 13px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 3px 0;
   line-height: 1.2;
 }
 
 .step-dates {
   font-size: 11px;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.3;
 }

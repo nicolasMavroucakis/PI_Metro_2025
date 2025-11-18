@@ -1,3 +1,6 @@
+@import './Style/theme.css';
+@import './Style/theme-overrides.css';
+
 :root {
   --font-principal: 'Helvetica', sans-serif;
 }
@@ -7,6 +10,8 @@ body {
   font-family: var(--font-principal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 /* Removendo a regra global que anula as sombras dos headers */

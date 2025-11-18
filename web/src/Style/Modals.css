@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  /* background removido - será controlado pelo tema */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +15,7 @@
 }
 
 .modal-content {
-  background: white;
+  /* background removido - será controlado pelo tema */
   border-radius: 12px;
   padding: 0;
   width: 100%;
@@ -23,7 +23,7 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  /* box-shadow será controlado pelo tema */
   animation: modal-fade-in 0.3s ease-out;
 }
 
@@ -32,14 +32,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 25px;
-  border-bottom: 1px solid #e0e0e0;
+  /* border-bottom será controlado pelo tema */
   flex-shrink: 0;
 }
 
 .modal-header h2 {
   font-size: 22px;
   font-weight: 600;
-  color: #333;
+  /* color será controlado pelo tema */
   margin: 0;
   display: flex;
   align-items: center;
@@ -49,17 +49,14 @@
 .btn-close {
   background: none;
   border: none;
-  color: #666;
+  /* color será controlado pelo tema */
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
   transition: all 0.2s;
 }
 
-.btn-close:hover {
-  background: #f0f0f0;
-  color: #333;
-}
+/* btn-close:hover - estilo controlado pelo tema */
 
 .modal-body {
   padding: 25px;
@@ -72,8 +69,7 @@
   gap: 12px;
   justify-content: flex-end;
   padding: 20px 25px;
-  border-top: 1px solid #e0e0e0;
-  background: #f9f9f9;
+  /* border-top e background serão controlados pelo tema */
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }

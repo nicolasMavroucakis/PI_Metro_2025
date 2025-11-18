@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../../Style/ProjectDetails.module.css';
 
-const ProgressChart = ({ chartData, onGenerateReport }) => {
+const ProgressChart = ({ chartData }) => {
   return (
     <div className={styles['chart-section']}>
       <div className={styles['chart-header']}>
@@ -78,9 +78,6 @@ const ProgressChart = ({ chartData, onGenerateReport }) => {
           </>
         )}
       </div>
-      <button className={styles['generate-report-btn']} onClick={onGenerateReport}>
-        Gerar Relatório
-      </button>
     </div>
   );
 };

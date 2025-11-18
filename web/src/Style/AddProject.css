@@ -1,41 +1,41 @@
 /* Estilos para a página Adicionar Projeto */
 
 .add-project-header-style {
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
 }
 
 .add-project-header-style .pageHeader_title,
 .add-project-header-style .pageHeader_subtitle {
-  color: #333;
+  color: var(--text-primary);
 }
 
 .add-project-main {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: var(--bg-secondary);
 }
 
 .add-project-container {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   max-width: 1000px;
   margin: 0 auto;
   overflow: hidden;
 }
 
 .add-project-header {
-  background: #f8f9fa;
+  background: var(--bg-tertiary);
   padding: 25px 30px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .add-project-header h2 {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -65,7 +65,7 @@
 /* Estilos para elementos desabilitados */
 .form-input:disabled,
 .form-select:disabled {
-  background-color: #f5f5f5;
+  background-color: var(--bg-tertiary);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -104,7 +104,7 @@
 .form-label {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 8px;
   display: block;
 }
@@ -112,11 +112,11 @@
 .form-input,
 .form-select {
   padding: 12px 16px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
-  color: #333;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-card);
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
@@ -129,7 +129,7 @@
 }
 
 .form-input::placeholder {
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .date-input {
@@ -148,24 +148,24 @@
 
 /* File Upload Area */
 .file-upload-area {
-  border: 2px dashed #d1d5db;
+  border: 2px dashed var(--border-color);
   border-radius: 12px;
   padding: 40px 20px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #fafbfc;
+  background: var(--bg-tertiary);
   position: relative;
 }
 
 .file-upload-area:hover {
   border-color: #1976D2;
-  background: #f8f9ff;
+  background: var(--bg-hover);
 }
 
 .file-upload-area.drag-active {
   border-color: #1976D2;
-  background: #f0f4ff;
+  background: var(--bg-hover);
   transform: scale(1.02);
 }
 
@@ -177,7 +177,7 @@
 }
 
 .upload-icon {
-  color: #6b7280;
+  color: var(--text-secondary);
   margin-bottom: 8px;
 }
 
@@ -187,14 +187,14 @@
 
 .upload-text {
   font-size: 16px;
-  color: #374151;
+  color: var(--text-primary);
   font-weight: 500;
   margin: 0;
 }
 
 .upload-or {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -230,7 +230,7 @@
 
 .file-size {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -240,7 +240,7 @@
   justify-content: flex-end;
   margin-top: 40px;
   padding-top: 25px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--border-color);
 }
 
 .submit-button {

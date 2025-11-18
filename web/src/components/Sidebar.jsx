@@ -2,13 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import MetroLogo from '../assets/metro.png';
-import { useSidebar } from '../contexts/SidebarContext'; // Importar o hook
+import { useSidebar } from '../contexts/SidebarContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { 
   Home,
   Users,
   FileText,
   PlusCircle,
-  ChevronRight
+  ChevronRight,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 const Sidebar = ({ 
@@ -20,6 +23,7 @@ const Sidebar = ({
   const navigate = useNavigate();
   // Usar o estado e funções do contexto
   const { isOpen, closeOnMobile } = useSidebar();
+  const { theme, toggleTheme, isDark } = useTheme();
   
   const defaultMenuItems = [
     { icon: '🏠', label: 'Home', active: true, path: '/home' },
@@ -91,6 +95,23 @@ const Sidebar = ({
           </button>
         ))}
       </nav>
+
+      {/* Toggle de Tema */}
+      <div className="sidebar-theme-toggle">
+        <button
+          onClick={toggleTheme}
+          className="theme-toggle-btn"
+          aria-label={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
+          title={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
+        >
+          <span className="nav-icon">
+            {isDark ? <Sun size={22} strokeWidth={2} /> : <Moon size={22} strokeWidth={2} />}
+          </span>
+          <span className={`nav-label ${isOpen ? 'visible' : 'hidden'}`}>
+            {isDark ? 'Modo Claro' : 'Modo Escuro'}
+          </span>
+        </button>
+      </div>
 
       {showMetroBranding && (
         <div className="sidebar-footer">
