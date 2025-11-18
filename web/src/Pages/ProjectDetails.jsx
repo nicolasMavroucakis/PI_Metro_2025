@@ -20,6 +20,7 @@ import NewPhotoModal from '../components/ProjectDetails/modals/NewPhotoModal';
 import ViewMorePhotosModal from '../components/ProjectDetails/modals/ViewMorePhotosModal';
 import UpdateProgressModal from '../components/ProjectDetails/modals/UpdateProgressModal';
 import AddAlertModal from '../components/ProjectDetails/modals/AddAlertModal';
+import UpdateDeadlineModal from '../components/ProjectDetails/modals/UpdateDeadlineModal';
 import ConfirmationModal from '../components/shared/ConfirmationModal/ConfirmationModal';
 import { menuItemsConfig } from '../config/menuItems';
 
@@ -60,6 +61,13 @@ function ProjectDetails() {
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [photoToDelete, setPhotoToDelete] = useState(null);
+  
+  const [showConfirmAlertModal, setShowConfirmAlertModal] = useState(false);
+  const [alertToDelete, setAlertToDelete] = useState(null);
+  
+  const [showUpdateDeadlineModal, setShowUpdateDeadlineModal] = useState(false);
+  const [newDeadline, setNewDeadline] = useState('');
+  const [updatingDeadline, setUpdatingDeadline] = useState(false);
 
   // Função para atualizar progresso
   const handleUpdateProgress = async () => {
@@ -262,7 +270,90 @@ function ProjectDetails() {
     setShowConfirmModal(true);
   };
 
-  // (removido) handleDeleteAlert não é mais utilizado
+  // Deletar alerta
+  const handleDeleteAlert = async () => {
+    if (!alertToDelete) return;
+
+    try {
+      // Remover o alerta da lista
+      const updatedAlerts = alerts.filter(a => a.id !== alertToDelete.id);
+      
+      // Salvar no DynamoDB
+      const result = await projectService.updateProject(projectId, {
+        alerts: updatedAlerts
+      });
+
+      if (result.success) {
+        setAlerts(updatedAlerts);
+        setShowConfirmAlertModal(false);
+        setAlertToDelete(null);
+      } else {
+        alert(`Erro ao deletar alerta: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Erro ao deletar alerta:', error);
+      alert('Erro ao deletar alerta. Tente novamente.');
+    } finally {
+      setShowConfirmAlertModal(false);
+      setAlertToDelete(null);
+    }
+  };
+
+  // Abrir modal de confirmação para deletar alerta
+  const requestDeleteAlert = (alert) => {
+    setAlertToDelete(alert);
+    setShowConfirmAlertModal(true);
+  };
+
+  // Abrir modal para alterar prazo final
+  const handleOpenDeadlineModal = () => {
+    if (project?.endDate) {
+      setNewDeadline(project.endDate);
+    } else {
+      setNewDeadline('');
+    }
+    setShowUpdateDeadlineModal(true);
+  };
+
+  // Atualizar prazo final
+  const handleUpdateDeadline = async () => {
+    if (!newDeadline) {
+      alert('Por favor, selecione uma data');
+      return;
+    }
+
+    // Validar se a data não é no passado
+    const selectedDate = new Date(newDeadline);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+      alert('O prazo final não pode ser uma data no passado');
+      return;
+    }
+
+    try {
+      setUpdatingDeadline(true);
+      
+      const result = await projectService.updateProject(projectId, {
+        endDate: newDeadline
+      });
+
+      if (result.success) {
+        await reloadProjectData();
+        setShowUpdateDeadlineModal(false);
+        setNewDeadline('');
+        alert('Prazo final atualizado com sucesso!');
+      } else {
+        alert(`Erro ao atualizar prazo final: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar prazo final:', error);
+      alert('Erro ao atualizar prazo final. Tente novamente.');
+    } finally {
+      setUpdatingDeadline(false);
+    }
+  };
 
   // Se estiver carregando
   if (loading) {
@@ -343,10 +434,18 @@ function ProjectDetails() {
           />
 
           {/* Alertas */}
-          <AlertsCard alerts={alerts} onAddAlert={() => setShowAddAlertModal(true)} />
+          <AlertsCard 
+            alerts={alerts} 
+            onAddAlert={() => setShowAddAlertModal(true)}
+            onDeleteAlert={requestDeleteAlert}
+          />
 
           {/* Próximas Etapas */}
-          <ProjectInfoCard project={project} onViewMore={handleViewMore} />
+          <ProjectInfoCard 
+            project={project} 
+            onViewMore={handleViewMore}
+            onEditDeadline={handleOpenDeadlineModal}
+          />
         </div>
 
         {/* Gráfico de Progresso */}
@@ -398,13 +497,35 @@ function ProjectDetails() {
         setNewAlertLevel={setNewAlertLevel}
       />
 
-      {/* Modal de Confirmação de Exclusão */}
+      {/* Modal de Atualizar Prazo Final */}
+      <UpdateDeadlineModal
+        show={showUpdateDeadlineModal}
+        onClose={() => setShowUpdateDeadlineModal(false)}
+        onUpdate={handleUpdateDeadline}
+        updating={updatingDeadline}
+        newDeadline={newDeadline}
+        setNewDeadline={setNewDeadline}
+      />
+
+      {/* Modal de Confirmação de Exclusão de Foto */}
       <ConfirmationModal
         show={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         onConfirm={handleDeletePhoto}
         title="Confirmar Exclusão"
         message={`Tem certeza que deseja apagar a foto "${photoToDelete?.fileName}"? Esta ação não pode ser desfeita.`}
+      />
+
+      {/* Modal de Confirmação de Exclusão de Alerta */}
+      <ConfirmationModal
+        show={showConfirmAlertModal}
+        onClose={() => {
+          setShowConfirmAlertModal(false);
+          setAlertToDelete(null);
+        }}
+        onConfirm={handleDeleteAlert}
+        title="Confirmar Exclusão"
+        message={`Tem certeza que deseja deletar o alerta "${alertToDelete?.text}"? Esta ação não pode ser desfeita.`}
       />
     </Layout>
   );

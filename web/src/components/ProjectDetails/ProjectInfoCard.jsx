@@ -1,9 +1,9 @@
 import React from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, Edit2 } from 'lucide-react';
 import { formatDate } from '../../utils/formatters';
 import styles from '../../Style/ProjectDetails.module.css';
 
-const ProjectInfoCard = ({ project, onViewMore }) => {
+const ProjectInfoCard = ({ project, onViewMore, onEditDeadline }) => {
   return (
     <div className={styles['info-card']}>
       <div className={styles['card-header']}>
@@ -22,7 +22,21 @@ const ProjectInfoCard = ({ project, onViewMore }) => {
           <div className={styles['step-indicator']}></div>
           <div className={styles['step-content']}>
             <h4 className={styles['step-title']}>Prazo Final</h4>
-            <p className={styles['step-dates']}>{formatDate(project.endDate)}</p>
+            <div className={styles['deadline-wrapper']}>
+              <p className={styles['step-dates']}>{formatDate(project.endDate)}</p>
+              {onEditDeadline && (
+                <button
+                  className={styles['edit-deadline-btn']}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditDeadline();
+                  }}
+                  title="Editar prazo final"
+                >
+                  <Edit2 size={14} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
         <div className={`${styles['step-item']} ${styles.active}`}>

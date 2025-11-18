@@ -690,6 +690,36 @@
   line-height: 1.3;
 }
 
+.deadline-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.deadline-wrapper .step-dates {
+  flex: 1;
+}
+
+.edit-deadline-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.edit-deadline-btn:hover {
+  background: rgba(25, 118, 210, 0.1);
+  color: #1976D2;
+}
+
 /* Botões Ver Mais */
 .view-more-btn {
   background: #1976D2;
@@ -1085,6 +1115,26 @@
   font-size: 13px;
   color: #333;
   line-height: 1.4;
+  flex: 1;
+}
+
+.delete-alert-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.delete-alert-btn:hover {
+  background: rgba(244, 67, 54, 0.1);
+  color: #F44336;
 }
 
 .more-alerts {
@@ -1343,6 +1393,19 @@
   font-weight: 600;
 }
 
+/* Estilos para o modal de Atualizar Prazo Final */
+.updateDeadlineModal {
+  min-width: 450px;
+  max-width: 500px;
+}
+
+.updateDeadlineModal h3 {
+  text-align: center;
+  margin: 0 0 25px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .progressModalForm {
   display: flex;
   flex-direction: column;
@@ -1384,4 +1447,11 @@
 .formTextarea {
   resize: vertical;
   min-height: 90px;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  display: block;
 }

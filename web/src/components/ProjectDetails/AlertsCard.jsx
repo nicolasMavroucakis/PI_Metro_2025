@@ -1,8 +1,8 @@
 import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Trash2 } from 'lucide-react';
 import styles from '../../Style/ProjectDetails.module.css';
 
-const AlertsCard = ({ alerts, onAddAlert }) => {
+const AlertsCard = ({ alerts, onAddAlert, onDeleteAlert }) => {
   return (
     <div className={styles['alerts-card']}>
       <div className={styles['card-header']}>
@@ -20,6 +20,18 @@ const AlertsCard = ({ alerts, onAddAlert }) => {
               <div key={alert.id} className={`${styles['alert-item']} ${styles[`alert-${alert.level}`]}`}>
                 <div className={styles['alert-indicator']}></div>
                 <div className={styles['alert-text']}>{alert.text}</div>
+                {onDeleteAlert && (
+                  <button
+                    className={styles['delete-alert-btn']}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteAlert(alert);
+                    }}
+                    title="Deletar alerta"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
             ))}
             {alerts.length > 3 && (
