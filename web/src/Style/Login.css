@@ -1,11 +1,19 @@
+/* Isolamento completo do tema escuro - a tela de login não deve ser afetada */
+body:has(.container),
 body {
   margin: 0;
-  background-color: #002f87;
-  color: white;
+  background-color: #002f87 !important;
+  color: white !important;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+/* Garantir que o body na tela de login não seja afetado pelo tema */
+body:has(.container) {
+  background-color: #002f87 !important;
+  color: white !important;
 }
 
 .container {
@@ -15,7 +23,7 @@ body {
   align-items: center;
   width: 80%;
   max-width: 1200px;
-  background-color: #002f87;
+  background-color: #002f87 !important;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -42,15 +50,15 @@ body {
 }
 
 .logo-section h1 {
-  color: white;
+  color: white !important;
   font-size: 24px;
   margin: 0;
   font-weight: normal;
 }
 
 .login-section {
-  background-color: white;
-  color: #002f87;
+  background-color: white !important;
+  color: #002f87 !important;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -64,6 +72,7 @@ body {
   text-align: center;
   font-size: 28px;
   font-weight: bold;
+  color: #002f87 !important;
 }
 
 .form {
@@ -75,27 +84,36 @@ body {
   margin-top: 15px;
   margin-bottom: 5px;
   font-weight: 500;
+  color: #002f87 !important;
 }
 
 .input {
   padding: 12px;
   margin-bottom: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc !important;
   border-radius: 4px;
   font-size: 16px;
+  background-color: white !important;
+  color: #333 !important;
+}
+
+.input::placeholder {
+  color: #999 !important;
 }
 
 .input:focus {
   outline: none;
-  border-color: #002f87;
-  box-shadow: 0 0 5px rgba(0, 47, 135, 0.3);
+  border-color: #002f87 !important;
+  box-shadow: 0 0 5px rgba(0, 47, 135, 0.3) !important;
+  background-color: white !important;
+  color: #333 !important;
 }
 
 .button {
   margin-top: 20px;
   padding: 12px;
-  background-color: #002f87;
-  color: white;
+  background-color: #002f87 !important;
+  color: white !important;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -105,23 +123,26 @@ body {
 }
 
 .button:hover {
-  background-color: #001f5f;
+  background-color: #001f5f !important;
+  color: white !important;
 }
 
 .register-text {
   margin-top: 20px;
   font-size: 14px;
   text-align: center;
+  color: #002f87 !important;
 }
 
 .link {
-  color: #002f87;
+  color: #002f87 !important;
   text-decoration: none;
   font-weight: bold;
 }
 
 .link:hover {
   text-decoration: underline;
+  color: #001f5f !important;
 }
 
 /* Mensagens de erro e sucesso */
@@ -147,21 +168,67 @@ body {
   text-align: center;
 }
 
+/* Regras específicas para sobrescrever qualquer regra global do tema */
+.container input,
+.container .input,
+.login-section input,
+.login-section .input {
+  background-color: white !important;
+  color: #333 !important;
+  border-color: #ccc !important;
+}
+
+.container input::placeholder,
+.container .input::placeholder,
+.login-section input::placeholder,
+.login-section .input::placeholder {
+  color: #999 !important;
+}
+
+.container input:focus,
+.container .input:focus,
+.login-section input:focus,
+.login-section .input:focus {
+  background-color: white !important;
+  color: #333 !important;
+  border-color: #002f87 !important;
+}
+
+.container button,
+.container .button,
+.login-section button,
+.login-section .button {
+  background-color: #002f87 !important;
+  color: white !important;
+}
+
+.container button:hover,
+.container .button:hover,
+.login-section button:hover,
+.login-section .button:hover {
+  background-color: #001f5f !important;
+  color: white !important;
+}
+
 /* Estilo para inputs e botões desabilitados */
 .input:disabled {
-  background-color: #f5f5f5;
+  background-color: #f5f5f5 !important;
+  color: #333 !important;
   cursor: not-allowed;
   opacity: 0.7;
+  border-color: #ccc !important;
 }
 
 .button:disabled {
-  background-color: #6c757d;
+  background-color: #6c757d !important;
+  color: white !important;
   cursor: not-allowed;
   opacity: 0.7;
 }
 
 .button:disabled:hover {
-  background-color: #6c757d;
+  background-color: #6c757d !important;
+  color: white !important;
 }
 
 /* Responsividade */
